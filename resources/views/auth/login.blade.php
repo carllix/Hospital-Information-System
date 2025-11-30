@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Login | Ganehsa Hospital')
+@section('title', 'Login | Ganesha Hospital')
 
 @section('content')
 <div class="flex min-h-screen">
