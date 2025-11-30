@@ -27,7 +27,7 @@ export function initializeRegisterForm() {
         container.innerHTML = '';
 
         roleCards.forEach(card => {
-            card.classList.remove('border-green-500', 'bg-green-50');
+            card.classList.remove('border-[#f56e9d]', 'bg-pink-50');
             card.classList.add('border-gray-300');
         });
     }
@@ -56,12 +56,12 @@ export function initializeRegisterForm() {
             const role = this.dataset.role;
 
             roleCards.forEach(c => {
-                c.classList.remove('border-green-500', 'bg-green-50');
+                c.classList.remove('border-[#f56e9d]', 'bg-pink-50');
                 c.classList.add('border-gray-300');
             });
 
             this.classList.remove('border-gray-300');
-            this.classList.add('border-green-500', 'bg-green-50');
+            this.classList.add('border-[#f56e9d]', 'bg-pink-50');
 
             showForm(role);
         });
@@ -73,7 +73,7 @@ export function initializeRegisterForm() {
         const selectedCard = document.querySelector(`.role-card[data-role="${oldValues.role}"]`);
         if (selectedCard) {
             selectedCard.classList.remove('border-gray-300');
-            selectedCard.classList.add('border-green-500', 'bg-green-50');
+            selectedCard.classList.add('border-[#f56e9d]', 'bg-pink-50');
         }
         showForm(oldValues.role);
     }
@@ -88,7 +88,7 @@ function getPasienFields(oldValues) {
                 <label class="block text-gray-700 text-sm font-semibold mb-2">
                     Nama Lengkap <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required maxlength="100">
+                <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -96,13 +96,13 @@ function getPasienFields(oldValues) {
                     <label class="block text-gray-700 text-sm font-semibold mb-2">
                         NIK <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="nik" value="${oldValues.nik || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
+                    <input type="text" name="nik" value="${oldValues.nik || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">
                         Tanggal Lahir <span class="text-red-500">*</span>
                     </label>
-                    <input type="date" name="tanggal_lahir" value="${oldValues.tanggal_lahir || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                    <input type="date" name="tanggal_lahir" value="${oldValues.tanggal_lahir || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
                 </div>
             </div>
 
@@ -110,7 +110,7 @@ function getPasienFields(oldValues) {
                 <label class="block text-gray-700 text-sm font-semibold mb-2">
                     Jenis Kelamin <span class="text-red-500">*</span>
                 </label>
-                <select name="jenis_kelamin" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                <select name="jenis_kelamin" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
                     <option value="">Pilih</option>
                     <option value="Laki-Laki" ${oldValues.jenis_kelamin === 'Laki-Laki' ? 'selected' : ''}>Laki-Laki</option>
                     <option value="Perempuan" ${oldValues.jenis_kelamin === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
@@ -121,41 +121,41 @@ function getPasienFields(oldValues) {
                 <label class="block text-gray-700 text-sm font-semibold mb-2">
                     Alamat <span class="text-red-500">*</span>
                 </label>
-                <textarea name="alamat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="3" required>${oldValues.alamat || ''}</textarea>
+                <textarea name="alamat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" rows="3" required>${oldValues.alamat || ''}</textarea>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi</label>
-                    <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten</label>
-                    <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan</label>
-                    <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Kewarganegaraan</label>
-                    <input type="text" name="kewarganegaraan" value="${oldValues.kewarganegaraan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="50">
+                    <input type="text" name="kewarganegaraan" value="${oldValues.kewarganegaraan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">
                         No. Telepon <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="no_telepon" value="${oldValues.no_telepon || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required maxlength="15">
+                    <input type="text" name="no_telepon" value="${oldValues.no_telepon || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="15">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Golongan Darah</label>
-                    <select name="golongan_darah" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    <select name="golongan_darah" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
                         <option value="">Pilih</option>
                         <option value="A" ${oldValues.golongan_darah === 'A' ? 'selected' : ''}>A</option>
                         <option value="B" ${oldValues.golongan_darah === 'B' ? 'selected' : ''}>B</option>
@@ -173,7 +173,7 @@ function getPasienFields(oldValues) {
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Wearable Device ID</label>
-                    <input type="text" name="wearable_device_id" value="${oldValues.wearable_device_id || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="50">
+                    <input type="text" name="wearable_device_id" value="${oldValues.wearable_device_id || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
                 </div>
             </div>
         </div>
@@ -187,14 +187,14 @@ function getDokterFields(oldValues) {
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-semibold mb-2">NIP</label>
-                <input type="text" name="nip" value="${oldValues.nip || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="30">
+                <input type="text" name="nip" value="${oldValues.nip || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="30">
             </div>
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-semibold mb-2">
                     Nama Lengkap <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required maxlength="100">
+                <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -202,13 +202,13 @@ function getDokterFields(oldValues) {
                     <label class="block text-gray-700 text-sm font-semibold mb-2">
                         NIK <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="nik" value="${oldValues.nik || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
+                    <input type="text" name="nik" value="${oldValues.nik || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">
                         Tanggal Lahir <span class="text-red-500">*</span>
                     </label>
-                    <input type="date" name="tanggal_lahir" value="${oldValues.tanggal_lahir || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                    <input type="date" name="tanggal_lahir" value="${oldValues.tanggal_lahir || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
                 </div>
             </div>
 
@@ -216,7 +216,7 @@ function getDokterFields(oldValues) {
                 <label class="block text-gray-700 text-sm font-semibold mb-2">
                     Jenis Kelamin <span class="text-red-500">*</span>
                 </label>
-                <select name="jenis_kelamin" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                <select name="jenis_kelamin" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
                     <option value="">Pilih</option>
                     <option value="Laki-Laki" ${oldValues.jenis_kelamin === 'Laki-Laki' ? 'selected' : ''}>Laki-Laki</option>
                     <option value="Perempuan" ${oldValues.jenis_kelamin === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
@@ -227,45 +227,45 @@ function getDokterFields(oldValues) {
                 <label class="block text-gray-700 text-sm font-semibold mb-2">
                     Alamat <span class="text-red-500">*</span>
                 </label>
-                <textarea name="alamat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="3" required>${oldValues.alamat || ''}</textarea>
+                <textarea name="alamat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" rows="3" required>${oldValues.alamat || ''}</textarea>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi</label>
-                    <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten</label>
-                    <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan</label>
-                    <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Kewarganegaraan</label>
-                    <input type="text" name="kewarganegaraan" value="${oldValues.kewarganegaraan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="50">
+                    <input type="text" name="kewarganegaraan" value="${oldValues.kewarganegaraan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">
                         No. Telepon <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="no_telepon" value="${oldValues.no_telepon || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required maxlength="15">
+                    <input type="text" name="no_telepon" value="${oldValues.no_telepon || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="15">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Spesialisasi</label>
-                    <input type="text" name="spesialisasi" value="${oldValues.spesialisasi || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="spesialisasi" value="${oldValues.spesialisasi || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">No. STR</label>
-                    <input type="text" name="no_str" value="${oldValues.no_str || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="50">
+                    <input type="text" name="no_str" value="${oldValues.no_str || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
                 </div>
             </div>
         </div>
@@ -288,14 +288,14 @@ function getStafFields(role, oldValues) {
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-semibold mb-2">NIP</label>
-                <input type="text" name="nip" value="${oldValues.nip || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="30">
+                <input type="text" name="nip" value="${oldValues.nip || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="30">
             </div>
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-semibold mb-2">
                     Nama Lengkap <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required maxlength="100">
+                <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -303,13 +303,13 @@ function getStafFields(role, oldValues) {
                     <label class="block text-gray-700 text-sm font-semibold mb-2">
                         NIK <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="nik" value="${oldValues.nik || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
+                    <input type="text" name="nik" value="${oldValues.nik || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">
                         Tanggal Lahir <span class="text-red-500">*</span>
                     </label>
-                    <input type="date" name="tanggal_lahir" value="${oldValues.tanggal_lahir || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                    <input type="date" name="tanggal_lahir" value="${oldValues.tanggal_lahir || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
                 </div>
             </div>
 
@@ -317,7 +317,7 @@ function getStafFields(role, oldValues) {
                 <label class="block text-gray-700 text-sm font-semibold mb-2">
                     Jenis Kelamin <span class="text-red-500">*</span>
                 </label>
-                <select name="jenis_kelamin" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                <select name="jenis_kelamin" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
                     <option value="">Pilih</option>
                     <option value="Laki-Laki" ${oldValues.jenis_kelamin === 'Laki-Laki' ? 'selected' : ''}>Laki-Laki</option>
                     <option value="Perempuan" ${oldValues.jenis_kelamin === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
@@ -328,34 +328,34 @@ function getStafFields(role, oldValues) {
                 <label class="block text-gray-700 text-sm font-semibold mb-2">
                     Alamat <span class="text-red-500">*</span>
                 </label>
-                <textarea name="alamat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="3" required>${oldValues.alamat || ''}</textarea>
+                <textarea name="alamat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" rows="3" required>${oldValues.alamat || ''}</textarea>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi</label>
-                    <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten</label>
-                    <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan</label>
-                    <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="100">
+                    <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">Kewarganegaraan</label>
-                    <input type="text" name="kewarganegaraan" value="${oldValues.kewarganegaraan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" maxlength="50">
+                    <input type="text" name="kewarganegaraan" value="${oldValues.kewarganegaraan || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-semibold mb-2">
                         No. Telepon <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="no_telepon" value="${oldValues.no_telepon || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required maxlength="15">
+                    <input type="text" name="no_telepon" value="${oldValues.no_telepon || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="15">
                 </div>
             </div>
         </div>

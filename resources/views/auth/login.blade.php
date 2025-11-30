@@ -1,18 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Login | Hospital Information System')
+@section('title', 'Login | Ganehsa Hospital')
 
 @section('content')
 <div class="flex min-h-screen">
-    <div class="hidden lg:flex lg:w-1/2 bg-green-700 items-center justify-center p-12">
+    <div class="hidden lg:flex lg:w-1/2 items-center justify-center p-12" style="background: linear-gradient(to bottom right, #f56e9d, #d14a7a);">
         <div class="text-center">
             <div class="mb-8">
-                <svg class="w-48 h-48 mx-auto text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
+                <img src="{{ asset('images/GaTal-logo.png') }}" alt="Ganesha Hospital Logo" class="w-64 mx-auto">
             </div>
-            <h1 class="text-4xl font-bold text-white mb-4">Hospital Information System</h1>
-            <p class="text-green-100 text-lg">Sistem Informasi Manajemen Rumah Sakit Terpadu</p>
+            <h1 class="text-4xl font-bold text-white mb-4">Ganesha Hospital</h1>
+            <p class="text-pink-100 text-lg">Bijaksana dalam Merawat, Tulus dalam Melayani</p>
         </div>
     </div>
 
@@ -36,10 +34,10 @@
                             name="email"
                             id="email"
                             value="{{ old('email') }}"
-                            class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('email') border-red-500 @enderror"
+                            class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('email') border-red-500 @enderror"
                             required
                             autofocus
-                            placeholder="nama@email.com"
+                            placeholder="example@gmail.com"
                         >
                         @error('email')
                             <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
@@ -55,7 +53,7 @@
                                 type="password"
                                 name="password"
                                 id="password"
-                                class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 pr-12 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('password') border-red-500 @enderror"
+                                class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 pr-12 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('password') border-red-500 @enderror"
                                 required
                                 placeholder="Masukkan password"
                             >
@@ -78,7 +76,7 @@
                     <div class="flex items-center justify-between mb-6">
                         <button
                             type="submit"
-                            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200"
+                            class="w-full text-white font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:ring-offset-2 transition-colors duration-200" style="background-color: #f56e9d;" onmouseover="this.style.backgroundColor='#b8527a'" onmouseout="this.style.backgroundColor='#f56e9d'"
                         >
                             Login
                         </button>
@@ -87,7 +85,7 @@
                     <div class="text-center">
                         <p class="text-sm text-gray-600">
                             Belum punya akun?
-                            <a href="{{ route('register') }}" class="text-green-600 hover:text-green-700 font-semibold">
+                            <a href="{{ route('register') }}" class="font-semibold" style="color: #f56e9d;">
                                 Daftar di sini
                             </a>
                         </p>
