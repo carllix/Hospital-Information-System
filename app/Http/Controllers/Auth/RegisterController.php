@@ -69,7 +69,6 @@ class RegisterController extends Controller
                 'kewarganegaraan' => ['nullable', 'string', 'max:50'],
                 'no_telepon' => ['required', 'string', 'max:15'],
                 'golongan_darah' => ['nullable', 'in:A,B,AB,O,A+,A-,B+,B-,AB+,AB-,O+,O-'],
-                'wearable_device_id' => ['nullable', 'string', 'max:50', 'unique:pasien,wearable_device_id'],
             ]);
         } elseif ($role === 'dokter') {
             $rules = array_merge($rules, [
@@ -125,7 +124,6 @@ class RegisterController extends Controller
                 'kewarganegaraan' => $validated['kewarganegaraan'] ?? null,
                 'no_telepon' => $validated['no_telepon'],
                 'golongan_darah' => $validated['golongan_darah'] ?? null,
-                'wearable_device_id' => $validated['wearable_device_id'] ?? null,
             ]);
         } elseif ($role === 'dokter') {
             Dokter::create([

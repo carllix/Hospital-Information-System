@@ -152,29 +152,23 @@ function getPasienFields(oldValues) {
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label class="block text-gray-700 text-sm font-semibold mb-2">Golongan Darah</label>
-                    <select name="golongan_darah" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
-                        <option value="">Pilih</option>
-                        <option value="A" ${oldValues.golongan_darah === 'A' ? 'selected' : ''}>A</option>
-                        <option value="B" ${oldValues.golongan_darah === 'B' ? 'selected' : ''}>B</option>
-                        <option value="AB" ${oldValues.golongan_darah === 'AB' ? 'selected' : ''}>AB</option>
-                        <option value="O" ${oldValues.golongan_darah === 'O' ? 'selected' : ''}>O</option>
-                        <option value="A+" ${oldValues.golongan_darah === 'A+' ? 'selected' : ''}>A+</option>
-                        <option value="A-" ${oldValues.golongan_darah === 'A-' ? 'selected' : ''}>A-</option>
-                        <option value="B+" ${oldValues.golongan_darah === 'B+' ? 'selected' : ''}>B+</option>
-                        <option value="B-" ${oldValues.golongan_darah === 'B-' ? 'selected' : ''}>B-</option>
-                        <option value="AB+" ${oldValues.golongan_darah === 'AB+' ? 'selected' : ''}>AB+</option>
-                        <option value="AB-" ${oldValues.golongan_darah === 'AB-' ? 'selected' : ''}>AB-</option>
-                        <option value="O+" ${oldValues.golongan_darah === 'O+' ? 'selected' : ''}>O+</option>
-                        <option value="O-" ${oldValues.golongan_darah === 'O-' ? 'selected' : ''}>O-</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-700 text-sm font-semibold mb-2">Wearable Device ID</label>
-                    <input type="text" name="wearable_device_id" value="${oldValues.wearable_device_id || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
-                </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-semibold mb-2">Golongan Darah</label>
+                <select name="golongan_darah" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
+                    <option value="">Pilih</option>
+                    <option value="A" ${oldValues.golongan_darah === 'A' ? 'selected' : ''}>A</option>
+                    <option value="B" ${oldValues.golongan_darah === 'B' ? 'selected' : ''}>B</option>
+                    <option value="AB" ${oldValues.golongan_darah === 'AB' ? 'selected' : ''}>AB</option>
+                    <option value="O" ${oldValues.golongan_darah === 'O' ? 'selected' : ''}>O</option>
+                    <option value="A+" ${oldValues.golongan_darah === 'A+' ? 'selected' : ''}>A+</option>
+                    <option value="A-" ${oldValues.golongan_darah === 'A-' ? 'selected' : ''}>A-</option>
+                    <option value="B+" ${oldValues.golongan_darah === 'B+' ? 'selected' : ''}>B+</option>
+                    <option value="B-" ${oldValues.golongan_darah === 'B-' ? 'selected' : ''}>B-</option>
+                    <option value="AB+" ${oldValues.golongan_darah === 'AB+' ? 'selected' : ''}>AB+</option>
+                    <option value="AB-" ${oldValues.golongan_darah === 'AB-' ? 'selected' : ''}>AB-</option>
+                    <option value="O+" ${oldValues.golongan_darah === 'O+' ? 'selected' : ''}>O+</option>
+                    <option value="O-" ${oldValues.golongan_darah === 'O-' ? 'selected' : ''}>O-</option>
+                </select>
             </div>
         </div>
     `;
