@@ -22,35 +22,59 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
+    // Pasien Routes
     Route::get('/pasien/dashboard', function () {
-        return view('dashboard.pasien');
+        return view('pasien.dashboard');
     })->name('pasien.dashboard');
 
+    Route::get('/pasien/pembayaran', function () {
+        return view('pasien.pembayaran');
+    })->name('pasien.pembayaran');
+
+    Route::get('/pasien/rekam-medis', function () {
+        return view('pasien.rekam-medis');
+    })->name('pasien.rekam-medis');
+
+    Route::get('/pasien/health-monitoring', function () {
+        return view('pasien.health-monitoring');
+    })->name('pasien.health-monitoring');
+
+    // Pendaftaran Routes
     Route::get('/pendaftaran/dashboard', function () {
-        return view('dashboard.pendaftaran');
+        return view('pendaftaran.dashboard');
     })->name('pendaftaran.dashboard');
 
+    Route::get('/pendaftaran/pasien-management', function () {
+        return view('pendaftaran.pasien-management');
+    })->name('pendaftaran.pasien-management');
+
+    // Dokter Routes
     Route::get('/dokter/dashboard', function () {
-        return view('dashboard.dokter');
+        return view('dokter.dashboard');
     })->name('dokter.dashboard');
 
+    // Farmasi Routes
     Route::get('/farmasi/dashboard', function () {
-        return view('dashboard.farmasi');
+        return view('farmasi.dashboard');
     })->name('farmasi.dashboard');
 
+    // Lab Routes
     Route::get('/lab/dashboard', function () {
-        return view('dashboard.lab');
+        return view('lab.dashboard');
     })->name('lab.dashboard');
 
+    // Kasir Klinik Routes
     Route::get('/kasir-klinik/dashboard', function () {
-        return view('dashboard.kasir-klinik');
+        return view('kasir-klinik.dashboard');
     })->name('kasir-klinik.dashboard');
 
+    // Kasir Apotek Routes
     Route::get('/kasir-apotek/dashboard', function () {
-        return view('dashboard.kasir-apotek');
+        return view('kasir-apotek.dashboard');
     })->name('kasir-apotek.dashboard');
 
+    // Kasir Lab Routes
     Route::get('/kasir-lab/dashboard', function () {
-        return view('dashboard.kasir-lab');
+        return view('kasir-lab.dashboard');
     })->name('kasir-lab.dashboard');
 });
