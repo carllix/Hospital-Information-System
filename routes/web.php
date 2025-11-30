@@ -3,6 +3,14 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Dokter\DokterController;
+use App\Http\Controllers\Farmasi\FarmasiController;
+use App\Http\Controllers\Kasir\KasirApotekController;
+use App\Http\Controllers\Kasir\KasirKlinikController;
+use App\Http\Controllers\Kasir\KasirLabController;
+use App\Http\Controllers\Lab\LabController;
+use App\Http\Controllers\Pasien\PasienController;
+use App\Http\Controllers\Pendaftaran\PendaftaranController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,58 +31,30 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
     // Pasien Routes
-    Route::get('/pasien/dashboard', function () {
-        return view('pasien.dashboard');
-    })->name('pasien.dashboard');
-
-    Route::get('/pasien/pembayaran', function () {
-        return view('pasien.pembayaran');
-    })->name('pasien.pembayaran');
-
-    Route::get('/pasien/rekam-medis', function () {
-        return view('pasien.rekam-medis');
-    })->name('pasien.rekam-medis');
-
-    Route::get('/pasien/health-monitoring', function () {
-        return view('pasien.health-monitoring');
-    })->name('pasien.health-monitoring');
+    Route::get('/pasien/dashboard', [PasienController::class, 'dashboard'])->name('pasien.dashboard');
+    Route::get('/pasien/pembayaran', [PasienController::class, 'pembayaran'])->name('pasien.pembayaran');
+    Route::get('/pasien/rekam-medis', [PasienController::class, 'rekamMedis'])->name('pasien.rekam-medis');
+    Route::get('/pasien/health-monitoring', [PasienController::class, 'healthMonitoring'])->name('pasien.health-monitoring');
 
     // Pendaftaran Routes
-    Route::get('/pendaftaran/dashboard', function () {
-        return view('pendaftaran.dashboard');
-    })->name('pendaftaran.dashboard');
-
-    Route::get('/pendaftaran/pasien-management', function () {
-        return view('pendaftaran.pasien-management');
-    })->name('pendaftaran.pasien-management');
+    Route::get('/pendaftaran/dashboard', [PendaftaranController::class, 'dashboard'])->name('pendaftaran.dashboard');
+    Route::get('/pendaftaran/pasien-management', [PendaftaranController::class, 'pasienManagement'])->name('pendaftaran.pasien-management');
 
     // Dokter Routes
-    Route::get('/dokter/dashboard', function () {
-        return view('dokter.dashboard');
-    })->name('dokter.dashboard');
+    Route::get('/dokter/dashboard', [DokterController::class, 'dashboard'])->name('dokter.dashboard');
 
     // Farmasi Routes
-    Route::get('/farmasi/dashboard', function () {
-        return view('farmasi.dashboard');
-    })->name('farmasi.dashboard');
+    Route::get('/farmasi/dashboard', [FarmasiController::class, 'dashboard'])->name('farmasi.dashboard');
 
     // Lab Routes
-    Route::get('/lab/dashboard', function () {
-        return view('lab.dashboard');
-    })->name('lab.dashboard');
+    Route::get('/lab/dashboard', [LabController::class, 'dashboard'])->name('lab.dashboard');
 
     // Kasir Klinik Routes
-    Route::get('/kasir-klinik/dashboard', function () {
-        return view('kasir-klinik.dashboard');
-    })->name('kasir-klinik.dashboard');
+    Route::get('/kasir-klinik/dashboard', [KasirKlinikController::class, 'dashboard'])->name('kasir-klinik.dashboard');
 
     // Kasir Apotek Routes
-    Route::get('/kasir-apotek/dashboard', function () {
-        return view('kasir-apotek.dashboard');
-    })->name('kasir-apotek.dashboard');
+    Route::get('/kasir-apotek/dashboard', [KasirApotekController::class, 'dashboard'])->name('kasir-apotek.dashboard');
 
     // Kasir Lab Routes
-    Route::get('/kasir-lab/dashboard', function () {
-        return view('kasir-lab.dashboard');
-    })->name('kasir-lab.dashboard');
+    Route::get('/kasir-lab/dashboard', [KasirLabController::class, 'dashboard'])->name('kasir-lab.dashboard');
 });
