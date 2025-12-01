@@ -10,6 +10,11 @@ class Pasien extends Model
 {
     use HasFactory;
 
+    protected static function newFactory()
+    {
+        return \Database\Factories\PasienFactory::new();
+    }
+
     protected $table = 'pasien';
     protected $primaryKey = 'pasien_id';
     public $timestamps = false;

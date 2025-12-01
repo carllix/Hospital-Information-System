@@ -35,6 +35,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/pasien/pembayaran', [PasienController::class, 'pembayaran'])->name('pasien.pembayaran');
     Route::get('/pasien/rekam-medis', [PasienController::class, 'rekamMedis'])->name('pasien.rekam-medis');
     Route::get('/pasien/health-monitoring', [PasienController::class, 'healthMonitoring'])->name('pasien.health-monitoring');
+    Route::get('/pasien/profile', [PasienController::class, 'profile'])->name('pasien.profile');
+    Route::get('/pasien/profile/edit', [PasienController::class, 'editProfile'])->name('pasien.profile.edit');
+    Route::put('/pasien/profile', [PasienController::class, 'updateProfile'])->name('pasien.profile.update');
 
     // Pendaftaran Routes
     Route::get('/pendaftaran/dashboard', [PendaftaranController::class, 'dashboard'])->name('pendaftaran.dashboard');

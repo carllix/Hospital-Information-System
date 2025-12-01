@@ -5,6 +5,7 @@ $roleMenus = [
         ['name' => 'Pembayaran', 'route' => '/pasien/pembayaran', 'icon' => 'payment'],
         ['name' => 'Rekam Medis', 'route' => '/pasien/rekam-medis', 'icon' => 'medical'],
         ['name' => 'Health Monitoring', 'route' => '/pasien/health-monitoring', 'icon' => 'health'],
+        ['name' => 'Profil', 'route' => '/pasien/profile', 'icon' => 'profile'],
     ],
     'pendaftaran' => [
         ['name' => 'Dashboard', 'route' => '/pendaftaran/dashboard', 'icon' => 'dashboard'],
@@ -44,9 +45,13 @@ $currentRoute = request()->path();
 
     <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         @foreach($menus as $menu)
+            @php
+                // Check if current route matches exactly or starts with menu route
+                $isActive = '/' . $currentRoute === $menu['route'] || str_starts_with('/' . $currentRoute, $menu['route'] . '/');
+            @endphp
             <a href="{{ $menu['route'] }}"
-               class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-white hover:bg-[#d4537b] {{ '/' . $currentRoute === $menu['route'] ? 'bg-[#d4537b] shadow-lg font-semibold' : '' }}">
-                <x-menu-icon :icon="$menu['icon']" :active="'/' . $currentRoute === $menu['route']" size="small" />
+               class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-white hover:bg-[#d4537b] {{ $isActive ? 'bg-[#d4537b] shadow-lg font-semibold' : '' }}">
+                <x-menu-icon :icon="$menu['icon']" :active="$isActive" size="small" />
                 <span class="text-sm font-medium">{{ $menu['name'] }}</span>
             </a>
         @endforeach
