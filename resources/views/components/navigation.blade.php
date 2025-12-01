@@ -9,7 +9,13 @@ $roleMenus = [
     ],
     'pendaftaran' => [
         ['name' => 'Dashboard', 'route' => '/pendaftaran/dashboard', 'icon' => 'dashboard'],
-        ['name' => 'Pasien Management', 'route' => '/pendaftaran/pasien-management', 'icon' => 'users'],
+        ['name' => 'Pendaftaran Pasien Baru', 'route' => '/pendaftaran/pasien-baru', 'icon' => 'profile'],
+        ['name' => 'Pendaftaran Kunjungan', 'route' => '/pendaftaran/kunjungan', 'icon' => 'medical'],
+        ['name' => 'Data Pasien', 'route' => '/pendaftaran/data-pasien', 'icon' => 'profile'],
+        ['name' => 'Antrian Hari Ini', 'route' => '/pendaftaran/antrian', 'icon' => 'dashboard'],
+        ['name' => 'Jadwal Dokter', 'route' => '/pendaftaran/jadwal-dokter', 'icon' => 'profile'],
+        ['name' => 'Riwayat Pendaftaran', 'route' => '/pendaftaran/riwayat', 'icon' => 'medical'],
+        ['name' => 'Profil Saya', 'route' => '/pendaftaran/profile', 'icon' => 'profile'],
     ],
     'dokter' => [
         ['name' => 'Dashboard', 'route' => '/dokter/dashboard', 'icon' => 'dashboard'],
@@ -60,7 +66,7 @@ $currentRoute = request()->path();
     <div class="border-t border-gray-200 border-opacity-50 px-4 py-4">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white hover:bg-[#d4537b] w-full transition-all duration-200">
+            <button type="submit" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white hover:bg-[#c7406a] hover:cursor-pointer w-full transition-all duration-200">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>

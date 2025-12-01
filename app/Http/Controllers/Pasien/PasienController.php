@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pasien;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pemeriksaan;
+use App\Models\Tagihan;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -14,9 +15,31 @@ class PasienController extends Controller
         return view('pasien.dashboard');
     }
 
-    public function pembayaran(): View
+    public function pembayaran(Request $request): View
     {
-        return view('pasien.pembayaran');
+        $pasien = auth()->user()->pasien;
+
+        $query = Tagihan::with(['detailTagihan', 'pembayaran', 'pendaftaran'])
+            ->where('pasien_id', $pasien->pasien_id);
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by jenis tagihan
+        if ($request->filled('jenis')) {
+            $query->where('jenis_tagihan', $request->jenis);
+        }
+
+        $tagihans = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        // Calculate total unpaid bills
+        $totalBelumBayar = Tagihan::where('pasien_id', $pasien->pasien_id)
+            ->where('status', 'belum_bayar')
+            ->sum('total_tagihan');
+
+        return view('pasien.pembayaran', compact('tagihans', 'totalBelumBayar'));
     }
 
     public function rekamMedis(Request $request)

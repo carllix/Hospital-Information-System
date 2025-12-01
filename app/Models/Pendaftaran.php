@@ -17,9 +17,9 @@ class Pendaftaran extends Model
 
     protected $fillable = [
         'pasien_id',
+        'dokter_id',
         'tanggal_daftar',
         'nomor_antrian',
-        'jenis_kunjungan',
         'keluhan_utama',
         'staf_pendaftaran_id',
         'status',
@@ -35,6 +35,11 @@ class Pendaftaran extends Model
     public function pasien(): BelongsTo
     {
         return $this->belongsTo(Pasien::class, 'pasien_id', 'pasien_id');
+    }
+
+    public function dokter(): BelongsTo
+    {
+        return $this->belongsTo(Dokter::class, 'dokter_id', 'dokter_id');
     }
 
     public function stafPendaftaran(): BelongsTo
