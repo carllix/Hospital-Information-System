@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pasien;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pemeriksaan;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -18,9 +19,45 @@ class PasienController extends Controller
         return view('pasien.pembayaran');
     }
 
-    public function rekamMedis(): View
+    public function rekamMedis(Request $request)
     {
-        return view('pasien.rekam-medis');
+        $pasien = auth()->user()->pasien;
+
+        $query = Pemeriksaan::with(['dokter', 'pendaftaran', 'resep.detailResep', 'permintaanLab.hasilLab'])
+            ->where('pasien_id', $pasien->pasien_id);
+
+        // Filter by search (diagnosa atau nama dokter)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('diagnosa', 'like', "%{$search}%")
+                    ->orWhereHas('dokter', function ($q) use ($search) {
+                        $q->where('nama_lengkap', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('tanggal_pemeriksaan', '>=', $request->tanggal_dari);
+        }
+
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal_pemeriksaan', '<=', $request->tanggal_sampai);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_pasien', $request->status);
+        }
+
+        $query->orderBy('tanggal_pemeriksaan', 'desc');
+
+        $pemeriksaan = $query->paginate(10)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('pasien.components.rekam-medis-table', compact('pemeriksaan'))->render();
+        }
+
+        return view('pasien.rekam-medis', compact('pemeriksaan'));
     }
 
     public function healthMonitoring(): View
