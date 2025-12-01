@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Edit Profil - Pasien')
+@section('title', 'Edit Profil | Ganesha Hospital')
 @section('dashboard-title', 'Edit Profil Pasien')
 
 @section('content')
@@ -155,7 +155,7 @@
                     Batal
                 </a>
                 <button type="submit"
-                    class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors">
+                    class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors hover:cursor-pointer">
                     Simpan Perubahan
                 </button>
             </div>

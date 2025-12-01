@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Rekam Medis - Pasien')
+@section('title', 'Rekam Medis | Ganesha Hospital')
 @section('dashboard-title', 'Rekam Medis')
 
 @section('content')

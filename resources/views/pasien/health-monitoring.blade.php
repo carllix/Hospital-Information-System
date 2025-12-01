@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Health Monitoring - Ganesha Hospital')
+@section('title', 'Health Monitoring | Ganesha Hospital')
 
 @section('content')
 <div class="max-w-7xl">
@@ -10,7 +10,7 @@
     </div>
 
     <div class="bg-white rounded-lg shadow p-6">
-        <p class="text-gray-600">Halaman health monitoring - Coming soon</p>
+        <p class="text-gray-600">Coming Soon</p>
     </div>
 </div>
 @endsection

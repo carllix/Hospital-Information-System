@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Dashboard Pasien')
+@section('title', 'Dashboard | Ganesha Hospital')
 @section('dashboard-title', 'Dashboard Pasien')
 
 @section('content')

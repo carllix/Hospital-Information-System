@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Pembayaran - Ganesha Hospital')
+@section('title', 'Pembayaran | Ganesha Hospital')
 
 @section('content')
 <x-toast type="success" :message="session('success')" />
@@ -27,7 +27,7 @@
                 </label>
                 <select
                     id="status_filter"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d]"
                 >
                     <option value="">Semua Status</option>
                     <option value="belum_bayar" {{ request('status') === 'belum_bayar' ? 'selected' : '' }}>Belum Bayar</option>
@@ -41,7 +41,7 @@
                 </label>
                 <select
                     id="jenis_filter"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d]"
                 >
                     <option value="">Semua Jenis</option>
                     <option value="konsultasi" {{ request('jenis') === 'konsultasi' ? 'selected' : '' }}>Konsultasi</option>

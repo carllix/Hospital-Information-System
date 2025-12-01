@@ -137,7 +137,7 @@
                     Batal
                 </a>
                 <button type="submit"
-                    class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors">
+                    class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors hover:cursor-pointer">
                     Simpan Perubahan
                 </button>
             </div>
