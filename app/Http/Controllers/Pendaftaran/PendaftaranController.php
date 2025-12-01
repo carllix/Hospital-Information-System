@@ -282,4 +282,41 @@ class PendaftaranController extends Controller
 
         return view('pendaftaran.riwayat', compact('pendaftarans', 'dokters'));
     }
+
+    public function profile(): View
+    {
+        $staf = Staf::where('user_id', auth()->id())->firstOrFail();
+        return view('pendaftaran.profile', compact('staf'));
+    }
+
+    public function editProfile(): View
+    {
+        $staf = Staf::where('user_id', auth()->id())->firstOrFail();
+        return view('pendaftaran.edit-profile', compact('staf'));
+    }
+
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $staf = Staf::where('user_id', auth()->id())->firstOrFail();
+
+        $validated = $request->validate([
+            'nama_lengkap' => 'required|string|max:100',
+            'tanggal_lahir' => 'required|date',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
+            'alamat' => 'required|string',
+            'provinsi' => 'nullable|string|max:100',
+            'kota_kabupaten' => 'nullable|string|max:100',
+            'kecamatan' => 'nullable|string|max:100',
+            'kewarganegaraan' => 'nullable|string|max:50',
+            'no_telepon' => 'required|string|max:15',
+        ]);
+
+        try {
+            $staf->update($validated);
+
+            return redirect()->route('pendaftaran.profile')->with('success', 'Profil berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui profil.'])->withInput();
+        }
+    }
 }

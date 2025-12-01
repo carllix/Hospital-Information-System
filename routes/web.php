@@ -51,6 +51,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/pendaftaran/{id}/status', [PendaftaranController::class, 'updateStatus'])->name('pendaftaran.update-status');
     Route::get('/pendaftaran/jadwal-dokter', [PendaftaranController::class, 'jadwalDokter'])->name('pendaftaran.jadwal-dokter');
     Route::get('/pendaftaran/riwayat', [PendaftaranController::class, 'riwayat'])->name('pendaftaran.riwayat');
+    Route::get('/pendaftaran/profile', [PendaftaranController::class, 'profile'])->name('pendaftaran.profile');
+    Route::get('/pendaftaran/profile/edit', [PendaftaranController::class, 'editProfile'])->name('pendaftaran.profile.edit');
+    Route::put('/pendaftaran/profile', [PendaftaranController::class, 'updateProfile'])->name('pendaftaran.profile.update');
 
     // Dokter Routes
     Route::get('/dokter/dashboard', [DokterController::class, 'dashboard'])->name('dokter.dashboard');

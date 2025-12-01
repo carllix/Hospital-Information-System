@@ -15,6 +15,7 @@ $roleMenus = [
         ['name' => 'Antrian Hari Ini', 'route' => '/pendaftaran/antrian', 'icon' => 'dashboard'],
         ['name' => 'Jadwal Dokter', 'route' => '/pendaftaran/jadwal-dokter', 'icon' => 'profile'],
         ['name' => 'Riwayat Pendaftaran', 'route' => '/pendaftaran/riwayat', 'icon' => 'medical'],
+        ['name' => 'Profil Saya', 'route' => '/pendaftaran/profile', 'icon' => 'profile'],
     ],
     'dokter' => [
         ['name' => 'Dashboard', 'route' => '/dokter/dashboard', 'icon' => 'dashboard'],
