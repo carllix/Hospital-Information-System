@@ -41,7 +41,16 @@ Route::middleware('auth')->group(function () {
 
     // Pendaftaran Routes
     Route::get('/pendaftaran/dashboard', [PendaftaranController::class, 'dashboard'])->name('pendaftaran.dashboard');
-    Route::get('/pendaftaran/pasien-management', [PendaftaranController::class, 'pasienManagement'])->name('pendaftaran.pasien-management');
+    Route::get('/pendaftaran/pasien-baru', [PendaftaranController::class, 'pasienBaru'])->name('pendaftaran.pasien-baru');
+    Route::post('/pendaftaran/pasien-baru', [PendaftaranController::class, 'storePasienBaru'])->name('pendaftaran.pasien-baru.store');
+    Route::get('/pendaftaran/kunjungan', [PendaftaranController::class, 'kunjungan'])->name('pendaftaran.kunjungan');
+    Route::post('/pendaftaran/search-pasien', [PendaftaranController::class, 'searchPasien'])->name('pendaftaran.search-pasien');
+    Route::post('/pendaftaran/store', [PendaftaranController::class, 'storePendaftaran'])->name('pendaftaran.store');
+    Route::get('/pendaftaran/data-pasien', [PendaftaranController::class, 'dataPasien'])->name('pendaftaran.data-pasien');
+    Route::get('/pendaftaran/antrian', [PendaftaranController::class, 'antrian'])->name('pendaftaran.antrian');
+    Route::patch('/pendaftaran/{id}/status', [PendaftaranController::class, 'updateStatus'])->name('pendaftaran.update-status');
+    Route::get('/pendaftaran/jadwal-dokter', [PendaftaranController::class, 'jadwalDokter'])->name('pendaftaran.jadwal-dokter');
+    Route::get('/pendaftaran/riwayat', [PendaftaranController::class, 'riwayat'])->name('pendaftaran.riwayat');
 
     // Dokter Routes
     Route::get('/dokter/dashboard', [DokterController::class, 'dashboard'])->name('dokter.dashboard');

@@ -9,7 +9,12 @@ $roleMenus = [
     ],
     'pendaftaran' => [
         ['name' => 'Dashboard', 'route' => '/pendaftaran/dashboard', 'icon' => 'dashboard'],
-        ['name' => 'Pasien Management', 'route' => '/pendaftaran/pasien-management', 'icon' => 'users'],
+        ['name' => 'Pendaftaran Pasien Baru', 'route' => '/pendaftaran/pasien-baru', 'icon' => 'profile'],
+        ['name' => 'Pendaftaran Kunjungan', 'route' => '/pendaftaran/kunjungan', 'icon' => 'medical'],
+        ['name' => 'Data Pasien', 'route' => '/pendaftaran/data-pasien', 'icon' => 'profile'],
+        ['name' => 'Antrian Hari Ini', 'route' => '/pendaftaran/antrian', 'icon' => 'dashboard'],
+        ['name' => 'Jadwal Dokter', 'route' => '/pendaftaran/jadwal-dokter', 'icon' => 'profile'],
+        ['name' => 'Riwayat Pendaftaran', 'route' => '/pendaftaran/riwayat', 'icon' => 'medical'],
     ],
     'dokter' => [
         ['name' => 'Dashboard', 'route' => '/dokter/dashboard', 'icon' => 'dashboard'],
