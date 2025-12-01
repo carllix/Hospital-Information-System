@@ -42,6 +42,42 @@ class PasienController extends Controller
         return view('pasien.pembayaran', compact('tagihans', 'totalBelumBayar'));
     }
 
+    public function pembayaranDetail($id)
+    {
+        $pasien = auth()->user()->pasien;
+
+        $tagihan = Tagihan::with(['detailTagihan', 'pembayaran', 'pendaftaran'])
+            ->where('pasien_id', $pasien->pasien_id)
+            ->where('tagihan_id', $id)
+            ->firstOrFail();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'tagihan_id' => $tagihan->tagihan_id,
+                'tanggal' => $tagihan->created_at->translatedFormat('j F Y H:i'),
+                'jenis_tagihan' => ucfirst($tagihan->jenis_tagihan),
+                'nomor_antrian' => $tagihan->pendaftaran->nomor_antrian ?? null,
+                'total_tagihan' => number_format($tagihan->total_tagihan, 0, ',', '.'),
+                'status' => $tagihan->status,
+                'detail_items' => $tagihan->detailTagihan->map(function ($detail) {
+                    return [
+                        'nama_item' => $detail->nama_item,
+                        'jumlah' => $detail->jumlah,
+                        'harga_satuan' => number_format($detail->harga_satuan, 0, ',', '.'),
+                        'subtotal' => number_format($detail->subtotal, 0, ',', '.'),
+                    ];
+                }),
+                'pembayaran' => $tagihan->pembayaran ? [
+                    'tanggal_bayar' => $tagihan->pembayaran->tanggal_bayar->translatedFormat('j F Y H:i'),
+                    'metode_pembayaran' => ucfirst($tagihan->pembayaran->metode_pembayaran),
+                    'no_kwitansi' => $tagihan->pembayaran->no_kwitansi,
+                    'jumlah_bayar' => number_format($tagihan->pembayaran->jumlah_bayar, 0, ',', '.'),
+                ] : null,
+            ]
+        ]);
+    }
+
     public function rekamMedis(Request $request)
     {
         $pasien = auth()->user()->pasien;
@@ -81,6 +117,85 @@ class PasienController extends Controller
         }
 
         return view('pasien.rekam-medis', compact('pemeriksaan'));
+    }
+
+    public function rekamMedisDetail($id)
+    {
+        $pasien = auth()->user()->pasien;
+
+        $pemeriksaan = Pemeriksaan::with([
+            'dokter',
+            'pendaftaran',
+            'resep.detailResep.obat',
+            'permintaanLab.hasilLab.petugasLab',
+            'rujukan.dokterPerujuk'
+        ])
+            ->where('pasien_id', $pasien->pasien_id)
+            ->where('pemeriksaan_id', $id)
+            ->firstOrFail();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'pemeriksaan_id' => $pemeriksaan->pemeriksaan_id,
+                'tanggal_pemeriksaan' => $pemeriksaan->tanggal_pemeriksaan->translatedFormat('j F Y H:i'),
+                'dokter' => [
+                    'nama' => $pemeriksaan->dokter->nama_lengkap,
+                    'spesialisasi' => $pemeriksaan->dokter->spesialisasi ?? '-',
+                ],
+                'keluhan' => $pemeriksaan->pendaftaran->keluhan_utama ?? '-',
+                'anamnesa' => $pemeriksaan->anamnesa ?? '-',
+                'pemeriksaan_fisik' => $pemeriksaan->pemeriksaan_fisik ?? '-',
+                'vital_signs' => [
+                    'tekanan_darah' => $pemeriksaan->tekanan_darah ?? '-',
+                    'suhu_tubuh' => $pemeriksaan->suhu_tubuh ? $pemeriksaan->suhu_tubuh . '°C' : '-',
+                    'berat_badan' => $pemeriksaan->berat_badan ? $pemeriksaan->berat_badan . ' kg' : '-',
+                    'tinggi_badan' => $pemeriksaan->tinggi_badan ? $pemeriksaan->tinggi_badan . ' cm' : '-',
+                ],
+                'diagnosa' => $pemeriksaan->diagnosa ?? '-',
+                'icd10_code' => $pemeriksaan->icd10_code ?? '-',
+                'tindakan_medis' => $pemeriksaan->tindakan_medis ?? '-',
+                'catatan_dokter' => $pemeriksaan->catatan_dokter ?? '-',
+                'status_pasien' => $pemeriksaan->status_pasien,
+                'resep' => $pemeriksaan->resep ? [
+                    'tanggal_resep' => $pemeriksaan->resep->tanggal_resep->translatedFormat('j F Y'),
+                    'status' => $pemeriksaan->resep->status,
+                    'obat' => $pemeriksaan->resep->detailResep->map(function ($detail) {
+                        return [
+                            'nama_obat' => $detail->obat->nama_obat,
+                            'jumlah' => $detail->jumlah,
+                            'dosis' => $detail->dosis,
+                            'aturan_pakai' => $detail->aturan_pakai,
+                        ];
+                    })
+                ] : null,
+                'lab' => $pemeriksaan->permintaanLab->map(function ($lab) {
+                    return [
+                        'jenis_pemeriksaan' => str_replace('_', ' ', ucwords($lab->jenis_pemeriksaan, '_')),
+                        'tanggal_permintaan' => $lab->tanggal_permintaan->translatedFormat('j F Y'),
+                        'status' => $lab->status,
+                        'hasil' => $lab->hasilLab->map(function ($hasil) {
+                            return [
+                                'jenis_test' => $hasil->jenis_test,
+                                'parameter' => $hasil->parameter,
+                                'hasil' => $hasil->hasil,
+                                'satuan' => $hasil->satuan ?? '',
+                                'nilai_normal' => $hasil->nilai_normal ?? '-',
+                                'tanggal_hasil' => $hasil->tanggal_hasil->translatedFormat('j F Y'),
+                            ];
+                        })
+                    ];
+                }),
+                'rujukan' => $pemeriksaan->rujukan ? [
+                    'rs_tujuan' => $pemeriksaan->rujukan->rs_tujuan ?? '-',
+                    'dokter_spesialis' => $pemeriksaan->rujukan->dokter_spesialis_tujuan ?? '-',
+                    'alasan_rujukan' => $pemeriksaan->rujukan->alasan_rujukan,
+                    'diagnosa_sementara' => $pemeriksaan->rujukan->diagnosa_sementara ?? '-',
+                    'tanggal_rujukan' => $pemeriksaan->rujukan->tanggal_rujukan->translatedFormat('j F Y'),
+                    'dokter_perujuk' => $pemeriksaan->rujukan->dokterPerujuk->nama_lengkap,
+                ] : null,
+            ]
+        ]);
     }
 
     public function healthMonitoring(): View

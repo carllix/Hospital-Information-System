@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pasien extends Model
 {
@@ -46,5 +47,25 @@ class Pasien extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    public function pendaftaran(): HasMany
+    {
+        return $this->hasMany(Pendaftaran::class, 'pasien_id', 'pasien_id');
+    }
+
+    public function pemeriksaan(): HasMany
+    {
+        return $this->hasMany(Pemeriksaan::class, 'pasien_id', 'pasien_id');
+    }
+
+    public function tagihan(): HasMany
+    {
+        return $this->hasMany(Tagihan::class, 'pasien_id', 'pasien_id');
+    }
+
+    public function wearableData(): HasMany
+    {
+        return $this->hasMany(WearableData::class, 'pasien_id', 'pasien_id');
     }
 }

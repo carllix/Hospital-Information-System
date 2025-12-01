@@ -33,7 +33,9 @@ Route::middleware('auth')->group(function () {
     // Pasien Routes
     Route::get('/pasien/dashboard', [PasienController::class, 'dashboard'])->name('pasien.dashboard');
     Route::get('/pasien/pembayaran', [PasienController::class, 'pembayaran'])->name('pasien.pembayaran');
+    Route::get('/pasien/pembayaran/{id}', [PasienController::class, 'pembayaranDetail'])->name('pasien.pembayaran.detail');
     Route::get('/pasien/rekam-medis', [PasienController::class, 'rekamMedis'])->name('pasien.rekam-medis');
+    Route::get('/pasien/rekam-medis/{id}', [PasienController::class, 'rekamMedisDetail'])->name('pasien.rekam-medis.detail');
     Route::get('/pasien/health-monitoring', [PasienController::class, 'healthMonitoring'])->name('pasien.health-monitoring');
     Route::get('/pasien/profile', [PasienController::class, 'profile'])->name('pasien.profile');
     Route::get('/pasien/profile/edit', [PasienController::class, 'editProfile'])->name('pasien.profile.edit');

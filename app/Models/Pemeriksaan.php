@@ -68,4 +68,9 @@ class Pemeriksaan extends Model
     {
         return $this->hasMany(PermintaanLab::class, 'pemeriksaan_id', 'pemeriksaan_id');
     }
+
+    public function rujukan(): HasOne
+    {
+        return $this->hasOne(Rujukan::class, 'pemeriksaan_id', 'pemeriksaan_id');
+    }
 }
