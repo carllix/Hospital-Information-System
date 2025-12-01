@@ -13,7 +13,7 @@
         <div class="flex items-center justify-between mb-4">
             <div>
                 <h2 class="text-xl font-bold text-gray-800">Antrian Hari Ini</h2>
-                <p class="text-sm text-gray-600 mt-1">{{ now()->format('l, d F Y') }}</p>
+                <p class="text-sm text-gray-600 mt-1">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
             </div>
             <div class="text-right">
                 <p class="text-sm text-gray-600">Total Antrian</p>
