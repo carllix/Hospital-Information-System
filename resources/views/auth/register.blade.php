@@ -463,7 +463,26 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-gray-700 text-sm font-semibold mb-2">Spesialisasi</label>
-                            <input type="text" name="spesialisasi" value="${oldValues.spesialisasi || ''}" placeholder="Contoh: Dokter Umum" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <select name="spesialisasi" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
+                                <option value="">Pilih Spesialisasi</option>
+                                <option value="Umum" ${oldValues.spesialisasi === 'Umum' ? 'selected' : ''}>Umum</option>
+                                <option value="Penyakit Dalam" ${oldValues.spesialisasi === 'Penyakit Dalam' ? 'selected' : ''}>Penyakit Dalam</option>
+                                <option value="Anak" ${oldValues.spesialisasi === 'Anak' ? 'selected' : ''}>Anak</option>
+                                <option value="Kandungan" ${oldValues.spesialisasi === 'Kandungan' ? 'selected' : ''}>Kandungan</option>
+                                <option value="Jantung" ${oldValues.spesialisasi === 'Jantung' ? 'selected' : ''}>Jantung</option>
+                                <option value="Bedah" ${oldValues.spesialisasi === 'Bedah' ? 'selected' : ''}>Bedah</option>
+                                <option value="Mata" ${oldValues.spesialisasi === 'Mata' ? 'selected' : ''}>Mata</option>
+                                <option value="THT" ${oldValues.spesialisasi === 'THT' ? 'selected' : ''}>THT</option>
+                                <option value="Kulit dan Kelamin" ${oldValues.spesialisasi === 'Kulit dan Kelamin' ? 'selected' : ''}>Kulit dan Kelamin</option>
+                                <option value="Saraf" ${oldValues.spesialisasi === 'Saraf' ? 'selected' : ''}>Saraf</option>
+                                <option value="Jiwa" ${oldValues.spesialisasi === 'Jiwa' ? 'selected' : ''}>Jiwa</option>
+                                <option value="Paru" ${oldValues.spesialisasi === 'Paru' ? 'selected' : ''}>Paru</option>
+                                <option value="Orthopedi" ${oldValues.spesialisasi === 'Orthopedi' ? 'selected' : ''}>Orthopedi</option>
+                                <option value="Urologi" ${oldValues.spesialisasi === 'Urologi' ? 'selected' : ''}>Urologi</option>
+                                <option value="Radiologi" ${oldValues.spesialisasi === 'Radiologi' ? 'selected' : ''}>Radiologi</option>
+                                <option value="Anestesi" ${oldValues.spesialisasi === 'Anestesi' ? 'selected' : ''}>Anestesi</option>
+                                <option value="Patologi Klinik" ${oldValues.spesialisasi === 'Patologi Klinik' ? 'selected' : ''}>Patologi Klinik</option>
+                            </select>
                         </div>
                         <div>
                             <label class="block text-gray-700 text-sm font-semibold mb-2">No. STR</label>

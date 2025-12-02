@@ -235,11 +235,25 @@ class PendaftaranController extends Controller
 
         $dokters = $query->orderBy('nama_lengkap')->get();
 
-        // Get unique specializations for filter dropdown
-        $spesialisasiList = Dokter::whereNotNull('spesialisasi')
-            ->distinct()
-            ->orderBy('spesialisasi')
-            ->pluck('spesialisasi');
+        $spesialisasiList = [
+            'Umum',
+            'Penyakit Dalam',
+            'Anak',
+            'Kandungan',
+            'Jantung',
+            'Bedah',
+            'Mata',
+            'THT',
+            'Kulit dan Kelamin',
+            'Saraf',
+            'Jiwa',
+            'Paru',
+            'Orthopedi',
+            'Urologi',
+            'Radiologi',
+            'Anestesi',
+            'Patologi Klinik'
+        ];
 
         return view('pendaftaran.jadwal-dokter', compact('dokters', 'spesialisasiList'));
     }
