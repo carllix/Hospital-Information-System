@@ -113,7 +113,27 @@ Route::middleware('auth')->group(function () {
     });
 
     // Lab Routes
-    Route::get('/lab/dashboard', [LabController::class, 'dashboard'])->name('lab.dashboard');
+    Route::prefix('lab')->name('lab.')->group(function () {
+        Route::get('/dashboard', [LabController::class, 'dashboard'])->name('dashboard');
+        
+        // Permintaan Lab
+        Route::get('/permintaan', [LabController::class, 'daftarPermintaan'])->name('daftar-permintaan');
+        Route::get('/permintaan/{id}', [LabController::class, 'detailPermintaan'])->name('detail-permintaan');
+        Route::patch('/permintaan/{id}/ambil', [LabController::class, 'ambilPermintaan'])->name('ambil-permintaan');
+        
+        // Input Hasil Lab
+        Route::get('/hasil/{id}', [LabController::class, 'formHasil'])->name('form-hasil');
+        Route::post('/hasil', [LabController::class, 'storeHasil'])->name('store-hasil');
+        
+        // Riwayat & Laporan
+        Route::get('/riwayat', [LabController::class, 'riwayat'])->name('riwayat');
+        Route::get('/laporan', [LabController::class, 'laporan'])->name('laporan');
+        
+        // Profile
+        Route::get('/profile', [LabController::class, 'profile'])->name('profile');
+        Route::get('/profile/edit', [LabController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/profile', [LabController::class, 'updateProfile'])->name('profile.update');
+    });
 
     // Kasir Klinik Routes
     Route::get('/kasir-klinik/dashboard', [KasirKlinikController::class, 'dashboard'])->name('kasir-klinik.dashboard');

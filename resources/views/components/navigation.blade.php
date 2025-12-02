@@ -31,6 +31,10 @@ $roleMenus = [
     ],
     'lab' => [
         ['name' => 'Dashboard', 'route' => '/lab/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Daftar Permintaan', 'route' => '/lab/permintaan', 'icon' => 'medical'],
+        ['name' => 'Riwayat Pemeriksaan', 'route' => '/lab/riwayat', 'icon' => 'health'],
+        ['name' => 'Laporan', 'route' => '/lab/laporan', 'icon' => 'payment'],
+        ['name' => 'Profil Saya', 'route' => '/lab/profile', 'icon' => 'profile'],
     ],
     'kasir_klinik' => [
         ['name' => 'Dashboard', 'route' => '/kasir-klinik/dashboard', 'icon' => 'dashboard'],
