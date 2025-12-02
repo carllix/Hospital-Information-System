@@ -6,12 +6,12 @@
 <x-toast type="success" :message="session('success')" />
 <x-toast type="error" :message="session('error')" />
 
-<div class="max-w-7xl space-y-6">
-    <!-- Header -->
+<div class="max-w-7xl">
     <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center justify-between mb-4">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-xl font-bold text-gray-800">Riwayat Tagihan & Pembayaran</h2>
+                <h2 class="text-2xl font-bold text-gray-800">Riwayat Tagihan & Pembayaran</h2>
             </div>
             <div class="text-right">
                 <p class="text-sm text-gray-600">Total Tagihan Belum Bayar</p>
@@ -20,58 +20,56 @@
         </div>
 
         <!-- Filter -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-                <label for="status_filter" class="block text-sm font-medium text-gray-700 mb-2">
-                    Status Pembayaran
-                </label>
-                <select
-                    id="status_filter"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d]"
-                >
-                    <option value="">Semua Status</option>
-                    <option value="belum_bayar" {{ request('status') === 'belum_bayar' ? 'selected' : '' }}>Belum Bayar</option>
-                    <option value="lunas" {{ request('status') === 'lunas' ? 'selected' : '' }}>Lunas</option>
-                </select>
-            </div>
+        <div class="mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="status_filter" class="block text-sm font-medium text-gray-700 mb-2">
+                        Status Pembayaran
+                    </label>
+                    <select
+                        id="status_filter"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d]"
+                    >
+                        <option value="">Semua Status</option>
+                        <option value="belum_bayar" {{ request('status') === 'belum_bayar' ? 'selected' : '' }}>Belum Bayar</option>
+                        <option value="lunas" {{ request('status') === 'lunas' ? 'selected' : '' }}>Lunas</option>
+                    </select>
+                </div>
 
-            <div>
-                <label for="jenis_filter" class="block text-sm font-medium text-gray-700 mb-2">
-                    Jenis Tagihan
-                </label>
-                <select
-                    id="jenis_filter"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d]"
-                >
-                    <option value="">Semua Jenis</option>
-                    <option value="konsultasi" {{ request('jenis') === 'konsultasi' ? 'selected' : '' }}>Konsultasi</option>
-                    <option value="obat" {{ request('jenis') === 'obat' ? 'selected' : '' }}>Obat</option>
-                    <option value="lab" {{ request('jenis') === 'lab' ? 'selected' : '' }}>Laboratorium</option>
-                    <option value="tindakan" {{ request('jenis') === 'tindakan' ? 'selected' : '' }}>Tindakan</option>
-                </select>
+                <div>
+                    <label for="jenis_filter" class="block text-sm font-medium text-gray-700 mb-2">
+                        Jenis Tagihan
+                    </label>
+                    <select
+                        id="jenis_filter"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d]"
+                    >
+                        <option value="">Semua Jenis</option>
+                        <option value="konsultasi" {{ request('jenis') === 'konsultasi' ? 'selected' : '' }}>Konsultasi</option>
+                        <option value="obat" {{ request('jenis') === 'obat' ? 'selected' : '' }}>Obat</option>
+                        <option value="lab" {{ request('jenis') === 'lab' ? 'selected' : '' }}>Laboratorium</option>
+                        <option value="tindakan" {{ request('jenis') === 'tindakan' ? 'selected' : '' }}>Tindakan</option>
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Tagihan Table -->
-    <div id="tagihanContainer">
-        <div id="tagihanContent">
+        <!-- Tagihan Table -->
+        <div id="tagihanContainer">
+            <div id="tagihanContent">
         @if($tagihans->isEmpty())
-        <div class="bg-white rounded-lg shadow-md p-8 text-center">
+        <div class="p-8 text-center">
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
             <p class="mt-4 text-gray-600">Tidak ada tagihan</p>
         </div>
         @else
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                No
-                            </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Tanggal
                             </th>
@@ -95,9 +93,6 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($tagihans as $tagihan)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $tagihan->tagihan_id }}</div>
-                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900">{{ $tagihan->created_at->translatedFormat('j F Y') }}</div>
                                 <div class="text-xs text-gray-500">{{ $tagihan->created_at->format('H:i') }}</div>
@@ -141,9 +136,25 @@
 
         <!-- Pagination -->
         <div class="mt-6">
-            {{ $tagihans->links() }}
+            <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-700">
+                    Menampilkan
+                    <span class="font-medium">{{ $tagihans->firstItem() ?? 0 }}</span>
+                    sampai
+                    <span class="font-medium">{{ $tagihans->lastItem() ?? 0 }}</span>
+                    dari
+                    <span class="font-medium">{{ $tagihans->total() }}</span>
+                    data
+                </p>
+                @if($tagihans->hasPages())
+                <div>
+                    {{ $tagihans->links() }}
+                </div>
+                @endif
+            </div>
         </div>
         @endif
+            </div>
         </div>
     </div>
 </div>
@@ -261,7 +272,7 @@ function renderDetailTagihan(data) {
     let html = `
         <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-200">
             <div>
-                <h3 class="text-2xl font-bold text-gray-900">Detail Tagihan ${data.tagihan_id}</h3>
+                <h3 class="text-2xl font-bold text-gray-900">Detail Tagihan</h3>
             </div>
         </div>
 

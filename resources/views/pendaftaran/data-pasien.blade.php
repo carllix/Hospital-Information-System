@@ -100,7 +100,7 @@
                     @foreach($pasiens as $pasien)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-semibold text-[#f56e9d]">{{ $pasien->no_rekam_medis }}</div>
+                            <div class="text-sm font-semibold">{{ $pasien->no_rekam_medis }}</div>
                         </td>
                         <td class="px-6 py-4">
                             <div class="text-sm font-semibold text-gray-900">{{ $pasien->nama_lengkap }}</div>
@@ -137,7 +137,22 @@
 
         <!-- Pagination -->
         <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
-            {{ $pasiens->links() }}
+            <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-700">
+                    Menampilkan
+                    <span class="font-medium">{{ $pasiens->firstItem() ?? 0 }}</span>
+                    sampai
+                    <span class="font-medium">{{ $pasiens->lastItem() ?? 0 }}</span>
+                    dari
+                    <span class="font-medium">{{ $pasiens->total() }}</span>
+                    data
+                </p>
+                @if($pasiens->hasPages())
+                <div>
+                    {{ $pasiens->links() }}
+                </div>
+                @endif
+            </div>
         </div>
         @endif
         </div>

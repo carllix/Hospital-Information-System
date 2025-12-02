@@ -23,7 +23,7 @@
             >
             <button
                 id="searchBtn"
-                class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium"
+                class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium hover:cursor-pointer"
             >
                 Cari
             </button>
@@ -51,7 +51,7 @@
         <h2 class="text-xl font-bold text-gray-800 mb-4">Form Pendaftaran Kunjungan</h2>
 
         <!-- Selected Patient Info -->
-        <div id="selectedPatientInfo" class="bg-[#fff5f8] p-4 rounded-lg mb-6">
+        <div id="selectedPatientInfo" class="p-4 rounded-lg mb-6 border border-gray-200">
             <h3 class="text-sm font-semibold text-[#d14a7a] mb-2">Data Pasien:</h3>
             <div class="grid grid-cols-2 gap-3 text-sm">
                 <div>
@@ -87,7 +87,7 @@
                     required
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('dokter_id') border-red-500 @enderror"
                 >
-                    <option value="">-- Pilih Dokter --</option>
+                    <option value="">Pilih Dokter</option>
                     @foreach($dokters as $dokter)
                     <option value="{{ $dokter->dokter_id }}">
                         {{ $dokter->nama_lengkap }}
@@ -125,13 +125,13 @@
                 <button
                     type="button"
                     id="cancelBtn"
-                    class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                    class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium hover:cursor-pointer"
                 >
                     Batal
                 </button>
                 <button
                     type="submit"
-                    class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium"
+                    class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium hover:cursor-pointer"
                 >
                     Daftar Kunjungan
                 </button>

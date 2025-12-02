@@ -67,7 +67,7 @@
                     required
                     value="{{ old('email') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('email') border-red-500 @enderror"
-                    placeholder="email@example.com"
+                    placeholder="example@gmail.com"
                 >
                 @error('email')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>

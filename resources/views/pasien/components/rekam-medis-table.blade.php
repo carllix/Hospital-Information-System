@@ -70,8 +70,21 @@
     </table>
 </div>
 
-@if($pemeriksaan->hasPages())
-    <div class="mt-6" id="paginationContainer">
-        {{ $pemeriksaan->links() }}
+<div class="mt-6" id="paginationContainer">
+    <div class="flex items-center justify-between">
+        <p class="text-sm text-gray-700">
+            Menampilkan
+            <span class="font-medium">{{ $pemeriksaan->firstItem() ?? 0 }}</span>
+            sampai
+            <span class="font-medium">{{ $pemeriksaan->lastItem() ?? 0 }}</span>
+            dari
+            <span class="font-medium">{{ $pemeriksaan->total() }}</span>
+            data
+        </p>
+        @if($pemeriksaan->hasPages())
+        <div>
+            {{ $pemeriksaan->links() }}
+        </div>
+        @endif
     </div>
-@endif
+</div>

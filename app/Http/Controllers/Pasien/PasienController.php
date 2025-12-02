@@ -87,11 +87,11 @@ class PasienController extends Controller
 
         // Filter by search (diagnosa atau nama dokter)
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
-                $q->where('diagnosa', 'like', "%{$search}%")
+                $q->whereRaw('LOWER(diagnosa) LIKE ?', ["%{$search}%"])
                     ->orWhereHas('dokter', function ($q) use ($search) {
-                        $q->where('nama_lengkap', 'like', "%{$search}%");
+                        $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"]);
                     });
             });
         }

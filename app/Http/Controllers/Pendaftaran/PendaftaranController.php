@@ -156,11 +156,11 @@ class PendaftaranController extends Controller
 
         // Search by name, NIK, or medical record number
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = strtolower($request->search);
             $query->where(function($q) use ($search) {
-                $q->where('nama_lengkap', 'LIKE', "%{$search}%")
-                  ->orWhere('nik', 'LIKE', "%{$search}%")
-                  ->orWhere('no_rekam_medis', 'LIKE', "%{$search}%");
+                $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
             });
         }
 
@@ -169,7 +169,7 @@ class PendaftaranController extends Controller
             $query->where('jenis_kelamin', $request->jenis_kelamin);
         }
 
-        $pasiens = $query->orderBy('no_rekam_medis', 'desc')->paginate(20);
+        $pasiens = $query->orderBy('no_rekam_medis', 'desc')->paginate(10);
 
         return view('pendaftaran.data-pasien', compact('pasiens'));
     }
@@ -224,7 +224,8 @@ class PendaftaranController extends Controller
 
         // Search by doctor name
         if ($request->filled('search')) {
-            $query->where('nama_lengkap', 'LIKE', "%{$request->search}%");
+            $search = strtolower($request->search);
+            $query->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"]);
         }
 
         // Filter by specialization
@@ -269,15 +270,15 @@ class PendaftaranController extends Controller
 
         // Search by patient name or NIK
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = strtolower($request->search);
             $query->whereHas('pasien', function($q) use ($search) {
-                $q->where('nama_lengkap', 'LIKE', "%{$search}%")
-                  ->orWhere('nik', 'LIKE', "%{$search}%")
-                  ->orWhere('no_rekam_medis', 'LIKE', "%{$search}%");
+                $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
             });
         }
 
-        $pendaftarans = $query->paginate(20);
+        $pendaftarans = $query->paginate(10);
         $dokters = Dokter::select('dokter_id', 'nama_lengkap')->orderBy('nama_lengkap')->get();
 
         return view('pendaftaran.riwayat', compact('pendaftarans', 'dokters'));

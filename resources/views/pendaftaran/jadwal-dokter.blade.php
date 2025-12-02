@@ -59,8 +59,8 @@
     </div>
 
     <!-- Doctors List -->
-    <div id="doctorsContainer" class="space-y-4">
-        <div id="doctorsContent">
+    <div id="doctorsContainer">
+        <div id="doctorsContent" class="space-y-4">
         @if($dokters->isEmpty())
         <div class="bg-white rounded-lg shadow-md p-8 text-center">
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

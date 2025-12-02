@@ -79,28 +79,28 @@
                 <button
                     type="button"
                     data-status=""
-                    class="status-tab pb-3 font-medium transition-colors text-[#f56e9d] border-b-2 border-[#f56e9d]"
+                    class="status-tab pb-3 font-medium transition-colors text-[#f56e9d] border-b-2 border-[#f56e9d] hover:cursor-pointer"
                 >
                     Semua
                 </button>
                 <button
                     type="button"
                     data-status="menunggu"
-                    class="status-tab pb-3 font-medium transition-colors text-gray-500 hover:text-[#f56e9d] border-b-2 border-transparent"
+                    class="status-tab pb-3 font-medium transition-colors text-gray-500 hover:text-[#f56e9d] hover:cursor-pointer border-b-2 border-transparent"
                 >
                     Menunggu
                 </button>
                 <button
                     type="button"
                     data-status="dipanggil"
-                    class="status-tab pb-3 font-medium transition-colors text-gray-500 hover:text-[#f56e9d] border-b-2 border-transparent"
+                    class="status-tab pb-3 font-medium transition-colors text-gray-500 hover:text-[#f56e9d] border-b-2 border-transparent hover:cursor-pointer"
                 >
                     Dipanggil
                 </button>
                 <button
                     type="button"
                     data-status="selesai"
-                    class="status-tab pb-3 font-medium transition-colors text-gray-500 hover:text-[#f56e9d] border-b-2 border-transparent"
+                    class="status-tab pb-3 font-medium transition-colors text-gray-500 hover:text-[#f56e9d] border-b-2 border-transparent hover:cursor-pointer"
                 >
                     Selesai
                 </button>
@@ -186,7 +186,22 @@
 
         <!-- Pagination -->
         <div id="paginationContainer" class="px-6 py-4 border-t border-gray-200">
-            {{ $pendaftarans->withQueryString()->links() }}
+            <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-700">
+                    Menampilkan
+                    <span class="font-medium">{{ $pendaftarans->firstItem() ?? 0 }}</span>
+                    sampai
+                    <span class="font-medium">{{ $pendaftarans->lastItem() ?? 0 }}</span>
+                    dari
+                    <span class="font-medium">{{ $pendaftarans->total() }}</span>
+                    data
+                </p>
+                @if($pendaftarans->hasPages())
+                <div>
+                    {{ $pendaftarans->withQueryString()->links() }}
+                </div>
+                @endif
+            </div>
         </div>
         @endif
         </div>
