@@ -108,8 +108,7 @@
         </div>
 
         <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-lg font-bold text-gray-800">Daftar Riwayat Pendaftaran</h2>
-            <p class="text-sm text-gray-600 mt-1">Total: <span id="totalCount">{{ $pendaftarans->total() }}</span> pendaftaran</p>
+            <h2 class="text-lg font-bold text-gray-800">Riwayat Pendaftaran</h2>
         </div>
 
         <div id="tableContent">
