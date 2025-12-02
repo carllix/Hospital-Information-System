@@ -19,12 +19,22 @@ $roleMenus = [
     ],
     'dokter' => [
         ['name' => 'Dashboard', 'route' => '/dokter/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Antrian Pasien', 'route' => '/dokter/antrian', 'icon' => 'medical'],
+        ['name' => 'Riwayat Pemeriksaan', 'route' => '/dokter/riwayat', 'icon' => 'medical'],
+        ['name' => 'Profil Saya', 'route' => '/dokter/profile', 'icon' => 'profile'],
     ],
     'apoteker' => [
         ['name' => 'Dashboard', 'route' => '/farmasi/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Daftar Resep', 'route' => '/farmasi/resep', 'icon' => 'medical'],
+        ['name' => 'Stok Obat', 'route' => '/farmasi/stok-obat', 'icon' => 'health'],
+        ['name' => 'Laporan', 'route' => '/farmasi/laporan', 'icon' => 'payment'],
     ],
     'lab' => [
         ['name' => 'Dashboard', 'route' => '/lab/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Daftar Permintaan', 'route' => '/lab/permintaan', 'icon' => 'medical'],
+        ['name' => 'Riwayat Pemeriksaan', 'route' => '/lab/riwayat', 'icon' => 'health'],
+        ['name' => 'Laporan', 'route' => '/lab/laporan', 'icon' => 'payment'],
+        ['name' => 'Profil Saya', 'route' => '/lab/profile', 'icon' => 'profile'],
     ],
     'kasir_klinik' => [
         ['name' => 'Dashboard', 'route' => '/kasir-klinik/dashboard', 'icon' => 'dashboard'],
