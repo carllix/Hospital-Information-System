@@ -72,7 +72,6 @@ class RegisterController extends Controller
             ]);
         } elseif ($role === 'dokter') {
             $rules = array_merge($rules, [
-                'nip' => ['nullable', 'string', 'max:30', 'unique:dokter,nip'],
                 'nama_lengkap' => ['required', 'string', 'max:100'],
                 'nik' => ['required', 'string', 'size:16', 'unique:dokter,nik'],
                 'tanggal_lahir' => ['required', 'date', 'before:today'],
@@ -88,7 +87,6 @@ class RegisterController extends Controller
             ]);
         } elseif (in_array($role, ['pendaftaran', 'apoteker', 'lab', 'kasir_klinik', 'kasir_apotek', 'kasir_lab'])) {
             $rules = array_merge($rules, [
-                'nip' => ['nullable', 'string', 'max:30', 'unique:staf,nip'],
                 'nama_lengkap' => ['required', 'string', 'max:100'],
                 'nik' => ['required', 'string', 'size:16', 'unique:staf,nik'],
                 'tanggal_lahir' => ['required', 'date', 'before:today'],
@@ -128,7 +126,7 @@ class RegisterController extends Controller
         } elseif ($role === 'dokter') {
             Dokter::create([
                 'user_id' => $user->user_id,
-                'nip' => $validated['nip'] ?? null,
+                'nip' => $this->generateNipRS(),
                 'nama_lengkap' => $validated['nama_lengkap'],
                 'nik' => $validated['nik'],
                 'tanggal_lahir' => $validated['tanggal_lahir'],
@@ -154,7 +152,7 @@ class RegisterController extends Controller
 
             Staf::create([
                 'user_id' => $user->user_id,
-                'nip' => $validated['nip'] ?? null,
+                'nip' => $this->generateNipRS(),
                 'nama_lengkap' => $validated['nama_lengkap'],
                 'nik' => $validated['nik'],
                 'tanggal_lahir' => $validated['tanggal_lahir'],
@@ -182,5 +180,28 @@ class RegisterController extends Controller
         $newNumber = $lastNumber + 1;
 
         return 'RM-' . str_pad($newNumber, 5, '0', STR_PAD_LEFT);
+    }
+
+    private function generateNipRS(): string
+    {
+        // Get the last NIP from dokter table
+        $lastDokter = Dokter::orderBy('dokter_id', 'desc')->first();
+        $lastNumberDokter = 0;
+        if ($lastDokter && $lastDokter->nip) {
+            $lastNumberDokter = (int) substr($lastDokter->nip, 5);
+        }
+
+        // Get the last NIP from staf table
+        $lastStaf = Staf::orderBy('staf_id', 'desc')->first();
+        $lastNumberStaf = 0;
+        if ($lastStaf && $lastStaf->nip) {
+            $lastNumberStaf = (int) substr($lastStaf->nip, 5);
+        }
+
+        // Take the highest number from both tables
+        $lastNumber = max($lastNumberDokter, $lastNumberStaf);
+        $newNumber = $lastNumber + 1;
+
+        return 'NIPRS' . str_pad($newNumber, 5, '0', STR_PAD_LEFT);
     }
 }

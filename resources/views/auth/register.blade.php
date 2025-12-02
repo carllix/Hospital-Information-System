@@ -379,11 +379,6 @@
                     <h3 class="text-lg font-bold text-gray-700 mb-4">Data Dokter</h3>
 
                     <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">NIP</label>
-                        <input type="text" name="nip" value="${oldValues.nip || ''}" placeholder="Nomor Induk Pegawai (opsional)" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="30">
-                    </div>
-
-                    <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-semibold mb-2">
                             Nama Lengkap <span class="text-red-500">*</span>
                         </label>
@@ -478,11 +473,6 @@
             return `
                 <div class="border-t pt-4 mb-4">
                     <h3 class="text-lg font-bold text-gray-700 mb-4">Data ${roleLabels[role]}</h3>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">NIP</label>
-                        <input type="text" name="nip" value="${oldValues.nip || ''}" placeholder="Nomor Induk Pegawai (opsional)" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="30">
-                    </div>
 
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-semibold mb-2">

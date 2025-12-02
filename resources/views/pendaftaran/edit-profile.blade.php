@@ -18,10 +18,10 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="nip" class="block text-sm font-medium text-gray-700 mb-2">NIP</label>
+                    <label for="nip" class="block text-sm font-medium text-gray-700 mb-2">NIP RS</label>
                     <input type="text" id="nip" value="{{ $staf->nip }}" readonly
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed">
-                    <p class="mt-1 text-xs text-gray-500">NIP tidak dapat diubah</p>
+                    <p class="mt-1 text-xs text-gray-500">NIP RS tidak dapat diubah</p>
                 </div>
 
                 <div>

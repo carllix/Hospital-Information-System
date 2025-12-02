@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('staf', function (Blueprint $table) {
             $table->id('staf_id');
             $table->foreignId('user_id')->unique()->constrained('users', 'user_id')->onDelete('cascade');
-            $table->string('nip', 30)->unique()->nullable();
+            $table->string('nip', 30)->unique()->notNullable();
             $table->string('nama_lengkap', 100)->notNullable();
             $table->string('nik', 16)->unique()->notNullable();
             $table->date('tanggal_lahir')->notNullable();
