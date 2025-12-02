@@ -8,7 +8,6 @@
 <x-toast type="error" :message="session('error')" />
 
 <div class="space-y-6">
-    <!-- Search and Filter Section -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
@@ -21,10 +20,8 @@
             </div>
         </div>
 
-        <!-- Search and Filters -->
         <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Search -->
                 <div class="md:col-span-2">
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
                         Cari Pasien
@@ -39,7 +36,6 @@
                     />
                 </div>
 
-                <!-- Gender Filter -->
                 <div>
                     <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 mb-2">
                         Jenis Kelamin
@@ -58,7 +54,6 @@
         </div>
     </div>
 
-    <!-- Table Section -->
     <div id="tableContainer" class="bg-white rounded-lg shadow-md overflow-hidden">
         <div id="tableContent">
         @if($pasiens->isEmpty())
@@ -135,7 +130,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
             <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-700">
@@ -200,7 +194,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.querySelector('.text-3xl.font-bold.text-\\[\\#f56e9d\\]').textContent = newTotal.textContent;
                 }
 
-                // Update URL without reload
                 window.history.pushState({}, '', url);
             }
         };

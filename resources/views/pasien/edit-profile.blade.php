@@ -52,6 +52,15 @@
                 </div>
 
                 <div>
+                    <label for="tempat_lahir" class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir <span class="text-red-500">*</span></label>
+                    <input type="text" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir', $pasien->tempat_lahir) }}" required maxlength="100"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('tempat_lahir') border-red-500 @enderror" placeholder="Contoh: Bandung">
+                    @error('tempat_lahir')
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
                     <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir <span class="text-red-500">*</span></label>
                     <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', $pasien->tanggal_lahir->format('Y-m-d')) }}" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('tanggal_lahir') border-red-500 @enderror">
@@ -106,27 +115,27 @@
                 </div>
 
                 <div>
-                    <label for="provinsi" class="block text-sm font-medium text-gray-700 mb-2">Provinsi</label>
-                    <input type="text" id="provinsi" name="provinsi" value="{{ old('provinsi', $pasien->provinsi) }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('provinsi') border-red-500 @enderror">
+                    <label for="provinsi" class="block text-sm font-medium text-gray-700 mb-2">Provinsi <span class="text-red-500">*</span></label>
+                    <input type="text" id="provinsi" name="provinsi" value="{{ old('provinsi', $pasien->provinsi) }}" required maxlength="100"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('provinsi') border-red-500 @enderror" placeholder="Contoh: Jawa Barat">
                     @error('provinsi')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="kota_kabupaten" class="block text-sm font-medium text-gray-700 mb-2">Kota/Kabupaten</label>
-                    <input type="text" id="kota_kabupaten" name="kota_kabupaten" value="{{ old('kota_kabupaten', $pasien->kota_kabupaten) }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('kota_kabupaten') border-red-500 @enderror">
+                    <label for="kota_kabupaten" class="block text-sm font-medium text-gray-700 mb-2">Kota/Kabupaten <span class="text-red-500">*</span></label>
+                    <input type="text" id="kota_kabupaten" name="kota_kabupaten" value="{{ old('kota_kabupaten', $pasien->kota_kabupaten) }}" required maxlength="100"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('kota_kabupaten') border-red-500 @enderror" placeholder="Contoh: Bandung">
                     @error('kota_kabupaten')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="kecamatan" class="block text-sm font-medium text-gray-700 mb-2">Kecamatan</label>
-                    <input type="text" id="kecamatan" name="kecamatan" value="{{ old('kecamatan', $pasien->kecamatan) }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('kecamatan') border-red-500 @enderror">
+                    <label for="kecamatan" class="block text-sm font-medium text-gray-700 mb-2">Kecamatan <span class="text-red-500">*</span></label>
+                    <input type="text" id="kecamatan" name="kecamatan" value="{{ old('kecamatan', $pasien->kecamatan) }}" required maxlength="100"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('kecamatan') border-red-500 @enderror" placeholder="Contoh: Coblong">
                     @error('kecamatan')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror

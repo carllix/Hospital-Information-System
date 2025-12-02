@@ -8,7 +8,6 @@
 
 <div class="max-w-7xl">
     <div class="bg-white rounded-lg shadow-md p-6">
-        <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Riwayat Tagihan & Pembayaran</h2>
@@ -19,7 +18,6 @@
             </div>
         </div>
 
-        <!-- Filter -->
         <div class="mb-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -54,7 +52,6 @@
             </div>
         </div>
 
-        <!-- Tagihan Table -->
         <div id="tagihanContainer">
             <div id="tagihanContent">
         @if($tagihans->isEmpty())
@@ -134,7 +131,6 @@
             </div>
         </div>
 
-        <!-- Pagination -->
         <div class="mt-6">
             <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-700">
@@ -159,7 +155,6 @@
     </div>
 </div>
 
-<!-- Detail Modal -->
 <div id="detailTagihanModal" class="hidden fixed inset-0 z-50">
     <div class="fixed inset-0 bg-black" style="opacity: 0.2;"></div>
     <div class="fixed inset-0 flex items-center justify-center pl-64 overflow-y-auto">
@@ -224,7 +219,6 @@ document.addEventListener('DOMContentLoaded', function() {
     jenisFilter.addEventListener('change', debouncedFetch);
 });
 
-// Modal functions
 window.openDetailTagihan = function(tagihanId) {
     const modal = document.getElementById('detailTagihanModal');
     const modalContent = document.getElementById('detailTagihanContent');

@@ -15,7 +15,6 @@
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- NIK -->
             <div>
                 <label for="nik" class="block text-sm font-medium text-gray-700 mb-2">
                     NIK <span class="text-red-500">*</span>
@@ -113,6 +112,26 @@
                 @enderror
             </div>
 
+            <!-- Tempat Lahir -->
+            <div>
+                <label for="tempat_lahir" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tempat Lahir <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    name="tempat_lahir"
+                    id="tempat_lahir"
+                    required
+                    maxlength="100"
+                    value="{{ old('tempat_lahir') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('tempat_lahir') border-red-500 @enderror"
+                    placeholder="Contoh: Bandung"
+                >
+                @error('tempat_lahir')
+                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
             <!-- Jenis Kelamin -->
             <div>
                 <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 mb-2">
@@ -175,49 +194,61 @@
                 <!-- Provinsi -->
                 <div>
                     <label for="provinsi" class="block text-sm font-medium text-gray-700 mb-2">
-                        Provinsi
+                        Provinsi <span class="text-red-500">*</span>
                     </label>
                     <input
                         type="text"
                         name="provinsi"
                         id="provinsi"
+                        required
                         maxlength="100"
                         value="{{ old('provinsi') }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('provinsi') border-red-500 @enderror"
                         placeholder="Contoh: Jawa Barat"
                     >
+                    @error('provinsi')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Kota/Kabupaten -->
                 <div>
                     <label for="kota_kabupaten" class="block text-sm font-medium text-gray-700 mb-2">
-                        Kota/Kabupaten
+                        Kota/Kabupaten <span class="text-red-500">*</span>
                     </label>
                     <input
                         type="text"
                         name="kota_kabupaten"
                         id="kota_kabupaten"
+                        required
                         maxlength="100"
                         value="{{ old('kota_kabupaten') }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kota_kabupaten') border-red-500 @enderror"
                         placeholder="Contoh: Bandung"
                     >
+                    @error('kota_kabupaten')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Kecamatan -->
                 <div>
                     <label for="kecamatan" class="block text-sm font-medium text-gray-700 mb-2">
-                        Kecamatan
+                        Kecamatan <span class="text-red-500">*</span>
                     </label>
                     <input
                         type="text"
                         name="kecamatan"
                         id="kecamatan"
+                        required
                         maxlength="100"
                         value="{{ old('kecamatan') }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kecamatan') border-red-500 @enderror"
                         placeholder="Contoh: Coblong"
                     >
+                    @error('kecamatan')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 

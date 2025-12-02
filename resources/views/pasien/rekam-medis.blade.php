@@ -57,10 +57,8 @@
 </div>
 
 <div id="detailModal" class="hidden fixed inset-0 z-50">
-    <!-- Overlay with low opacity -->
     <div class="fixed inset-0 bg-black" style="opacity: 0.2;"></div>
 
-    <!-- Modal Container - positioned with sidebar offset -->
     <div class="fixed inset-0 flex items-center justify-center pl-64 overflow-y-auto">
         <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto m-4">
             <div id="modalContent" class="p-6"></div>
@@ -193,10 +191,8 @@
         const modal = document.getElementById('detailModal');
         const modalContent = document.getElementById('modalContent');
 
-        // Prevent background scrolling
         document.body.style.overflow = 'hidden';
 
-        // Show modal with loading state
         modal.classList.remove('hidden');
         modalContent.innerHTML = `
             <div class="flex items-center justify-center py-12">
@@ -204,7 +200,6 @@
             </div>
         `;
 
-        // Fetch detail data
         const xhr = new XMLHttpRequest();
         xhr.open('GET', '/pasien/rekam-medis/' + pemeriksaanId, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -233,7 +228,6 @@
     function renderModalContent(data) {
         const modalContent = document.getElementById('modalContent');
 
-        // Status badge
         let statusBadge = '';
         switch(data.status_pasien) {
             case 'selesai_penanganan':
@@ -339,7 +333,6 @@
             </div>
         `;
 
-        // Resep (if exists)
         if (data.resep) {
             html += `
                 <div class="mb-6 border-t border-gray-200 pt-6">
@@ -385,7 +378,6 @@
             `;
         }
 
-        // Lab Results (if exists)
         if (data.lab.length > 0) {
             html += `
                 <div class="mb-6 border-t border-gray-200 pt-6">
@@ -447,7 +439,6 @@
             html += '</div>';
         }
 
-        // Rujukan (if exists)
         if (data.rujukan) {
             html += `
                 <div class="mb-6 border-t border-gray-200 pt-6">

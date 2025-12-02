@@ -8,7 +8,6 @@
 <x-toast type="error" :message="session('error')" />
 
 <div class="space-y-6">
-    <!-- Search Pasien Section -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-bold text-gray-800 mb-4">Cari Pasien</h2>
         <p class="text-sm text-gray-600 mb-4">Cari pasien berdasarkan NIK</p>
@@ -29,13 +28,11 @@
             </button>
         </div>
 
-        <!-- Search Results -->
         <div id="searchResults" class="mt-4 hidden">
             <h3 class="text-sm font-semibold text-gray-700 mb-3">Hasil Pencarian:</h3>
             <div id="resultsContainer" class="space-y-2"></div>
         </div>
 
-        <!-- No Results -->
         <div id="noResults" class="mt-4 hidden">
             <div class="bg-[#fff5f8] p-4 rounded-lg">
                 <p class="text-sm text-[#d14a7a]">Pasien tidak ditemukan. Silakan daftarkan sebagai pasien baru.</p>
@@ -46,11 +43,9 @@
         </div>
     </div>
 
-    <!-- Form Pendaftaran -->
     <div id="formPendaftaran" class="bg-white rounded-lg shadow-md p-6 hidden">
         <h2 class="text-xl font-bold text-gray-800 mb-4">Form Pendaftaran Kunjungan</h2>
 
-        <!-- Selected Patient Info -->
         <div id="selectedPatientInfo" class="p-4 rounded-lg mb-6 border border-gray-200">
             <h3 class="text-sm font-semibold text-[#d14a7a] mb-2">Data Pasien:</h3>
             <div class="grid grid-cols-2 gap-3 text-sm">

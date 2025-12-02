@@ -290,12 +290,19 @@
                         <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" placeholder="Nama sesuai KTP" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                     </div>
 
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">
+                            NIK <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nik" value="${oldValues.nik || ''}" placeholder="16 digit" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                NIK <span class="text-red-500">*</span>
+                                Tempat Lahir <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="nik" value="${oldValues.nik || ''}" placeholder="16 digit" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
+                            <input type="text" name="tempat_lahir" value="${oldValues.tempat_lahir || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                         <div>
                             <label class="block text-gray-700 text-sm font-semibold mb-2">
@@ -325,16 +332,16 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi</label>
-                            <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" placeholder="Contoh: Jawa Barat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi <span class="text-red-500">*</span></label>
+                            <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" placeholder="Contoh: Jawa Barat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                         <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten</label>
-                            <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten <span class="text-red-500">*</span></label>
+                            <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                         <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan</label>
-                            <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" placeholder="Contoh: Coblong" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan <span class="text-red-500">*</span></label>
+                            <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" placeholder="Contoh: Coblong" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                     </div>
 
@@ -385,12 +392,19 @@
                         <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" placeholder="Nama sesuai KTP" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                     </div>
 
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">
+                            NIK <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nik" value="${oldValues.nik || ''}" placeholder="16 digit" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                NIK <span class="text-red-500">*</span>
+                                Tempat Lahir <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="nik" value="${oldValues.nik || ''}" placeholder="16 digit" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
+                            <input type="text" name="tempat_lahir" value="${oldValues.tempat_lahir || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                         <div>
                             <label class="block text-gray-700 text-sm font-semibold mb-2">
@@ -420,16 +434,16 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi</label>
-                            <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" placeholder="Contoh: Jawa Barat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi <span class="text-red-500">*</span></label>
+                            <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" placeholder="Contoh: Jawa Barat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                         <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten</label>
-                            <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten <span class="text-red-500">*</span></label>
+                            <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                         <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan</label>
-                            <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" placeholder="Contoh: Coblong" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan <span class="text-red-500">*</span></label>
+                            <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" placeholder="Contoh: Coblong" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                     </div>
 
@@ -481,12 +495,19 @@
                         <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" placeholder="Nama sesuai KTP" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                     </div>
 
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">
+                            NIK <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nik" value="${oldValues.nik || ''}" placeholder="16 digit" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                NIK <span class="text-red-500">*</span>
+                                Tempat Lahir <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="nik" value="${oldValues.nik || ''}" placeholder="16 digit" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
+                            <input type="text" name="tempat_lahir" value="${oldValues.tempat_lahir || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                         <div>
                             <label class="block text-gray-700 text-sm font-semibold mb-2">
@@ -516,16 +537,16 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi</label>
-                            <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" placeholder="Contoh: Jawa Barat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi <span class="text-red-500">*</span></label>
+                            <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" placeholder="Contoh: Jawa Barat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                         <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten</label>
-                            <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten <span class="text-red-500">*</span></label>
+                            <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                         <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan</label>
-                            <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" placeholder="Contoh: Coblong" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="100">
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan <span class="text-red-500">*</span></label>
+                            <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" placeholder="Contoh: Coblong" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
                         </div>
                     </div>
 

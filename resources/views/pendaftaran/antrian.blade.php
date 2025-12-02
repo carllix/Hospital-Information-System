@@ -8,7 +8,6 @@
 <x-toast type="error" :message="session('error')" />
 
 <div class="space-y-6">
-    <!-- Filter Section -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-4">
             <div>
@@ -41,7 +40,6 @@
         </div>
     </div>
 
-    <!-- Antrian Table -->
     <div id="antrianContainer" class="bg-white rounded-lg shadow-md overflow-hidden">
         <div id="antrianContent">
             @if($pendaftarans->isEmpty())
@@ -149,7 +147,6 @@
     </div>
 </div>
 
-<!-- Modal Konfirmasi -->
 <div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 lg:ml-64">
     <div id="modalBackdrop" class="absolute inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="closeConfirmModal()"></div>
     <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="modalContent">
@@ -229,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const debouncedFetch = debounce(() => fetchData(), 500);
     dokterId.addEventListener('change', debouncedFetch);
 
-    // Auto refresh every 30 seconds
     setInterval(fetchData, 30000);
 });
 
@@ -247,7 +243,6 @@ function openConfirmModal() {
 
     modal.classList.remove('hidden');
 
-    // Trigger animation
     setTimeout(() => {
         modalContent.classList.remove('scale-95', 'opacity-0');
         modalContent.classList.add('scale-100', 'opacity-100');
@@ -289,7 +284,6 @@ function confirmPanggilPasien() {
             const response = JSON.parse(xhr.responseText);
             showToast('success', response.message);
 
-            // Update UI
             const row = document.querySelector(`[data-id="${selectedPendaftaranId}"]`);
             if (row) {
                 const statusBadge = row.querySelector('.status-badge');

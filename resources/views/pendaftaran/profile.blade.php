@@ -40,6 +40,11 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir</label>
+                    <p class="text-gray-900">{{ $staf->tempat_lahir }}</p>
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir</label>
                     <p class="text-gray-900">{{ $staf->tanggal_lahir->format('d/m/Y') }}</p>
                 </div>

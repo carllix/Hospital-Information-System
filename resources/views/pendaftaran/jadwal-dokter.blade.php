@@ -5,7 +5,6 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header Section -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
@@ -18,10 +17,8 @@
             </div>
         </div>
 
-        <!-- Filter Section -->
         <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Search -->
                 <div>
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
                         Cari Dokter
@@ -36,7 +33,6 @@
                     />
                 </div>
 
-                <!-- Specialization Filter -->
                 <div>
                     <label for="spesialisasi" class="block text-sm font-medium text-gray-700 mb-2">
                         Spesialisasi
@@ -58,7 +54,6 @@
         </div>
     </div>
 
-    <!-- Doctors List -->
     <div id="doctorsContainer">
         <div id="doctorsContent" class="space-y-4">
         @if($dokters->isEmpty())
@@ -105,7 +100,6 @@
                     </div>
                 </div>
 
-                <!-- Schedule -->
                 @if($dokter->jadwal_praktik && count($dokter->jadwal_praktik) > 0)
                 <div class="mt-6 pt-6 border-t border-gray-200">
                     <h4 class="text-sm font-semibold text-gray-700 mb-3">Jadwal Praktik:</h4>
@@ -179,7 +173,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.querySelector('.text-3xl.font-bold.text-\\[\\#f56e9d\\]').textContent = newTotal.textContent;
                 }
 
-                // Update URL without reload
                 window.history.pushState({}, '', url);
             }
         };
