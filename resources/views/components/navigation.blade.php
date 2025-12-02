@@ -25,6 +25,9 @@ $roleMenus = [
     ],
     'apoteker' => [
         ['name' => 'Dashboard', 'route' => '/farmasi/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Daftar Resep', 'route' => '/farmasi/resep', 'icon' => 'medical'],
+        ['name' => 'Stok Obat', 'route' => '/farmasi/stok-obat', 'icon' => 'health'],
+        ['name' => 'Laporan', 'route' => '/farmasi/laporan', 'icon' => 'payment'],
     ],
     'lab' => [
         ['name' => 'Dashboard', 'route' => '/lab/dashboard', 'icon' => 'dashboard'],

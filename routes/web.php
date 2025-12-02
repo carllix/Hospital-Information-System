@@ -90,7 +90,27 @@ Route::middleware('auth')->group(function () {
     });
 
     // Farmasi Routes
-    Route::get('/farmasi/dashboard', [FarmasiController::class, 'dashboard'])->name('farmasi.dashboard');
+    Route::prefix('farmasi')->name('farmasi.')->group(function () {
+        Route::get('/dashboard', [FarmasiController::class, 'dashboard'])->name('dashboard');
+        
+        // Resep
+        Route::get('/resep', [FarmasiController::class, 'daftarResep'])->name('daftar-resep');
+        Route::get('/resep/{id}', [FarmasiController::class, 'detailResep'])->name('detail-resep');
+        Route::patch('/resep/{id}/proses', [FarmasiController::class, 'prosesResep'])->name('proses-resep');
+        Route::patch('/resep/{id}/selesaikan', [FarmasiController::class, 'selesaikanResep'])->name('selesaikan-resep');
+        
+        // Stok Obat
+        Route::get('/stok-obat', [FarmasiController::class, 'stokObat'])->name('stok-obat');
+        Route::get('/obat/tambah', [FarmasiController::class, 'tambahObat'])->name('tambah-obat');
+        Route::post('/obat', [FarmasiController::class, 'storeObat'])->name('store-obat');
+        Route::get('/obat/{id}/edit', [FarmasiController::class, 'editObat'])->name('edit-obat');
+        Route::put('/obat/{id}', [FarmasiController::class, 'updateObat'])->name('update-obat');
+        Route::patch('/obat/{id}/stok', [FarmasiController::class, 'updateStok'])->name('update-stok');
+        Route::delete('/obat/{id}', [FarmasiController::class, 'deleteObat'])->name('delete-obat');
+        
+        // Laporan
+        Route::get('/laporan', [FarmasiController::class, 'laporanResep'])->name('laporan-resep');
+    });
 
     // Lab Routes
     Route::get('/lab/dashboard', [LabController::class, 'dashboard'])->name('lab.dashboard');
