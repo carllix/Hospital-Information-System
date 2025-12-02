@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pasien;
 
 use App\Http\Controllers\Controller;
+use App\Models\Dokter;
 use App\Models\Pemeriksaan;
 use App\Models\Tagihan;
 use Illuminate\Http\Request;
@@ -22,19 +23,16 @@ class PasienController extends Controller
         $query = Tagihan::with(['detailTagihan', 'pembayaran', 'pendaftaran'])
             ->where('pasien_id', $pasien->pasien_id);
 
-        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Filter by jenis tagihan
         if ($request->filled('jenis')) {
             $query->where('jenis_tagihan', $request->jenis);
         }
 
         $tagihans = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        // Calculate total unpaid bills
         $totalBelumBayar = Tagihan::where('pasien_id', $pasien->pasien_id)
             ->where('status', 'belum_bayar')
             ->sum('total_tagihan');
@@ -85,7 +83,6 @@ class PasienController extends Controller
         $query = Pemeriksaan::with(['dokter', 'pendaftaran', 'resep.detailResep', 'permintaanLab.hasilLab'])
             ->where('pasien_id', $pasien->pasien_id);
 
-        // Filter by search (diagnosa atau nama dokter)
         if ($request->filled('search')) {
             $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
@@ -201,6 +198,44 @@ class PasienController extends Controller
     public function healthMonitoring(): View
     {
         return view('pasien.health-monitoring');
+    }
+
+    public function jadwalDokter(Request $request): View
+    {
+        $query = Dokter::query();
+
+        if ($request->filled('search')) {
+            $search = strtolower($request->search);
+            $query->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"]);
+        }
+
+        if ($request->filled('spesialisasi')) {
+            $query->where('spesialisasi', $request->spesialisasi);
+        }
+
+        $dokters = $query->orderBy('nama_lengkap')->get();
+
+        $spesialisasiList = [
+            'Umum',
+            'Penyakit Dalam',
+            'Anak',
+            'Kandungan',
+            'Jantung',
+            'Bedah',
+            'Mata',
+            'THT',
+            'Kulit dan Kelamin',
+            'Saraf',
+            'Jiwa',
+            'Paru',
+            'Orthopedi',
+            'Urologi',
+            'Radiologi',
+            'Anestesi',
+            'Patologi Klinik'
+        ];
+
+        return view('pendaftaran.jadwal-dokter', compact('dokters', 'spesialisasiList'));
     }
 
     public function profile(): View

@@ -198,7 +198,6 @@ class RegisterController extends Controller
             $lastNumberStaf = (int) substr($lastStaf->nip, 5);
         }
 
-        // Take the highest number from both tables
         $lastNumber = max($lastNumberDokter, $lastNumberStaf);
         $newNumber = $lastNumber + 1;
 

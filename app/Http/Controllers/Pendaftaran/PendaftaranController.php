@@ -45,19 +45,16 @@ class PendaftaranController extends Controller
 
         DB::beginTransaction();
         try {
-            // Generate No Rekam Medis (format: RM-YYYYMMDD-XXXX)
             $today = now()->format('Ymd');
             $lastPasien = Pasien::whereDate('created_at', now())->count();
             $noRM = 'RM-' . $today . '-' . str_pad($lastPasien + 1, 4, '0', STR_PAD_LEFT);
 
-            // Create user account for pasien
             $user = User::create([
                 'email' => $request->email,
-                'password' => Hash::make($request->nik), // Default password = NIK
+                'password' => Hash::make($request->nik), 
                 'role' => 'pasien',
             ]);
 
-            // Create pasien record
             $pasien = Pasien::create([
                 'user_id' => $user->user_id,
                 'no_rekam_medis' => $noRM,
@@ -116,18 +113,15 @@ class PendaftaranController extends Controller
 
         DB::beginTransaction();
         try {
-            // Generate nomor antrian per dokter
             $today = now()->format('Y-m-d');
             $lastAntrian = Pendaftaran::where('dokter_id', $request->dokter_id)
                 ->whereDate('tanggal_daftar', $today)
                 ->count();
 
-            // Get dokter initial for antrian prefix
             $dokter = Dokter::find($request->dokter_id);
             $initial = strtoupper(substr($dokter->nama_lengkap, 0, 1));
             $nomorAntrian = $initial . str_pad($lastAntrian + 1, 3, '0', STR_PAD_LEFT);
 
-            // Get staf_id from current user
             $staf = Staf::where('user_id', auth()->id())->first();
 
             Pendaftaran::create([
@@ -154,7 +148,6 @@ class PendaftaranController extends Controller
     {
         $query = Pasien::query();
 
-        // Search by name, NIK, or medical record number
         if ($request->filled('search')) {
             $search = strtolower($request->search);
             $query->where(function($q) use ($search) {
@@ -164,7 +157,6 @@ class PendaftaranController extends Controller
             });
         }
 
-        // Filter by gender
         if ($request->filled('jenis_kelamin')) {
             $query->where('jenis_kelamin', $request->jenis_kelamin);
         }
@@ -181,7 +173,6 @@ class PendaftaranController extends Controller
             ->whereIn('status', ['menunggu', 'dipanggil'])
             ->orderBy('nomor_antrian');
 
-        // Filter by dokter
         if ($request->filled('dokter_id')) {
             $query->where('dokter_id', $request->dokter_id);
         }
@@ -200,7 +191,6 @@ class PendaftaranController extends Controller
 
         $pendaftaran = Pendaftaran::findOrFail($id);
 
-        // Only allow update from menunggu to dipanggil
         if ($pendaftaran->status !== 'menunggu') {
             return response()->json([
                 'success' => false,
@@ -222,13 +212,11 @@ class PendaftaranController extends Controller
     {
         $query = Dokter::query();
 
-        // Search by doctor name
         if ($request->filled('search')) {
             $search = strtolower($request->search);
             $query->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"]);
         }
 
-        // Filter by specialization
         if ($request->filled('spesialisasi')) {
             $query->where('spesialisasi', $request->spesialisasi);
         }
@@ -263,7 +251,6 @@ class PendaftaranController extends Controller
         $query = Pendaftaran::with(['pasien', 'dokter', 'stafPendaftaran'])
             ->orderBy('tanggal_daftar', 'desc');
 
-        // Filter by date range
         if ($request->filled('tanggal_dari')) {
             $query->whereDate('tanggal_daftar', '>=', $request->tanggal_dari);
         }
@@ -272,17 +259,14 @@ class PendaftaranController extends Controller
             $query->whereDate('tanggal_daftar', '<=', $request->tanggal_sampai);
         }
 
-        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Filter by dokter
         if ($request->filled('dokter_id')) {
             $query->where('dokter_id', $request->dokter_id);
         }
 
-        // Search by patient name or NIK
         if ($request->filled('search')) {
             $search = strtolower($request->search);
             $query->whereHas('pasien', function($q) use ($search) {

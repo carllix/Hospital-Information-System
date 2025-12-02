@@ -5,6 +5,7 @@ $roleMenus = [
         ['name' => 'Pembayaran', 'route' => '/pasien/pembayaran', 'icon' => 'payment'],
         ['name' => 'Rekam Medis', 'route' => '/pasien/rekam-medis', 'icon' => 'medical'],
         ['name' => 'Health Monitoring', 'route' => '/pasien/health-monitoring', 'icon' => 'health'],
+        ['name' => 'Jadwal Dokter', 'route' => '/pasien/jadwal-dokter', 'icon' => 'medical'],
         ['name' => 'Profil', 'route' => '/pasien/profile', 'icon' => 'profile'],
     ],
     'pendaftaran' => [
