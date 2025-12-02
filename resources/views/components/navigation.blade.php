@@ -19,6 +19,9 @@ $roleMenus = [
     ],
     'dokter' => [
         ['name' => 'Dashboard', 'route' => '/dokter/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Antrian Pasien', 'route' => '/dokter/antrian', 'icon' => 'medical'],
+        ['name' => 'Riwayat Pemeriksaan', 'route' => '/dokter/riwayat', 'icon' => 'medical'],
+        ['name' => 'Profil Saya', 'route' => '/dokter/profile', 'icon' => 'profile'],
     ],
     'apoteker' => [
         ['name' => 'Dashboard', 'route' => '/farmasi/dashboard', 'icon' => 'dashboard'],

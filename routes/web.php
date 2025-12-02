@@ -58,7 +58,36 @@ Route::middleware('auth')->group(function () {
     Route::put('/pendaftaran/profile', [PendaftaranController::class, 'updateProfile'])->name('pendaftaran.profile.update');
 
     // Dokter Routes
-    Route::get('/dokter/dashboard', [DokterController::class, 'dashboard'])->name('dokter.dashboard');
+    Route::prefix('dokter')->name('dokter.')->group(function () {
+        Route::get('/dashboard', [DokterController::class, 'dashboard'])->name('dashboard');
+        Route::get('/antrian', [DokterController::class, 'antrian'])->name('antrian');
+        Route::patch('/panggil-pasien/{id}', [DokterController::class, 'panggilPasien'])->name('panggil-pasien');
+        
+        // Pemeriksaan
+        Route::get('/pemeriksaan/{id}', [DokterController::class, 'formPemeriksaan'])->name('form-pemeriksaan');
+        Route::post('/pemeriksaan', [DokterController::class, 'storePemeriksaan'])->name('store-pemeriksaan');
+        
+        // Resep
+        Route::get('/resep/{pemeriksaanId}', [DokterController::class, 'formResep'])->name('form-resep');
+        Route::post('/resep', [DokterController::class, 'storeResep'])->name('store-resep');
+        
+        // Lab
+        Route::get('/lab/{pemeriksaanId}', [DokterController::class, 'formLab'])->name('form-lab');
+        Route::post('/lab', [DokterController::class, 'storeLab'])->name('store-lab');
+        
+        // Rujukan
+        Route::get('/rujukan/{pemeriksaanId}', [DokterController::class, 'formRujukan'])->name('form-rujukan');
+        Route::post('/rujukan', [DokterController::class, 'storeRujukan'])->name('store-rujukan');
+        
+        // Riwayat & Detail
+        Route::get('/riwayat', [DokterController::class, 'riwayat'])->name('riwayat');
+        Route::get('/pemeriksaan/detail/{id}', [DokterController::class, 'detailPemeriksaan'])->name('detail-pemeriksaan');
+        
+        // Profile
+        Route::get('/profile', [DokterController::class, 'profile'])->name('profile');
+        Route::get('/profile/edit', [DokterController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/profile', [DokterController::class, 'updateProfile'])->name('profile.update');
+    });
 
     // Farmasi Routes
     Route::get('/farmasi/dashboard', [FarmasiController::class, 'dashboard'])->name('farmasi.dashboard');
