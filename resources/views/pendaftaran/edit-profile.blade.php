@@ -142,6 +142,41 @@
                 @enderror
             </div>
 
+            <!-- Password Change Section -->
+            <div class="border-t border-gray-300 pt-6 mt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Ubah Password</h3>
+                <p class="text-sm text-gray-600 mb-4">Kosongkan jika tidak ingin mengubah password</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label for="current_password" class="block text-sm font-medium text-gray-700 mb-2">Password Saat Ini</label>
+                        <input type="password" id="current_password" name="current_password"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('current_password') border-red-500 @enderror"
+                            placeholder="Masukkan password saat ini">
+                        @error('current_password')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="new_password" class="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
+                        <input type="password" id="new_password" name="new_password"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('new_password') border-red-500 @enderror"
+                            placeholder="Minimal 8 karakter">
+                        @error('new_password')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="new_password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password Baru</label>
+                        <input type="password" id="new_password_confirmation" name="new_password_confirmation"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d]"
+                            placeholder="Ulangi password baru">
+                    </div>
+                </div>
+            </div>
+
             <div class="flex justify-end space-x-4 pt-4">
                 <a href="{{ route('pendaftaran.profile') }}"
                     class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">

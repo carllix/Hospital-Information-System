@@ -20,6 +20,7 @@ class Dokter extends Model
         'nama_lengkap',
         'nik',
         'tanggal_lahir',
+        'tempat_lahir',
         'jenis_kelamin',
         'alamat',
         'provinsi',

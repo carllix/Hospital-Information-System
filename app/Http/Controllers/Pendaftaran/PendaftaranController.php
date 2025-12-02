@@ -32,11 +32,12 @@ class PendaftaranController extends Controller
             'nik' => 'required|string|size:16|unique:pasien,nik',
             'nama_lengkap' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date|before:today',
+            'tempat_lahir' => 'required|string|max:100',
             'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'alamat' => 'required|string',
-            'kota_kabupaten' => 'nullable|string|max:100',
-            'kecamatan' => 'nullable|string|max:100',
-            'provinsi' => 'nullable|string|max:100',
+            'kota_kabupaten' => 'required|string|max:100',
+            'kecamatan' => 'required|string|max:100',
+            'provinsi' => 'required|string|max:100',
             'kewarganegaraan' => 'nullable|string|max:50',
             'no_telepon' => 'required|string|max:15',
             'golongan_darah' => 'nullable|in:A,B,AB,O,A+,A-,B+,B-,AB+,AB-,O+,O-',
@@ -51,7 +52,7 @@ class PendaftaranController extends Controller
 
             $user = User::create([
                 'email' => $request->email,
-                'password' => Hash::make($request->nik), 
+                'password' => Hash::make($request->nik),
                 'role' => 'pasien',
             ]);
 
@@ -61,6 +62,7 @@ class PendaftaranController extends Controller
                 'nama_lengkap' => $request->nama_lengkap,
                 'nik' => $request->nik,
                 'tanggal_lahir' => $request->tanggal_lahir,
+                'tempat_lahir' => $request->tempat_lahir,
                 'jenis_kelamin' => $request->jenis_kelamin,
                 'alamat' => $request->alamat,
                 'kota_kabupaten' => $request->kota_kabupaten,
@@ -301,19 +303,38 @@ class PendaftaranController extends Controller
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
+            'tempat_lahir' => 'required|string|max:100',
             'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'alamat' => 'required|string',
-            'provinsi' => 'nullable|string|max:100',
-            'kota_kabupaten' => 'nullable|string|max:100',
-            'kecamatan' => 'nullable|string|max:100',
+            'provinsi' => 'required|string|max:100',
+            'kota_kabupaten' => 'required|string|max:100',
+            'kecamatan' => 'required|string|max:100',
             'kewarganegaraan' => 'nullable|string|max:50',
             'no_telepon' => 'required|string|max:15',
+            'current_password' => 'nullable|required_with:new_password|string',
+            'new_password' => 'nullable|min:8|confirmed',
         ]);
+
+        // Validate and update password if provided
+        if ($request->filled('current_password')) {
+            if (!Hash::check($request->current_password, auth()->user()->password)) {
+                return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai.'])->withInput();
+            }
+
+            auth()->user()->update([
+                'password' => Hash::make($request->new_password)
+            ]);
+        }
 
         try {
             $staf->update($validated);
 
-            return redirect()->route('pendaftaran.profile')->with('success', 'Profil berhasil diperbarui.');
+            $message = 'Profil berhasil diperbarui.';
+            if ($request->filled('new_password')) {
+                $message = 'Profil dan password berhasil diperbarui.';
+            }
+
+            return redirect()->route('pendaftaran.profile')->with('success', $message);
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui profil.'])->withInput();
         }

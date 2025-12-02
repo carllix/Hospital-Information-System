@@ -7,6 +7,7 @@ use App\Models\Dokter;
 use App\Models\Pemeriksaan;
 use App\Models\Tagihan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class PasienController extends Controller
@@ -257,15 +258,18 @@ class PasienController extends Controller
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
+            'tempat_lahir' => 'required|string|max:100',
             'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'alamat' => 'required|string',
-            'provinsi' => 'nullable|string|max:100',
-            'kota_kabupaten' => 'nullable|string|max:100',
-            'kecamatan' => 'nullable|string|max:100',
+            'provinsi' => 'required|string|max:100',
+            'kota_kabupaten' => 'required|string|max:100',
+            'kecamatan' => 'required|string|max:100',
             'kewarganegaraan' => 'nullable|string|max:50',
             'no_telepon' => 'required|string|max:15',
             'golongan_darah' => 'nullable|in:A,B,AB,O,A+,A-,B+,B-,AB+,AB-,O+,O-',
             'wearable_device_id' => 'nullable|string|max:50',
+            'current_password' => 'nullable|required_with:new_password|string',
+            'new_password' => 'nullable|min:8|confirmed',
         ]);
 
         if ($request->filled('wearable_device_id')) {
@@ -276,10 +280,26 @@ class PasienController extends Controller
             }
         }
 
+        // Validate and update password if provided
+        if ($request->filled('current_password')) {
+            if (!Hash::check($request->current_password, auth()->user()->password)) {
+                return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai.'])->withInput();
+            }
+
+            auth()->user()->update([
+                'password' => Hash::make($request->new_password)
+            ]);
+        }
+
         try {
             $pasien->update($validated);
 
-            return redirect()->route('pasien.profile')->with('success', 'Profil berhasil diperbarui.');
+            $message = 'Profil berhasil diperbarui.';
+            if ($request->filled('new_password')) {
+                $message = 'Profil dan password berhasil diperbarui.';
+            }
+
+            return redirect()->route('pasien.profile')->with('success', $message);
         } catch (\Exception) {
             return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui profil.'])->withInput();
         }
