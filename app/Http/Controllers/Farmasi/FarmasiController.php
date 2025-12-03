@@ -352,4 +352,79 @@ class FarmasiController extends Controller
         
         return view('farmasi.laporan-resep', compact('resepList', 'statistik', 'bulan', 'tahun'));
     }
+
+    public function selesaikanResepDanBuatTagihan($id): RedirectResponse
+    {
+        try {
+            DB::beginTransaction();
+            
+            $resep = Resep::with(['detailResep.obat', 'pemeriksaan'])->findOrFail($id);
+            $apoteker = Auth::user()->staf;
+            
+            // Cek authorization
+            if ($resep->apoteker_id !== $apoteker->staf_id) {
+                return back()->with('error', 'Anda tidak memiliki akses untuk menyelesaikan resep ini!');
+            }
+            
+            if ($resep->status !== 'diproses') {
+                return back()->with('error', 'Resep tidak dalam status diproses!');
+            }
+            
+            // Ambil detail resep dan hitung total
+            $detailReseps = $resep->detailResep;
+            $totalTagihanObat = 0;
+
+            // Cek stok dan kurangi stok obat
+            foreach ($detailReseps as $detail) {
+                $obat = $detail->obat;
+                
+                if ($obat->stok < $detail->jumlah) {
+                    DB::rollBack();
+                    return back()->with('error', "Stok obat {$obat->nama_obat} tidak mencukupi!");
+                }
+                
+                // Hitung subtotal untuk tagihan
+                $subtotal = $detail->jumlah * $obat->harga;
+                $totalTagihanObat += $subtotal;
+                
+                // Kurangi stok
+                $obat->decrement('stok', $detail->jumlah);
+            }
+
+            // 1. Buat Tagihan
+            $tagihan = \App\Models\Tagihan::create([
+                'pendaftaran_id' => $resep->pemeriksaan->pendaftaran_id,
+                'pasien_id' => $resep->pasien_id,
+                'jenis_tagihan' => 'obat', // Jenis Tagihan Obat
+                'status' => 'belum_bayar',
+                'subtotal' => $totalTagihanObat, 
+                'total_tagihan' => $totalTagihanObat,
+                'tanggal_tagihan' => now(),
+            ]);
+
+            // 2. Buat Detail Tagihan
+            foreach ($detailReseps as $detail) {
+                $subtotal = $detail->jumlah * $detail->obat->harga;
+                
+                \App\Models\DetailTagihan::create([
+                    'tagihan_id' => $tagihan->tagihan_id,
+                    'deskripsi_item' => $detail->obat->nama_obat . ' (' . $detail->aturan_pakai . ')',
+                    'kuantitas' => $detail->jumlah,
+                    'harga_satuan' => $detail->obat->harga,
+                    'subtotal' => $subtotal,
+                ]);
+            }
+            
+            // 3. Update status resep menjadi 'selesai'
+            $resep->update(['status' => 'selesai']);
+
+            DB::commit();
+
+            return redirect()->route('farmasi.daftar-resep')->with('success', 'Resep selesai diselesaikan, tagihan Apotek berhasil dibuat!');
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal menyelesaikan resep dan membuat tagihan: ' . $e->getMessage());
+        }
+    }
 }

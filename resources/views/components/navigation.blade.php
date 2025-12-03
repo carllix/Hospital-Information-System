@@ -39,12 +39,18 @@ $roleMenus = [
     ],
     'kasir_klinik' => [
         ['name' => 'Dashboard', 'route' => '/kasir-klinik/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Riwayat Transaksi', 'route' => '/kasir-klinik/riwayat', 'icon' => 'medical'],
+        ['name' => 'Laporan Keuangan', 'route' => '/kasir-klinik/laporan', 'icon' => 'payment'],
     ],
     'kasir_apotek' => [
         ['name' => 'Dashboard', 'route' => '/kasir-apotek/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Riwayat Transaksi', 'route' => '/kasir-apotek/riwayat', 'icon' => 'medical'],
+        ['name' => 'Laporan Keuangan', 'route' => '/kasir-apotek/laporan', 'icon' => 'payment'],
     ],
     'kasir_lab' => [
         ['name' => 'Dashboard', 'route' => '/kasir-lab/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Riwayat Transaksi', 'route' => '/kasir-lab/riwayat', 'icon' => 'medical'],
+        ['name' => 'Laporan Keuangan', 'route' => '/kasir-lab/laporan', 'icon' => 'payment'],
     ],
 ];
 

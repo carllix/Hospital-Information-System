@@ -137,11 +137,35 @@ Route::middleware('auth')->group(function () {
     });
 
     // Kasir Klinik Routes
-    Route::get('/kasir-klinik/dashboard', [KasirKlinikController::class, 'dashboard'])->name('kasir-klinik.dashboard');
+    Route::prefix('kasir-klinik')->name('kasir-klinik.')->middleware(['auth', 'role:kasir_klinik'])->group(function () {
+        Route::get('/', [KasirKlinikController::class, 'dashboard'])->name('dashboard');
+        Route::get('/dashboard', [KasirKlinikController::class, 'dashboard'])->name('dashboard');
+        Route::get('/riwayat', [KasirKlinikController::class, 'riwayat'])->name('riwayat');
+        Route::get('/laporan', [KasirKlinikController::class, 'laporan'])->name('laporan');
+        Route::get('/tagihan/{tagihan}', [KasirKlinikController::class, 'show'])->name('show');
+        Route::post('/tagihan/{tagihan}/bayar', [KasirKlinikController::class, 'processPayment'])->name('processPayment');
+        Route::get('/tagihan/{tagihan}/invoice', [KasirKlinikController::class, 'invoice'])->name('invoice');
+    });
 
     // Kasir Apotek Routes
-    Route::get('/kasir-apotek/dashboard', [KasirApotekController::class, 'dashboard'])->name('kasir-apotek.dashboard');
+    Route::prefix('kasir-apotek')->name('kasir-apotek.')->middleware(['auth', 'role:kasir_apotek'])->group(function () {
+        Route::get('/', [KasirApotekController::class, 'dashboard'])->name('dashboard');
+        Route::get('/index', [KasirApotekController::class, 'dashboard'])->name('index');
+        Route::get('/riwayat', [KasirApotekController::class, 'riwayat'])->name('riwayat');
+        Route::get('/laporan', [KasirApotekController::class, 'laporan'])->name('laporan');
+        Route::get('/tagihan/{tagihan}', [KasirApotekController::class, 'show'])->name('show');
+        Route::post('/tagihan/{tagihan}/bayar', [KasirApotekController::class, 'processPayment'])->name('processPayment');
+        Route::get('/tagihan/{tagihan}/invoice', [KasirApotekController::class, 'invoice'])->name('invoice');
+    });
 
     // Kasir Lab Routes
-    Route::get('/kasir-lab/dashboard', [KasirLabController::class, 'dashboard'])->name('kasir-lab.dashboard');
+    Route::prefix('kasir-lab')->name('kasir-lab.')->middleware(['auth', 'role:kasir_lab'])->group(function () {
+        Route::get('/', [KasirLabController::class, 'dashboard'])->name('dashboard');
+        Route::get('/index', [KasirApotekController::class, 'dashboard'])->name('index');
+        Route::get('/riwayat', [KasirLabController::class, 'riwayat'])->name('riwayat');
+        Route::get('/laporan', [KasirLabController::class, 'laporan'])->name('laporan');
+        Route::get('/tagihan/{tagihan}', [KasirLabController::class, 'show'])->name('show');
+        Route::post('/tagihan/{tagihan}/bayar', [KasirLabController::class, 'processPayment'])->name('processPayment');
+        Route::get('/tagihan/{tagihan}/invoice', [KasirLabController::class, 'invoice'])->name('invoice');
+    });
 });

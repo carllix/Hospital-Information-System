@@ -356,4 +356,76 @@ class LabController extends Controller
         
         return $templates[$jenisPemeriksaan] ?? $templates['lainnya'];
     }
+
+    public function selesaikanHasilLabDanBuatTagihan($id): RedirectResponse
+    {
+        try {
+            DB::beginTransaction();
+            
+            $permintaan = PermintaanLab::with(['pemeriksaan'])->findOrFail($id);
+            $petugasLab = Auth::user()->staf;
+            
+            // Cek authorization
+            if ($permintaan->petugas_lab_id !== $petugasLab->staf_id) {
+                return back()->with('error', 'Anda tidak memiliki akses untuk menyelesaikan permintaan ini!');
+            }
+            
+            if ($permintaan->status !== 'diproses') {
+                return back()->with('error', 'Permintaan tidak dalam status diproses!');
+            }
+            
+            // Definisikan tarif berdasarkan jenis pemeriksaan
+            $tarifLab = [
+                'darah_lengkap' => 80000,
+                'urine' => 60000,
+                'gula_darah' => 50000,
+                'kolesterol' => 75000,
+                'radiologi' => 150000,
+                'lainnya' => 70000,
+            ];
+
+            $biayaTes = $tarifLab[$permintaan->jenis_pemeriksaan] ?? $tarifLab['lainnya'];
+            $totalTagihanLab = $biayaTes;
+
+            // 1. Buat Tagihan
+            $tagihan = \App\Models\Tagihan::create([
+                'pendaftaran_id' => $permintaan->pemeriksaan->pendaftaran_id,
+                'pasien_id' => $permintaan->pasien_id,
+                'jenis_tagihan' => 'lab', // Jenis Tagihan Lab
+                'subtotal' => $totalTagihanLab,
+                'total_tagihan' => $totalTagihanLab,
+                'status' => 'belum_bayar',
+                'tanggal_tagihan' => now(),
+            ]);
+
+            // 2. Buat Detail Tagihan
+            $namaJenis = [
+                'darah_lengkap' => 'Pemeriksaan Darah Lengkap',
+                'urine' => 'Pemeriksaan Urinalisis',
+                'gula_darah' => 'Pemeriksaan Gula Darah',
+                'kolesterol' => 'Pemeriksaan Kolesterol',
+                'radiologi' => 'Pemeriksaan Radiologi',
+                'lainnya' => 'Pemeriksaan Laboratorium Lainnya',
+            ];
+
+            \App\Models\DetailTagihan::create([
+                'tagihan_id' => $tagihan->tagihan_id,
+                'deskripsi_item' => $namaJenis[$permintaan->jenis_pemeriksaan] ?? $namaJenis['lainnya'],
+                'kuantitas' => 1,
+                'harga_satuan' => $biayaTes,
+                'subtotal' => $biayaTes,
+            ]);
+
+            // 3. Update status permintaan lab menjadi 'selesai'
+            $permintaan->update(['status' => 'selesai']);
+
+            DB::commit();
+
+            return redirect()->route('lab.daftar-permintaan')->with('success', 'Hasil Lab selesai, tagihan berhasil dibuat!');
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal menyelesaikan hasil lab dan membuat tagihan: ' . $e->getMessage());
+        }
+    }
 }
