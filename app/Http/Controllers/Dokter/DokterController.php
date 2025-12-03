@@ -454,7 +454,7 @@ class DokterController extends Controller
     public function profile(): View
     {
         $dokter = Auth::user()->dokter;
-        return view('dokter.profile', compact('dokter'));
+        return view('dokter.profile-dokter', compact('dokter'));
     }
 
     /**
