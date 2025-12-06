@@ -20,6 +20,10 @@ class LoginController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+            'g-recaptcha-response' => ['required', 'captcha'],
+        ], [
+            'g-recaptcha-response.required' => 'Silakan verifikasi bahwa Anda bukan robot.',
+            'g-recaptcha-response.captcha' => 'Verifikasi reCAPTCHA gagal. Silakan coba lagi.',
         ]);
 
         if (Auth::attempt($credentials)) {
