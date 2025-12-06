@@ -52,6 +52,7 @@ class RegisterController extends Controller
             'role' => ['required', 'in:pasien,pendaftaran,dokter,apoteker,lab,kasir_klinik,kasir_apotek,kasir_lab'],
             'email' => ['required', 'email', 'max:100', 'unique:users,email'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => ['required', 'captcha'],
         ];
 
         $role = $request->input('role');
