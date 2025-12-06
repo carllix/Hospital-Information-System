@@ -14,12 +14,10 @@ class Pemeriksaan extends Model
 
     protected $table = 'pemeriksaan';
     protected $primaryKey = 'pemeriksaan_id';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'pendaftaran_id',
-        'pasien_id',
-        'dokter_id',
         'tanggal_pemeriksaan',
         'anamnesa',
         'pemeriksaan_fisik',
@@ -31,7 +29,7 @@ class Pemeriksaan extends Model
         'icd10_code',
         'tindakan_medis',
         'catatan_dokter',
-        'status_pasien',
+        'status',
     ];
 
     protected function casts(): array
@@ -42,16 +40,6 @@ class Pemeriksaan extends Model
             'berat_badan' => 'decimal:2',
             'tinggi_badan' => 'decimal:2',
         ];
-    }
-
-    public function pasien(): BelongsTo
-    {
-        return $this->belongsTo(Pasien::class, 'pasien_id', 'pasien_id');
-    }
-
-    public function dokter(): BelongsTo
-    {
-        return $this->belongsTo(Dokter::class, 'dokter_id', 'dokter_id');
     }
 
     public function pendaftaran(): BelongsTo
@@ -72,5 +60,10 @@ class Pemeriksaan extends Model
     public function rujukan(): HasOne
     {
         return $this->hasOne(Rujukan::class, 'pemeriksaan_id', 'pemeriksaan_id');
+    }
+
+    public function tagihan(): HasOne
+    {
+        return $this->hasOne(Tagihan::class, 'pemeriksaan_id', 'pemeriksaan_id');
     }
 }

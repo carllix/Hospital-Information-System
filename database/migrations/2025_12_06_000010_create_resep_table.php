@@ -6,29 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('resep', function (Blueprint $table) {
             $table->id('resep_id');
             $table->foreignId('pemeriksaan_id')->constrained('pemeriksaan', 'pemeriksaan_id')->onDelete('cascade');
-            $table->foreignId('pasien_id')->constrained('pasien', 'pasien_id')->onDelete('cascade');
-            $table->foreignId('dokter_id')->constrained('dokter', 'dokter_id')->onDelete('cascade');
-            $table->dateTime('tanggal_resep')->useCurrent()->notNullable();
-            $table->enum('status', ['menunggu', 'diproses', 'selesai'])->default('menunggu');
+            $table->dateTime('tanggal_resep')->useCurrent();
+            $table->enum('status', ['menunggu', 'diproses', 'selesai', 'batal'])->default('menunggu');
             $table->foreignId('apoteker_id')->nullable()->constrained('staf', 'staf_id')->onDelete('set null');
-            $table->timestamp('created_at')->useCurrent();
+            $table->text('catatan_apoteker')->nullable();
+            $table->timestamps();
 
-            $table->index('pasien_id');
+            $table->index('pemeriksaan_id');
             $table->index('status');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('resep');

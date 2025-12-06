@@ -9,7 +9,7 @@ class Obat extends Model
 {
     protected $table = 'obat';
     protected $primaryKey = 'obat_id';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'kode_obat',
@@ -17,12 +17,15 @@ class Obat extends Model
         'kategori',
         'satuan',
         'stok',
+        'stok_minimum',
         'harga',
         'deskripsi',
+        'is_deleted',
     ];
 
     protected $casts = [
         'stok' => 'integer',
+        'stok_minimum' => 'integer',
         'harga' => 'decimal:2',
     ];
 
