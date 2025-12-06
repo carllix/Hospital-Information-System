@@ -52,6 +52,15 @@ $roleMenus = [
         ['name' => 'Riwayat Transaksi', 'route' => '/kasir-lab/riwayat', 'icon' => 'medical'],
         ['name' => 'Laporan Keuangan', 'route' => '/kasir-lab/laporan', 'icon' => 'payment'],
     ],
+    'admin' => [
+        ['name' => 'Dashboard', 'route' => '/admin/dashboard', 'icon' => 'dashboard'],
+        ['name' => 'Dokter', 'route' => '/admin/dokter', 'icon' => 'medical'],
+        ['name' => 'Staf', 'route' => '/admin/staf', 'icon' => 'profile'],
+        ['name' => 'Jadwal Dokter', 'route' => '/admin/jadwal-dokter', 'icon' => 'medical'],
+        ['name' => 'Obat', 'route' => '/admin/obat', 'icon' => 'health'],
+        ['name' => 'Layanan', 'route' => '/admin/layanan', 'icon' => 'medical'],
+        ['name' => 'Pengguna', 'route' => '/admin/users', 'icon' => 'profile'],
+    ],
 ];
 
 $menus = $roleMenus[Auth::user()->role] ?? [];

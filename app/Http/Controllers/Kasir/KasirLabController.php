@@ -9,6 +9,7 @@ use App\Models\Pembayaran;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+// Ini KasirLab apa KasirApotek ya bang wkwkwk
 class KasirApotekController extends Controller
 {
     // Helper: Safely parse and set date boundaries (internal use)
