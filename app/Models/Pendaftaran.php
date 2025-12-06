@@ -13,12 +13,13 @@ class Pendaftaran extends Model
 
     protected $table = 'pendaftaran';
     protected $primaryKey = 'pendaftaran_id';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'pasien_id',
-        'dokter_id',
+        'jadwal_id',
         'tanggal_daftar',
+        'tanggal_kunjungan',
         'nomor_antrian',
         'keluhan_utama',
         'staf_pendaftaran_id',
@@ -29,6 +30,7 @@ class Pendaftaran extends Model
     {
         return [
             'tanggal_daftar' => 'datetime',
+            'tanggal_kunjungan' => 'date',
         ];
     }
 
@@ -37,9 +39,9 @@ class Pendaftaran extends Model
         return $this->belongsTo(Pasien::class, 'pasien_id', 'pasien_id');
     }
 
-    public function dokter(): BelongsTo
+    public function jadwalDokter(): BelongsTo
     {
-        return $this->belongsTo(Dokter::class, 'dokter_id', 'dokter_id');
+        return $this->belongsTo(JadwalDokter::class, 'jadwal_id', 'jadwal_id');
     }
 
     public function stafPendaftaran(): BelongsTo

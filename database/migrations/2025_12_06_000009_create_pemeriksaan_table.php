@@ -6,17 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pemeriksaan', function (Blueprint $table) {
             $table->id('pemeriksaan_id');
             $table->foreignId('pendaftaran_id')->unique()->constrained('pendaftaran', 'pendaftaran_id')->onDelete('cascade');
-            $table->foreignId('pasien_id')->constrained('pasien', 'pasien_id')->onDelete('cascade');
-            $table->foreignId('dokter_id')->constrained('dokter', 'dokter_id')->onDelete('cascade');
-            $table->dateTime('tanggal_pemeriksaan')->useCurrent()->notNullable();
+            $table->dateTime('tanggal_pemeriksaan')->useCurrent();
             $table->text('anamnesa')->nullable();
             $table->text('pemeriksaan_fisik')->nullable();
             $table->string('tekanan_darah', 20)->nullable();
@@ -27,18 +22,15 @@ return new class extends Migration
             $table->string('icd10_code', 10)->nullable();
             $table->text('tindakan_medis')->nullable();
             $table->text('catatan_dokter')->nullable();
-            $table->enum('status_pasien', ['selesai_penanganan', 'dirujuk', 'perlu_resep', 'perlu_lab'])->notNullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->enum('status', ['dalam_pemeriksaan', 'selesai'])->default('dalam_pemeriksaan');
+            $table->timestamps();
 
-            $table->index('pasien_id');
-            $table->index('dokter_id');
+            $table->index('pendaftaran_id');
             $table->index('tanggal_pemeriksaan');
+            $table->index('status');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('pemeriksaan');

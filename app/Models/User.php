@@ -17,6 +17,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_deleted',
     ];
 
     protected $hidden = [
@@ -49,13 +50,16 @@ class User extends Authenticatable
     {
         return match ($this->role) {
             'pasien' => '/pasien/dashboard',
-            'pendaftaran' => '/pendaftaran/dashboard',
             'dokter' => '/dokter/dashboard',
-            'apoteker' => '/farmasi/dashboard',
-            'lab' => '/lab/dashboard',
-            'kasir_klinik' => '/kasir-klinik/dashboard',
-            'kasir_apotek' => '/kasir-apotek/dashboard',
-            'kasir_lab' => '/kasir-lab/dashboard',
+            'staf' => match ($this->staf?->bagian) {
+                'pendaftaran' => '/pendaftaran/dashboard',
+                'farmasi' => '/farmasi/dashboard',
+                'laboratorium' => '/lab/dashboard',
+                'kasir' => '/kasir/dashboard',
+                default => '/dashboard',
+            },
+            'admin' => '/admin/dashboard',
+            default => '/dashboard',
         };
     }
 }

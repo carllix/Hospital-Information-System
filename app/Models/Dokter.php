@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Dokter extends Model
 {
@@ -12,11 +13,11 @@ class Dokter extends Model
 
     protected $table = 'dokter';
     protected $primaryKey = 'dokter_id';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'user_id',
-        'nip',
+        'nip_rs',
         'nama_lengkap',
         'nik',
         'tanggal_lahir',
@@ -26,23 +27,26 @@ class Dokter extends Model
         'provinsi',
         'kota_kabupaten',
         'kecamatan',
-        'kewarganegaraan',
         'no_telepon',
         'spesialisasi',
         'no_str',
-        'jadwal_praktik',
+        'is_deleted',
     ];
 
     protected function casts(): array
     {
         return [
             'tanggal_lahir' => 'date',
-            'jadwal_praktik' => 'array',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    public function jadwalDokter(): HasMany
+    {
+        return $this->hasMany(JadwalDokter::class, 'dokter_id', 'dokter_id');
     }
 }

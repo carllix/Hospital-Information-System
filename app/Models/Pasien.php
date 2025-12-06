@@ -18,7 +18,7 @@ class Pasien extends Model
 
     protected $table = 'pasien';
     protected $primaryKey = 'pasien_id';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'user_id',
@@ -32,10 +32,10 @@ class Pasien extends Model
         'provinsi',
         'kota_kabupaten',
         'kecamatan',
-        'kewarganegaraan',
         'no_telepon',
         'golongan_darah',
         'wearable_device_id',
+        'is_deleted',
     ];
 
     protected function casts(): array
@@ -53,16 +53,6 @@ class Pasien extends Model
     public function pendaftaran(): HasMany
     {
         return $this->hasMany(Pendaftaran::class, 'pasien_id', 'pasien_id');
-    }
-
-    public function pemeriksaan(): HasMany
-    {
-        return $this->hasMany(Pemeriksaan::class, 'pasien_id', 'pasien_id');
-    }
-
-    public function tagihan(): HasMany
-    {
-        return $this->hasMany(Tagihan::class, 'pasien_id', 'pasien_id');
     }
 
     public function wearableData(): HasMany

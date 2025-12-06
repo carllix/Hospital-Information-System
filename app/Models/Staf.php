@@ -12,11 +12,11 @@ class Staf extends Model
 
     protected $table = 'staf';
     protected $primaryKey = 'staf_id';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'user_id',
-        'nip',
+        'nip_rs',
         'nama_lengkap',
         'nik',
         'tanggal_lahir',
@@ -26,9 +26,9 @@ class Staf extends Model
         'provinsi',
         'kota_kabupaten',
         'kecamatan',
-        'kewarganegaraan',
         'no_telepon',
         'bagian',
+        'is_deleted',
     ];
 
     protected function casts(): array

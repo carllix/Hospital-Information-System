@@ -13,14 +13,12 @@ class Rujukan extends Model
 
     protected $fillable = [
         'pemeriksaan_id',
-        'pasien_id',
         'tujuan_rujukan',
         'rs_tujuan',
         'dokter_spesialis_tujuan',
         'alasan_rujukan',
         'diagnosa_sementara',
         'tanggal_rujukan',
-        'dokter_perujuk_id',
     ];
 
     protected $casts = [
@@ -30,15 +28,5 @@ class Rujukan extends Model
     public function pemeriksaan(): BelongsTo
     {
         return $this->belongsTo(Pemeriksaan::class, 'pemeriksaan_id', 'pemeriksaan_id');
-    }
-
-    public function pasien(): BelongsTo
-    {
-        return $this->belongsTo(Pasien::class, 'pasien_id', 'pasien_id');
-    }
-
-    public function dokterPerujuk(): BelongsTo
-    {
-        return $this->belongsTo(Dokter::class, 'dokter_perujuk_id', 'dokter_id');
     }
 }

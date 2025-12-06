@@ -6,29 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('obat', function (Blueprint $table) {
             $table->id('obat_id');
-            $table->string('kode_obat', 20)->unique()->notNullable();
-            $table->string('nama_obat', 255)->notNullable();
-            $table->enum('kategori', ['tablet', 'kapsul', 'sirup', 'salep', 'injeksi'])->notNullable();
-            $table->string('satuan', 20)->notNullable();
-            $table->integer('stok')->notNullable()->default(0);
-            $table->decimal('harga', 12, 2)->notNullable();
+            $table->string('kode_obat', 20)->unique();
+            $table->string('nama_obat', 255);
+            $table->enum('kategori', ['tablet', 'kapsul', 'sirup', 'salep', 'injeksi', 'lainnya']);
+            $table->string('satuan', 20);
+            $table->integer('stok')->default(0);
+            $table->integer('stok_minimum')->default(10);
+            $table->decimal('harga', 12, 2);
             $table->text('deskripsi')->nullable();
+            $table->boolean('is_deleted')->default(false);
+            $table->timestamps();
 
             $table->index('kode_obat');
             $table->index('nama_obat');
+            $table->index('kategori');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('obat');

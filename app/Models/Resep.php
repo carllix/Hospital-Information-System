@@ -13,15 +13,14 @@ class Resep extends Model
 
     protected $table = 'resep';
     protected $primaryKey = 'resep_id';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'pemeriksaan_id',
-        'pasien_id',
-        'dokter_id',
         'tanggal_resep',
         'status',
         'apoteker_id',
+        'catatan_apoteker',
     ];
 
     protected function casts(): array
@@ -34,16 +33,6 @@ class Resep extends Model
     public function pemeriksaan(): BelongsTo
     {
         return $this->belongsTo(Pemeriksaan::class, 'pemeriksaan_id', 'pemeriksaan_id');
-    }
-
-    public function pasien(): BelongsTo
-    {
-        return $this->belongsTo(Pasien::class, 'pasien_id', 'pasien_id');
-    }
-
-    public function dokter(): BelongsTo
-    {
-        return $this->belongsTo(Dokter::class, 'dokter_id', 'dokter_id');
     }
 
     public function apoteker(): BelongsTo
