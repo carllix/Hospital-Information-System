@@ -44,7 +44,7 @@ class UserController extends Controller
         try {
             $user = User::create([
                 'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
+                'password' => $validated['password'],
                 'role' => $validated['role'],
                 'is_deleted' => false,
             ]);
@@ -99,7 +99,7 @@ class UserController extends Controller
             ];
 
             if ($request->filled('password')) {
-                $updateData['password'] = Hash::make($validated['password']);
+                $updateData['password'] = $validated['password'];
             }
 
             $user->update($updateData);

@@ -21,7 +21,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">NIP RS</label>
-                    <p class="text-gray-900">{{ $staf->nip }}</p>
+                    <p class="text-gray-900">{{ $staf->nip_rs }}</p>
                 </div>
 
                 <div>
@@ -60,16 +60,6 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Bagian</label>
-                    <p class="text-gray-900 capitalize">{{ ucfirst($staf->bagian) }}</p>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Kewarganegaraan</label>
-                    <p class="text-gray-900">{{ $staf->kewarganegaraan ?? '-' }}</p>
-                </div>
-
-                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Provinsi</label>
                     <p class="text-gray-900">{{ $staf->provinsi ?? '-' }}</p>
                 </div>
@@ -83,11 +73,11 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Kecamatan</label>
                     <p class="text-gray-900">{{ $staf->kecamatan ?? '-' }}</p>
                 </div>
-            </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
-                <p class="text-gray-900">{{ $staf->alamat }}</p>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
+                    <p class="text-gray-900">{{ $staf->alamat }}</p>
+                </div>
             </div>
         </div>
     </div>

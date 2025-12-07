@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pendaftaran;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PasswordNotification;
 use App\Models\Pasien;
 use App\Models\Pendaftaran;
 use App\Models\Staf;
@@ -13,6 +14,9 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class PendaftaranController extends Controller
 {
@@ -38,7 +42,6 @@ class PendaftaranController extends Controller
             'kota_kabupaten' => 'required|string|max:100',
             'kecamatan' => 'required|string|max:100',
             'provinsi' => 'required|string|max:100',
-            'kewarganegaraan' => 'nullable|string|max:50',
             'no_telepon' => 'required|string|max:15',
             'golongan_darah' => 'nullable|in:A,B,AB,O,A+,A-,B+,B-,AB+,AB-,O+,O-',
             'email' => 'required|email|unique:users,email',
@@ -46,15 +49,16 @@ class PendaftaranController extends Controller
 
         DB::beginTransaction();
         try {
-            $today = now()->format('Ymd');
-            $lastPasien = Pasien::whereDate('created_at', now())->count();
-            $noRM = 'RM-' . $today . '-' . str_pad($lastPasien + 1, 4, '0', STR_PAD_LEFT);
+            // Generate random password
+            $randomPassword = Str::random(12);
 
             $user = User::create([
                 'email' => $request->email,
-                'password' => Hash::make($request->nik),
+                'password' => $randomPassword,
                 'role' => 'pasien',
             ]);
+
+            $noRM = $user->generateNoRekamMedis();
 
             $pasien = Pasien::create([
                 'user_id' => $user->user_id,
@@ -68,14 +72,28 @@ class PendaftaranController extends Controller
                 'kota_kabupaten' => $request->kota_kabupaten,
                 'kecamatan' => $request->kecamatan,
                 'provinsi' => $request->provinsi,
-                'kewarganegaraan' => $request->kewarganegaraan ?? 'Indonesia',
                 'no_telepon' => $request->no_telepon,
                 'golongan_darah' => $request->golongan_darah,
             ]);
 
+            // Send password notification email
+            try {
+                Mail::to($user->email)->send(
+                    new PasswordNotification(
+                        $request->nama_lengkap,
+                        $user->email,
+                        $randomPassword,
+                        $noRM
+                    )
+                );
+            } catch (\Exception $e) {
+                // Log email error but don't fail registration
+                Log::error('Failed to send password notification email: ' . $e->getMessage());
+            }
+
             DB::commit();
             return redirect()->route('pendaftaran.pasien-baru')
-                ->with('success', "Pasien berhasil didaftarkan! No. Rekam Medis: {$noRM}");
+                ->with('success', "Pasien berhasil didaftarkan! No. Rekam Medis: {$noRM}. Password telah dikirim ke email pasien.");
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('pendaftaran.pasien-baru')
@@ -152,10 +170,10 @@ class PendaftaranController extends Controller
 
         if ($request->filled('search')) {
             $search = strtolower($request->search);
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
+                    ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
             });
         }
 
@@ -271,10 +289,10 @@ class PendaftaranController extends Controller
 
         if ($request->filled('search')) {
             $search = strtolower($request->search);
-            $query->whereHas('pasien', function($q) use ($search) {
+            $query->whereHas('pasien', function ($q) use ($search) {
                 $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
+                    ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
             });
         }
 
@@ -309,7 +327,6 @@ class PendaftaranController extends Controller
             'provinsi' => 'required|string|max:100',
             'kota_kabupaten' => 'required|string|max:100',
             'kecamatan' => 'required|string|max:100',
-            'kewarganegaraan' => 'nullable|string|max:50',
             'no_telepon' => 'required|string|max:15',
             'current_password' => 'nullable|required_with:new_password|string',
             'new_password' => 'nullable|min:8|confirmed',
@@ -322,7 +339,7 @@ class PendaftaranController extends Controller
             }
 
             auth()->user()->update([
-                'password' => Hash::make($request->new_password)
+                'password' => $request->new_password
             ]);
         }
 

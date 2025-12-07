@@ -19,89 +19,12 @@
             <div class="w-full max-w-2xl">
                 <div class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
                     <div class="mb-6 text-center">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Daftar Akun Baru</h2>
-                        <p class="text-gray-600">Silakan lengkapi informasi Anda</p>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Daftar Akun Pasien</h2>
+                        <p class="text-gray-600">Silakan lengkapi informasi Anda untuk mendaftar</p>
                     </div>
 
-                    <div id="roleSelection" class="mb-6">
-                        <h2 class="text-lg font-semibold text-gray-700 mb-4 text-center">Pilih Role Anda</h2>
-
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <div class="role-card group cursor-pointer border-2 border-gray-300 rounded-lg p-3 text-center hover:border-[#f56e9d] hover:bg-pink-50 transition-all" data-role="pasien">
-                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-600 group-hover:text-[#f56e9d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-800 group-hover:text-[#f56e9d] transition-colors">Pasien</h3>
-                            </div>
-
-                            <div class="role-card group cursor-pointer border-2 border-gray-300 rounded-lg p-3 text-center hover:border-[#f56e9d] hover:bg-pink-50 transition-all" data-role="dokter">
-                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-600 group-hover:text-[#f56e9d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-800 group-hover:text-[#f56e9d] transition-colors">Dokter</h3>
-                            </div>
-
-                            <div class="role-card group cursor-pointer border-2 border-gray-300 rounded-lg p-3 text-center hover:border-[#f56e9d] hover:bg-pink-50 transition-all" data-role="pendaftaran">
-                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-600 group-hover:text-[#f56e9d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-800 text-sm group-hover:text-[#f56e9d] transition-colors">Staf Pendaftaran</h3>
-                            </div>
-
-                            <div class="role-card group cursor-pointer border-2 border-gray-300 rounded-lg p-3 text-center hover:border-[#f56e9d] hover:bg-pink-50 transition-all" data-role="apoteker">
-                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-600 group-hover:text-[#f56e9d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-800 group-hover:text-[#f56e9d] transition-colors">Apoteker</h3>
-                            </div>
-
-                            <div class="role-card group cursor-pointer border-2 border-gray-300 rounded-lg p-3 text-center hover:border-[#f56e9d] hover:bg-pink-50 transition-all" data-role="lab">
-                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-600 group-hover:text-[#f56e9d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-800 text-sm group-hover:text-[#f56e9d] transition-colors">Staf Laboratorium</h3>
-                            </div>
-
-                            <div class="role-card group cursor-pointer border-2 border-gray-300 rounded-lg p-3 text-center hover:border-[#f56e9d] hover:bg-pink-50 transition-all" data-role="kasir_klinik">
-                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-600 group-hover:text-[#f56e9d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-800 text-sm group-hover:text-[#f56e9d] transition-colors">Kasir Klinik</h3>
-                            </div>
-
-                            <div class="role-card group cursor-pointer border-2 border-gray-300 rounded-lg p-3 text-center hover:border-[#f56e9d] hover:bg-pink-50 transition-all" data-role="kasir_apotek">
-                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-600 group-hover:text-[#f56e9d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-800 text-sm group-hover:text-[#f56e9d] transition-colors">Kasir Apotek</h3>
-                            </div>
-
-                            <div class="role-card group cursor-pointer border-2 border-gray-300 rounded-lg p-3 text-center hover:border-[#f56e9d] hover:bg-pink-50 transition-all" data-role="kasir_lab">
-                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-600 group-hover:text-[#f56e9d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                                <h3 class="font-semibold text-gray-800 text-sm group-hover:text-[#f56e9d] transition-colors">Kasir Lab</h3>
-                            </div>
-                        </div>
-
-                        @error('role')
-                        <p class="text-red-500 text-xs italic mt-2 text-center">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <form method="POST" action="{{ route('register') }}" id="registerForm" style="display: none;">
+                    <form method="POST" action="{{ route('register') }}">
                         @csrf
-
-                        <input type="hidden" name="role" id="roleInput" value="{{ old('role') }}">
-
-                        <div class="mb-4">
-                            <button type="button" id="backToRoleSelection" class="text-sm flex items-center font-semibold" style="color: #f56e9d;">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                                </svg>
-                                Kembali ke pilihan role
-                            </button>
-                        </div>
 
                         <div class="mb-4">
                             <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">
@@ -173,16 +96,230 @@
                             </div>
                         </div>
 
-                        <div id="roleSpecificFields"></div>
+                        <div class="border-t pt-4 mb-4">
+                            <h3 class="text-lg font-bold text-gray-700 mb-4">Data Pasien</h3>
+
+                            <div class="mb-4">
+                                <label for="nama_lengkap" class="block text-gray-700 text-sm font-semibold mb-2">
+                                    Nama Lengkap <span class="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="nama_lengkap"
+                                    id="nama_lengkap"
+                                    value="{{ old('nama_lengkap') }}"
+                                    placeholder="Nama sesuai KTP"
+                                    class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('nama_lengkap') border-red-500 @enderror"
+                                    required
+                                    maxlength="100">
+                                @error('nama_lengkap')
+                                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="nik" class="block text-gray-700 text-sm font-semibold mb-2">
+                                    NIK <span class="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="nik"
+                                    id="nik"
+                                    value="{{ old('nik') }}"
+                                    placeholder="16 digit"
+                                    class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('nik') border-red-500 @enderror"
+                                    required
+                                    maxlength="16"
+                                    pattern="[0-9]{16}">
+                                @error('nik')
+                                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="tempat_lahir" class="block text-gray-700 text-sm font-semibold mb-2">
+                                        Tempat Lahir <span class="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="tempat_lahir"
+                                        id="tempat_lahir"
+                                        value="{{ old('tempat_lahir') }}"
+                                        placeholder="Contoh: Bandung"
+                                        class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('tempat_lahir') border-red-500 @enderror"
+                                        required
+                                        maxlength="100">
+                                    @error('tempat_lahir')
+                                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="tanggal_lahir" class="block text-gray-700 text-sm font-semibold mb-2">
+                                        Tanggal Lahir <span class="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="date"
+                                        name="tanggal_lahir"
+                                        id="tanggal_lahir"
+                                        value="{{ old('tanggal_lahir') }}"
+                                        class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('tanggal_lahir') border-red-500 @enderror"
+                                        required>
+                                    @error('tanggal_lahir')
+                                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="jenis_kelamin" class="block text-gray-700 text-sm font-semibold mb-2">
+                                    Jenis Kelamin <span class="text-red-500">*</span>
+                                </label>
+                                <select
+                                    name="jenis_kelamin"
+                                    id="jenis_kelamin"
+                                    class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('jenis_kelamin') border-red-500 @enderror"
+                                    required>
+                                    <option value="">Pilih</option>
+                                    <option value="Laki-Laki" {{ old('jenis_kelamin') == 'Laki-Laki' ? 'selected' : '' }}>Laki-Laki</option>
+                                    <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                </select>
+                                @error('jenis_kelamin')
+                                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="alamat" class="block text-gray-700 text-sm font-semibold mb-2">
+                                    Alamat <span class="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    name="alamat"
+                                    id="alamat"
+                                    placeholder="Alamat lengkap (Jalan, RT/RW, Kelurahan, dll)"
+                                    class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('alamat') border-red-500 @enderror"
+                                    rows="3"
+                                    required>{{ old('alamat') }}</textarea>
+                                @error('alamat')
+                                <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    <label for="provinsi" class="block text-gray-700 text-sm font-semibold mb-2">Provinsi <span class="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        name="provinsi"
+                                        id="provinsi"
+                                        value="{{ old('provinsi') }}"
+                                        placeholder="Contoh: Jawa Barat"
+                                        class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('provinsi') border-red-500 @enderror"
+                                        required
+                                        maxlength="100">
+                                    @error('provinsi')
+                                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="kota_kabupaten" class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten <span class="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        name="kota_kabupaten"
+                                        id="kota_kabupaten"
+                                        value="{{ old('kota_kabupaten') }}"
+                                        placeholder="Contoh: Bandung"
+                                        class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kota_kabupaten') border-red-500 @enderror"
+                                        required
+                                        maxlength="100">
+                                    @error('kota_kabupaten')
+                                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="kecamatan" class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan <span class="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        name="kecamatan"
+                                        id="kecamatan"
+                                        value="{{ old('kecamatan') }}"
+                                        placeholder="Contoh: Coblong"
+                                        class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kecamatan') border-red-500 @enderror"
+                                        required
+                                        maxlength="100">
+                                    @error('kecamatan')
+                                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="no_telepon" class="block text-gray-700 text-sm font-semibold mb-2">
+                                        No. Telepon <span class="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="no_telepon"
+                                        id="no_telepon"
+                                        value="{{ old('no_telepon') }}"
+                                        placeholder="08xxxxxxxxxx"
+                                        class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('no_telepon') border-red-500 @enderror"
+                                        required
+                                        maxlength="15">
+                                    @error('no_telepon')
+                                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="golongan_darah" class="block text-gray-700 text-sm font-semibold mb-2">Golongan Darah</label>
+                                    <select
+                                        name="golongan_darah"
+                                        id="golongan_darah"
+                                        class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
+                                        <option value="">Pilih</option>
+                                        <option value="A" {{ old('golongan_darah') == 'A' ? 'selected' : '' }}>A</option>
+                                        <option value="B" {{ old('golongan_darah') == 'B' ? 'selected' : '' }}>B</option>
+                                        <option value="AB" {{ old('golongan_darah') == 'AB' ? 'selected' : '' }}>AB</option>
+                                        <option value="O" {{ old('golongan_darah') == 'O' ? 'selected' : '' }}>O</option>
+                                        <option value="A+" {{ old('golongan_darah') == 'A+' ? 'selected' : '' }}>A+</option>
+                                        <option value="A-" {{ old('golongan_darah') == 'A-' ? 'selected' : '' }}>A-</option>
+                                        <option value="B+" {{ old('golongan_darah') == 'B+' ? 'selected' : '' }}>B+</option>
+                                        <option value="B-" {{ old('golongan_darah') == 'B-' ? 'selected' : '' }}>B-</option>
+                                        <option value="AB+" {{ old('golongan_darah') == 'AB+' ? 'selected' : '' }}>AB+</option>
+                                        <option value="AB-" {{ old('golongan_darah') == 'AB-' ? 'selected' : '' }}>AB-</option>
+                                        <option value="O+" {{ old('golongan_darah') == 'O+' ? 'selected' : '' }}>O+</option>
+                                        <option value="O-" {{ old('golongan_darah') == 'O-' ? 'selected' : '' }}>O-</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- reCAPTCHA Widget -->
-                        <div class="mb-6 flex justify-center">
-                            {!! NoCaptcha::renderJs() !!}
-                            {!! NoCaptcha::display() !!}
+                        <div class="mb-6">
+                            <div class="flex justify-center">
+                                {!! NoCaptcha::renderJs() !!}
+                                {!! NoCaptcha::display() !!}
+                            </div>
                         </div>
                         @error('g-recaptcha-response')
                         <p class="text-red-500 text-xs italic mt-2 text-center">{{ $message }}</p>
                         @enderror
+
+                        <style>
+                            /* Center reCAPTCHA challenge popup and backdrop */
+                            body>div[style*="position: fixed"] {
+                                background-color: rgba(0, 0, 0, 0.5) !important;
+                            }
+
+                            body>div>div>iframe[src*="recaptcha/api2/bframe"] {
+                                position: fixed !important;
+                                top: 50% !important;
+                                left: 50% !important;
+                                transform: translate(-50%, -50%) !important;
+                                z-index: 9999 !important;
+                            }
+                        </style>
 
                         <div class="flex items-center justify-between mt-6">
                             <button
@@ -207,8 +344,6 @@
     </div>
 
     <script>
-        window.oldFormValues = @json(old());
-
         function togglePasswordVisibility(inputId, iconId) {
             const passwordInput = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -226,394 +361,5 @@
             `;
             }
         }
-
-        // Register form initialization
-        (function() {
-            const roleSelection = document.getElementById('roleSelection');
-            const registerForm = document.getElementById('registerForm');
-            const roleInput = document.getElementById('roleInput');
-            const container = document.getElementById('roleSpecificFields');
-            const backButton = document.getElementById('backToRoleSelection');
-            const roleCards = document.querySelectorAll('.role-card');
-
-            if (!roleSelection || !registerForm || !roleInput || !container) {
-                return;
-            }
-
-            const oldValues = window.oldFormValues || {};
-
-            function showForm(role) {
-                roleInput.value = role;
-                roleSelection.style.display = 'none';
-                registerForm.style.display = 'block';
-
-                updateFormFields(role);
-            }
-
-            function showRoleSelection() {
-                roleSelection.style.display = 'block';
-                registerForm.style.display = 'none';
-                roleInput.value = '';
-                container.innerHTML = '';
-
-                roleCards.forEach(card => {
-                    card.classList.remove('border-[#f56e9d]', 'bg-pink-50');
-                    card.classList.add('border-gray-300');
-                });
-            }
-
-            function updateFormFields(role) {
-                if (!role) {
-                    container.innerHTML = '';
-                    return;
-                }
-
-                let fields = '';
-
-                if (role === 'pasien') {
-                    fields = getPasienFields(oldValues);
-                } else if (role === 'dokter') {
-                    fields = getDokterFields(oldValues);
-                } else if (['pendaftaran', 'apoteker', 'lab', 'kasir_klinik', 'kasir_apotek', 'kasir_lab'].includes(role)) {
-                    fields = getStafFields(role, oldValues);
-                }
-
-                container.innerHTML = fields;
-            }
-
-            function getPasienFields(oldValues) {
-                return `
-                <div class="border-t pt-4 mb-4">
-                    <h3 class="text-lg font-bold text-gray-700 mb-4">Data Pasien</h3>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            Nama Lengkap <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" placeholder="Nama sesuai KTP" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            NIK <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="nik" value="${oldValues.nik || ''}" placeholder="16 digit" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                Tempat Lahir <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="tempat_lahir" value="${oldValues.tempat_lahir || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                Tanggal Lahir <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="tanggal_lahir" value="${oldValues.tanggal_lahir || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            Jenis Kelamin <span class="text-red-500">*</span>
-                        </label>
-                        <select name="jenis_kelamin" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
-                            <option value="">Pilih</option>
-                            <option value="Laki-Laki" ${oldValues.jenis_kelamin === 'Laki-Laki' ? 'selected' : ''}>Laki-Laki</option>
-                            <option value="Perempuan" ${oldValues.jenis_kelamin === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            Alamat <span class="text-red-500">*</span>
-                        </label>
-                        <textarea name="alamat" placeholder="Alamat lengkap (Jalan, RT/RW, Kelurahan, dll)" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" rows="3" required>${oldValues.alamat || ''}</textarea>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi <span class="text-red-500">*</span></label>
-                            <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" placeholder="Contoh: Jawa Barat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten <span class="text-red-500">*</span></label>
-                            <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan <span class="text-red-500">*</span></label>
-                            <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" placeholder="Contoh: Coblong" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kewarganegaraan</label>
-                            <input type="text" name="kewarganegaraan" value="${oldValues.kewarganegaraan || ''}" placeholder="Indonesia" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                No. Telepon <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="no_telepon" value="${oldValues.no_telepon || ''}" placeholder="08xxxxxxxxxx" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="15">
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">Golongan Darah</label>
-                        <select name="golongan_darah" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
-                            <option value="">Pilih</option>
-                            <option value="A" ${oldValues.golongan_darah === 'A' ? 'selected' : ''}>A</option>
-                            <option value="B" ${oldValues.golongan_darah === 'B' ? 'selected' : ''}>B</option>
-                            <option value="AB" ${oldValues.golongan_darah === 'AB' ? 'selected' : ''}>AB</option>
-                            <option value="O" ${oldValues.golongan_darah === 'O' ? 'selected' : ''}>O</option>
-                            <option value="A+" ${oldValues.golongan_darah === 'A+' ? 'selected' : ''}>A+</option>
-                            <option value="A-" ${oldValues.golongan_darah === 'A-' ? 'selected' : ''}>A-</option>
-                            <option value="B+" ${oldValues.golongan_darah === 'B+' ? 'selected' : ''}>B+</option>
-                            <option value="B-" ${oldValues.golongan_darah === 'B-' ? 'selected' : ''}>B-</option>
-                            <option value="AB+" ${oldValues.golongan_darah === 'AB+' ? 'selected' : ''}>AB+</option>
-                            <option value="AB-" ${oldValues.golongan_darah === 'AB-' ? 'selected' : ''}>AB-</option>
-                            <option value="O+" ${oldValues.golongan_darah === 'O+' ? 'selected' : ''}>O+</option>
-                            <option value="O-" ${oldValues.golongan_darah === 'O-' ? 'selected' : ''}>O-</option>
-                        </select>
-                    </div>
-                </div>
-            `;
-            }
-
-            function getDokterFields(oldValues) {
-                return `
-                <div class="border-t pt-4 mb-4">
-                    <h3 class="text-lg font-bold text-gray-700 mb-4">Data Dokter</h3>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            Nama Lengkap <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" placeholder="Nama sesuai KTP" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            NIK <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="nik" value="${oldValues.nik || ''}" placeholder="16 digit" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                Tempat Lahir <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="tempat_lahir" value="${oldValues.tempat_lahir || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                Tanggal Lahir <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="tanggal_lahir" value="${oldValues.tanggal_lahir || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            Jenis Kelamin <span class="text-red-500">*</span>
-                        </label>
-                        <select name="jenis_kelamin" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
-                            <option value="">Pilih</option>
-                            <option value="Laki-Laki" ${oldValues.jenis_kelamin === 'Laki-Laki' ? 'selected' : ''}>Laki-Laki</option>
-                            <option value="Perempuan" ${oldValues.jenis_kelamin === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            Alamat <span class="text-red-500">*</span>
-                        </label>
-                        <textarea name="alamat" placeholder="Alamat lengkap (Jalan, RT/RW, Kelurahan, dll)" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" rows="3" required>${oldValues.alamat || ''}</textarea>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi <span class="text-red-500">*</span></label>
-                            <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" placeholder="Contoh: Jawa Barat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten <span class="text-red-500">*</span></label>
-                            <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan <span class="text-red-500">*</span></label>
-                            <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" placeholder="Contoh: Coblong" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kewarganegaraan</label>
-                            <input type="text" name="kewarganegaraan" value="${oldValues.kewarganegaraan || ''}" placeholder="Indonesia" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                No. Telepon <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="no_telepon" value="${oldValues.no_telepon || ''}" placeholder="08xxxxxxxxxx" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="15">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Spesialisasi</label>
-                            <select name="spesialisasi" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
-                                <option value="">Pilih Spesialisasi</option>
-                                <option value="Umum" ${oldValues.spesialisasi === 'Umum' ? 'selected' : ''}>Umum</option>
-                                <option value="Penyakit Dalam" ${oldValues.spesialisasi === 'Penyakit Dalam' ? 'selected' : ''}>Penyakit Dalam</option>
-                                <option value="Anak" ${oldValues.spesialisasi === 'Anak' ? 'selected' : ''}>Anak</option>
-                                <option value="Kandungan" ${oldValues.spesialisasi === 'Kandungan' ? 'selected' : ''}>Kandungan</option>
-                                <option value="Jantung" ${oldValues.spesialisasi === 'Jantung' ? 'selected' : ''}>Jantung</option>
-                                <option value="Bedah" ${oldValues.spesialisasi === 'Bedah' ? 'selected' : ''}>Bedah</option>
-                                <option value="Mata" ${oldValues.spesialisasi === 'Mata' ? 'selected' : ''}>Mata</option>
-                                <option value="THT" ${oldValues.spesialisasi === 'THT' ? 'selected' : ''}>THT</option>
-                                <option value="Kulit dan Kelamin" ${oldValues.spesialisasi === 'Kulit dan Kelamin' ? 'selected' : ''}>Kulit dan Kelamin</option>
-                                <option value="Saraf" ${oldValues.spesialisasi === 'Saraf' ? 'selected' : ''}>Saraf</option>
-                                <option value="Jiwa" ${oldValues.spesialisasi === 'Jiwa' ? 'selected' : ''}>Jiwa</option>
-                                <option value="Paru" ${oldValues.spesialisasi === 'Paru' ? 'selected' : ''}>Paru</option>
-                                <option value="Orthopedi" ${oldValues.spesialisasi === 'Orthopedi' ? 'selected' : ''}>Orthopedi</option>
-                                <option value="Urologi" ${oldValues.spesialisasi === 'Urologi' ? 'selected' : ''}>Urologi</option>
-                                <option value="Radiologi" ${oldValues.spesialisasi === 'Radiologi' ? 'selected' : ''}>Radiologi</option>
-                                <option value="Anestesi" ${oldValues.spesialisasi === 'Anestesi' ? 'selected' : ''}>Anestesi</option>
-                                <option value="Patologi Klinik" ${oldValues.spesialisasi === 'Patologi Klinik' ? 'selected' : ''}>Patologi Klinik</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">No. STR</label>
-                            <input type="text" name="no_str" value="${oldValues.no_str || ''}" placeholder="Nomor Surat Tanda Registrasi" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
-                        </div>
-                    </div>
-                </div>
-            `;
-            }
-
-            function getStafFields(role, oldValues) {
-                const roleLabels = {
-                    'pendaftaran': 'Staf Pendaftaran',
-                    'apoteker': 'Apoteker',
-                    'lab': 'Staf Laboratorium',
-                    'kasir_klinik': 'Kasir Klinik',
-                    'kasir_apotek': 'Kasir Apotek',
-                    'kasir_lab': 'Kasir Lab'
-                };
-
-                return `
-                <div class="border-t pt-4 mb-4">
-                    <h3 class="text-lg font-bold text-gray-700 mb-4">Data ${roleLabels[role]}</h3>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            Nama Lengkap <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="nama_lengkap" value="${oldValues.nama_lengkap || ''}" placeholder="Nama sesuai KTP" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            NIK <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="nik" value="${oldValues.nik || ''}" placeholder="16 digit" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="16" pattern="[0-9]{16}">
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                Tempat Lahir <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="tempat_lahir" value="${oldValues.tempat_lahir || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                Tanggal Lahir <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="tanggal_lahir" value="${oldValues.tanggal_lahir || ''}" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            Jenis Kelamin <span class="text-red-500">*</span>
-                        </label>
-                        <select name="jenis_kelamin" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required>
-                            <option value="">Pilih</option>
-                            <option value="Laki-Laki" ${oldValues.jenis_kelamin === 'Laki-Laki' ? 'selected' : ''}>Laki-Laki</option>
-                            <option value="Perempuan" ${oldValues.jenis_kelamin === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-semibold mb-2">
-                            Alamat <span class="text-red-500">*</span>
-                        </label>
-                        <textarea name="alamat" placeholder="Alamat lengkap (Jalan, RT/RW, Kelurahan, dll)" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" rows="3" required>${oldValues.alamat || ''}</textarea>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Provinsi <span class="text-red-500">*</span></label>
-                            <input type="text" name="provinsi" value="${oldValues.provinsi || ''}" placeholder="Contoh: Jawa Barat" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kota/Kabupaten <span class="text-red-500">*</span></label>
-                            <input type="text" name="kota_kabupaten" value="${oldValues.kota_kabupaten || ''}" placeholder="Contoh: Bandung" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kecamatan <span class="text-red-500">*</span></label>
-                            <input type="text" name="kecamatan" value="${oldValues.kecamatan || ''}" placeholder="Contoh: Coblong" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="100">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">Kewarganegaraan</label>
-                            <input type="text" name="kewarganegaraan" value="${oldValues.kewarganegaraan || ''}" placeholder="Indonesia" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" maxlength="50">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-semibold mb-2">
-                                No. Telepon <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="no_telepon" value="${oldValues.no_telepon || ''}" placeholder="08xxxxxxxxxx" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent" required maxlength="15">
-                        </div>
-                    </div>
-                </div>
-            `;
-            }
-
-            roleCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const role = this.dataset.role;
-
-                    roleCards.forEach(c => {
-                        c.classList.remove('border-[#f56e9d]', 'bg-pink-50');
-                        c.classList.add('border-gray-300');
-                    });
-
-                    this.classList.remove('border-gray-300');
-                    this.classList.add('border-[#f56e9d]', 'bg-pink-50');
-
-                    showForm(role);
-                });
-            });
-
-            backButton.addEventListener('click', showRoleSelection);
-
-            if (oldValues.role) {
-                const selectedCard = document.querySelector(`.role-card[data-role="${oldValues.role}"]`);
-                if (selectedCard) {
-                    selectedCard.classList.remove('border-gray-300');
-                    selectedCard.classList.add('border-[#f56e9d]', 'bg-pink-50');
-                }
-                showForm(oldValues.role);
-            }
-        })();
     </script>
     @endsection

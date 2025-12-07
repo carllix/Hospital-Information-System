@@ -17,7 +17,7 @@ class LoginController extends Controller
 
     public function login(Request $request): RedirectResponse
     {
-        $credentials = $request->validate([
+        $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
             'g-recaptcha-response' => ['required', 'captcha'],
@@ -25,6 +25,8 @@ class LoginController extends Controller
             'g-recaptcha-response.required' => 'Silakan verifikasi bahwa Anda bukan robot.',
             'g-recaptcha-response.captcha' => 'Verifikasi reCAPTCHA gagal. Silakan coba lagi.',
         ]);
+
+        $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
