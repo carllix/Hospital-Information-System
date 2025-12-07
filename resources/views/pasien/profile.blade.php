@@ -65,11 +65,6 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Kewarganegaraan</label>
-                    <p class="text-gray-900">{{ $pasien->kewarganegaraan ?? '-' }}</p>
-                </div>
-
-                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Provinsi</label>
                     <p class="text-gray-900">{{ $pasien->provinsi ?? '-' }}</p>
                 </div>
@@ -85,14 +80,16 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
-                <p class="text-gray-900">{{ $pasien->alamat }}</p>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
+                    <p class="text-gray-900">{{ $pasien->alamat }}</p>
+                </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Wearable Device ID</label>
-                <p class="text-gray-900">{{ $pasien->wearable_device_id ?? '-' }}</p>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Wearable Device ID</label>
+                    <p class="text-gray-900">{{ $pasien->wearable_device_id ?? '-' }}</p>
+                </div>
             </div>
         </div>
     </div>
