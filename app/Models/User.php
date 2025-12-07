@@ -62,4 +62,25 @@ class User extends Authenticatable
             default => '/dashboard',
         };
     }
+
+    public function generateNoRekamMedis(): string
+    {
+        $today = now()->format('Ymd');
+
+        // Get last patient registered today
+        $lastPasien = Pasien::where('no_rekam_medis', 'LIKE', "RM-{$today}-%")
+            ->orderBy('pasien_id', 'desc')
+            ->first();
+
+        if (!$lastPasien) {
+            // First patient today
+            $nomorUrut = 1;
+        } else {
+            // Extract last 4 digits and increment
+            $lastNumber = (int) substr($lastPasien->no_rekam_medis, -4);
+            $nomorUrut = $lastNumber + 1;
+        }
+
+        return 'RM-' . $today . '-' . str_pad($nomorUrut, 4, '0', STR_PAD_LEFT);
+    }
 }

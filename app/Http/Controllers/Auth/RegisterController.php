@@ -68,7 +68,7 @@ class RegisterController extends Controller
     {
         Pasien::create([
             'user_id' => $user->user_id,
-            'no_rekam_medis' => $this->generateNoRekamMedis(),
+            'no_rekam_medis' => $user->generateNoRekamMedis(),
             'nama_lengkap' => $validated['nama_lengkap'],
             'nik' => $validated['nik'],
             'tempat_lahir' => $validated['tempat_lahir'],
@@ -81,26 +81,5 @@ class RegisterController extends Controller
             'no_telepon' => $validated['no_telepon'],
             'golongan_darah' => $validated['golongan_darah'] ?? null,
         ]);
-    }
-
-    private function generateNoRekamMedis(): string
-    {
-        $today = now()->format('Ymd');
-
-        // Get last patient registered today
-        $lastPasien = Pasien::where('no_rekam_medis', 'LIKE', "RM-{$today}-%")
-            ->orderBy('pasien_id', 'desc')
-            ->first();
-
-        if (!$lastPasien) {
-            // First patient today
-            $nomorUrut = 1;
-        } else {
-            // Extract last 4 digits and increment
-            $lastNumber = (int) substr($lastPasien->no_rekam_medis, -4);
-            $nomorUrut = $lastNumber + 1;
-        }
-
-        return 'RM-' . $today . '-' . str_pad($nomorUrut, 4, '0', STR_PAD_LEFT);
     }
 }

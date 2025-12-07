@@ -38,7 +38,6 @@ class PendaftaranController extends Controller
             'kota_kabupaten' => 'required|string|max:100',
             'kecamatan' => 'required|string|max:100',
             'provinsi' => 'required|string|max:100',
-            'kewarganegaraan' => 'nullable|string|max:50',
             'no_telepon' => 'required|string|max:15',
             'golongan_darah' => 'nullable|in:A,B,AB,O,A+,A-,B+,B-,AB+,AB-,O+,O-',
             'email' => 'required|email|unique:users,email',
@@ -46,15 +45,13 @@ class PendaftaranController extends Controller
 
         DB::beginTransaction();
         try {
-            $today = now()->format('Ymd');
-            $lastPasien = Pasien::whereDate('created_at', now())->count();
-            $noRM = 'RM-' . $today . '-' . str_pad($lastPasien + 1, 4, '0', STR_PAD_LEFT);
-
             $user = User::create([
                 'email' => $request->email,
                 'password' => Hash::make($request->nik),
                 'role' => 'pasien',
             ]);
+
+            $noRM = $user->generateNoRekamMedis();
 
             $pasien = Pasien::create([
                 'user_id' => $user->user_id,
@@ -68,7 +65,6 @@ class PendaftaranController extends Controller
                 'kota_kabupaten' => $request->kota_kabupaten,
                 'kecamatan' => $request->kecamatan,
                 'provinsi' => $request->provinsi,
-                'kewarganegaraan' => $request->kewarganegaraan ?? 'Indonesia',
                 'no_telepon' => $request->no_telepon,
                 'golongan_darah' => $request->golongan_darah,
             ]);
@@ -152,10 +148,10 @@ class PendaftaranController extends Controller
 
         if ($request->filled('search')) {
             $search = strtolower($request->search);
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
+                    ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
             });
         }
 
@@ -271,10 +267,10 @@ class PendaftaranController extends Controller
 
         if ($request->filled('search')) {
             $search = strtolower($request->search);
-            $query->whereHas('pasien', function($q) use ($search) {
+            $query->whereHas('pasien', function ($q) use ($search) {
                 $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
+                    ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
             });
         }
 
@@ -309,7 +305,6 @@ class PendaftaranController extends Controller
             'provinsi' => 'required|string|max:100',
             'kota_kabupaten' => 'required|string|max:100',
             'kecamatan' => 'required|string|max:100',
-            'kewarganegaraan' => 'nullable|string|max:50',
             'no_telepon' => 'required|string|max:15',
             'current_password' => 'nullable|required_with:new_password|string',
             'new_password' => 'nullable|min:8|confirmed',

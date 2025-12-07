@@ -5,7 +5,7 @@
 
 @section('content')
 @if($errors->has('error'))
-    <x-toast type="error" :message="$errors->first('error')" />
+<x-toast type="error" :message="$errors->first('error')" />
 @endif
 
 <div class="w-full min-h-screen">
@@ -19,7 +19,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="nip" class="block text-sm font-medium text-gray-700 mb-2">NIP RS</label>
-                    <input type="text" id="nip" value="{{ $staf->nip }}" readonly
+                    <input type="text" id="nip" value="{{ $staf->nip_rs }}" readonly
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed">
                     <p class="mt-1 text-xs text-gray-500">NIP RS tidak dapat diubah</p>
                 </div>
@@ -37,40 +37,15 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed">
                     <p class="mt-1 text-xs text-gray-500">Email tidak dapat diubah</p>
                 </div>
-
-                <div>
-                    <label for="bagian" class="block text-sm font-medium text-gray-700 mb-2">Bagian</label>
-                    <input type="text" id="bagian" value="{{ ucfirst($staf->bagian) }}" readonly
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed">
-                    <p class="mt-1 text-xs text-gray-500">Bagian tidak dapat diubah</p>
-                </div>
-            </div>
-
-            <div class="mb-6">
-                <label for="nama_lengkap" class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
-                <input type="text" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap', $staf->nama_lengkap) }}" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('nama_lengkap') border-red-500 @enderror">
-                @error('nama_lengkap')
-                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                @enderror
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="tempat_lahir" class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir <span class="text-red-500">*</span></label>
-                    <input type="text" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir', $staf->tempat_lahir) }}" required maxlength="100"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('tempat_lahir') border-red-500 @enderror" placeholder="Contoh: Bandung">
-                    @error('tempat_lahir')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir <span class="text-red-500">*</span></label>
-                    <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', $staf->tanggal_lahir->format('Y-m-d')) }}" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('tanggal_lahir') border-red-500 @enderror">
-                    @error('tanggal_lahir')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <label for="nama_lengkap" class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                    <input type="text" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap', $staf->nama_lengkap) }}" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('nama_lengkap') border-red-500 @enderror">
+                    @error('nama_lengkap')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -83,7 +58,25 @@
                         <option value="Perempuan" {{ old('jenis_kelamin', $staf->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                     </select>
                     @error('jenis_kelamin')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="tempat_lahir" class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir <span class="text-red-500">*</span></label>
+                    <input type="text" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir', $staf->tempat_lahir) }}" required maxlength="100"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('tempat_lahir') border-red-500 @enderror" placeholder="Contoh: Bandung">
+                    @error('tempat_lahir')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir <span class="text-red-500">*</span></label>
+                    <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', $staf->tanggal_lahir->format('Y-m-d')) }}" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('tanggal_lahir') border-red-500 @enderror">
+                    @error('tanggal_lahir')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -92,16 +85,7 @@
                     <input type="text" id="no_telepon" name="no_telepon" value="{{ old('no_telepon', $staf->no_telepon) }}" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('no_telepon') border-red-500 @enderror">
                     @error('no_telepon')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="kewarganegaraan" class="block text-sm font-medium text-gray-700 mb-2">Kewarganegaraan</label>
-                    <input type="text" id="kewarganegaraan" name="kewarganegaraan" value="{{ old('kewarganegaraan', $staf->kewarganegaraan) }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('kewarganegaraan') border-red-500 @enderror">
-                    @error('kewarganegaraan')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -110,7 +94,7 @@
                     <input type="text" id="provinsi" name="provinsi" value="{{ old('provinsi', $staf->provinsi) }}"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('provinsi') border-red-500 @enderror">
                     @error('provinsi')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -119,7 +103,7 @@
                     <input type="text" id="kota_kabupaten" name="kota_kabupaten" value="{{ old('kota_kabupaten', $staf->kota_kabupaten) }}"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('kota_kabupaten') border-red-500 @enderror">
                     @error('kota_kabupaten')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -128,7 +112,7 @@
                     <input type="text" id="kecamatan" name="kecamatan" value="{{ old('kecamatan', $staf->kecamatan) }}"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('kecamatan') border-red-500 @enderror">
                     @error('kecamatan')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -138,7 +122,7 @@
                 <textarea id="alamat" name="alamat" rows="3" required
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('alamat') border-red-500 @enderror">{{ old('alamat', $staf->alamat) }}</textarea>
                 @error('alamat')
-                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -154,7 +138,7 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('current_password') border-red-500 @enderror"
                             placeholder="Masukkan password saat ini">
                         @error('current_password')
-                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -164,7 +148,7 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d] @error('new_password') border-red-500 @enderror"
                             placeholder="Minimal 8 karakter">
                         @error('new_password')
-                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
