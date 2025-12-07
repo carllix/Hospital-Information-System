@@ -31,7 +31,8 @@ class RegisterController extends Controller
                 'role' => 'pasien',
             ]);
 
-            $this->createPasien($user, $validated);
+            $noRM = $user->generateNoRekamMedis();
+            $this->createPasien($user, $validated, $noRM);
 
             DB::commit();
 
@@ -64,11 +65,11 @@ class RegisterController extends Controller
         ]);
     }
 
-    private function createPasien(User $user, array $validated): void
+    private function createPasien(User $user, array $validated, string $noRM): void
     {
         Pasien::create([
             'user_id' => $user->user_id,
-            'no_rekam_medis' => $user->generateNoRekamMedis(),
+            'no_rekam_medis' => $noRM,
             'nama_lengkap' => $validated['nama_lengkap'],
             'nik' => $validated['nik'],
             'tempat_lahir' => $validated['tempat_lahir'],

@@ -67,7 +67,7 @@ class StafController extends Controller
             // Create user account
             $user = User::create([
                 'email' => $validated['email'],
-                'password' => Hash::make($password),
+                'password' => $password,
                 'role' => 'staf',
                 'is_deleted' => false,
             ]);

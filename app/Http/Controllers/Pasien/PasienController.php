@@ -287,7 +287,7 @@ class PasienController extends Controller
             }
 
             auth()->user()->update([
-                'password' => Hash::make($request->new_password)
+                'password' => $request->new_password
             ]);
         }
 

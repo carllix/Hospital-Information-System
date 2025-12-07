@@ -27,8 +27,7 @@
                     maxlength="16"
                     value="{{ old('nik') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('nik') border-red-500 @enderror"
-                    placeholder="16 digit"
-                >
+                    placeholder="16 digit">
                 @error('nik')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                 @enderror
@@ -47,8 +46,7 @@
                     maxlength="100"
                     value="{{ old('nama_lengkap') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('nama_lengkap') border-red-500 @enderror"
-                    placeholder="Nama sesuai KTP"
-                >
+                    placeholder="Nama sesuai KTP">
                 @error('nama_lengkap')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                 @enderror
@@ -66,8 +64,7 @@
                     required
                     value="{{ old('email') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('email') border-red-500 @enderror"
-                    placeholder="example@gmail.com"
-                >
+                    placeholder="example@gmail.com">
                 @error('email')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                 @enderror
@@ -86,28 +83,8 @@
                     maxlength="15"
                     value="{{ old('no_telepon') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('no_telepon') border-red-500 @enderror"
-                    placeholder="08xxxxxxxxxx"
-                >
+                    placeholder="08xxxxxxxxxx">
                 @error('no_telepon')
-                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Tanggal Lahir -->
-            <div>
-                <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-2">
-                    Tanggal Lahir <span class="text-red-500">*</span>
-                </label>
-                <input
-                    type="date"
-                    name="tanggal_lahir"
-                    id="tanggal_lahir"
-                    required
-                    value="{{ old('tanggal_lahir') }}"
-                    max="{{ date('Y-m-d', strtotime('-1 day')) }}"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('tanggal_lahir') border-red-500 @enderror"
-                >
-                @error('tanggal_lahir')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -125,9 +102,26 @@
                     maxlength="100"
                     value="{{ old('tempat_lahir') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('tempat_lahir') border-red-500 @enderror"
-                    placeholder="Contoh: Bandung"
-                >
+                    placeholder="Contoh: Bandung">
                 @error('tempat_lahir')
+                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Tanggal Lahir -->
+            <div>
+                <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tanggal Lahir <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="date"
+                    name="tanggal_lahir"
+                    id="tanggal_lahir"
+                    required
+                    value="{{ old('tanggal_lahir') }}"
+                    max="{{ date('Y-m-d', strtotime('-1 day')) }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('tanggal_lahir') border-red-500 @enderror">
+                @error('tanggal_lahir')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -141,8 +135,7 @@
                     name="jenis_kelamin"
                     id="jenis_kelamin"
                     required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('jenis_kelamin') border-red-500 @enderror"
-                >
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('jenis_kelamin') border-red-500 @enderror">
                     <option value="">Pilih Jenis Kelamin</option>
                     <option value="Laki-Laki" {{ old('jenis_kelamin') == 'Laki-Laki' ? 'selected' : '' }}>Laki-Laki</option>
                     <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
@@ -160,29 +153,12 @@
                 <select
                     name="golongan_darah"
                     id="golongan_darah"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
-                >
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
                     <option value="">Pilih Golongan Darah</option>
                     @foreach(['A', 'B', 'AB', 'O', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as $gol)
                     <option value="{{ $gol }}" {{ old('golongan_darah') == $gol ? 'selected' : '' }}>{{ $gol }}</option>
                     @endforeach
                 </select>
-            </div>
-
-            <!-- Kewarganegaraan -->
-            <div>
-                <label for="kewarganegaraan" class="block text-sm font-medium text-gray-700 mb-2">
-                    Kewarganegaraan
-                </label>
-                <input
-                    type="text"
-                    name="kewarganegaraan"
-                    id="kewarganegaraan"
-                    maxlength="50"
-                    value="{{ old('kewarganegaraan', 'Indonesia') }}"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
-                    placeholder="Indonesia"
-                >
             </div>
         </div>
 
@@ -204,8 +180,7 @@
                         maxlength="100"
                         value="{{ old('provinsi') }}"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('provinsi') border-red-500 @enderror"
-                        placeholder="Contoh: Jawa Barat"
-                    >
+                        placeholder="Contoh: Jawa Barat">
                     @error('provinsi')
                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                     @enderror
@@ -224,8 +199,7 @@
                         maxlength="100"
                         value="{{ old('kota_kabupaten') }}"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kota_kabupaten') border-red-500 @enderror"
-                        placeholder="Contoh: Bandung"
-                    >
+                        placeholder="Contoh: Bandung">
                     @error('kota_kabupaten')
                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                     @enderror
@@ -244,8 +218,7 @@
                         maxlength="100"
                         value="{{ old('kecamatan') }}"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kecamatan') border-red-500 @enderror"
-                        placeholder="Contoh: Coblong"
-                    >
+                        placeholder="Contoh: Coblong">
                     @error('kecamatan')
                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                     @enderror
@@ -263,8 +236,7 @@
                     rows="3"
                     required
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('alamat') border-red-500 @enderror"
-                    placeholder="Alamat lengkap (Jalan, RT/RW, Kelurahan, dll)"
-                >{{ old('alamat') }}</textarea>
+                    placeholder="Alamat lengkap (Jalan, RT/RW, Kelurahan, dll)">{{ old('alamat') }}</textarea>
                 @error('alamat')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                 @enderror
@@ -275,8 +247,7 @@
         <div class="mt-6 bg-[#fff5f8] p-4 rounded-lg">
             <p class="text-sm text-[#d14a7a]">
                 <strong>Informasi:</strong>
-                Akun login untuk pasien akan dibuat otomatis dengan email yang diinputkan.
-                Password default adalah NIK pasien.
+                Akun login untuk pasien akan dibuat otomatis dengan email yang diinputkan. Password default akan dkirmkan melalui email yang didaftarkan.
             </p>
         </div>
 
@@ -284,17 +255,38 @@
         <div class="flex gap-3 mt-6">
             <button
                 type="reset"
-                class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-            >
+                class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
                 Reset Form
             </button>
             <button
                 type="submit"
-                class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium"
-            >
-                Daftar Pasien
+                id="submitBtn"
+                class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                <svg id="loadingSpinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span id="btnText">Daftar Pasien</span>
             </button>
         </div>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        form.addEventListener('submit', function(e) {
+            // Disable button
+            submitBtn.disabled = true;
+
+            // Show loading spinner and change text
+            loadingSpinner.classList.remove('hidden');
+            btnText.textContent = 'Mendaftar...';
+        });
+    });
+</script>
 @endsection

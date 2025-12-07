@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pendaftaran;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PasswordNotification;
 use App\Models\Pasien;
 use App\Models\Pendaftaran;
 use App\Models\Staf;
@@ -13,6 +14,9 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class PendaftaranController extends Controller
 {
@@ -45,9 +49,12 @@ class PendaftaranController extends Controller
 
         DB::beginTransaction();
         try {
+            // Generate random password
+            $randomPassword = Str::random(12);
+
             $user = User::create([
                 'email' => $request->email,
-                'password' => Hash::make($request->nik),
+                'password' => $randomPassword,
                 'role' => 'pasien',
             ]);
 
@@ -69,9 +76,24 @@ class PendaftaranController extends Controller
                 'golongan_darah' => $request->golongan_darah,
             ]);
 
+            // Send password notification email
+            try {
+                Mail::to($user->email)->send(
+                    new PasswordNotification(
+                        $request->nama_lengkap,
+                        $user->email,
+                        $randomPassword,
+                        $noRM
+                    )
+                );
+            } catch (\Exception $e) {
+                // Log email error but don't fail registration
+                Log::error('Failed to send password notification email: ' . $e->getMessage());
+            }
+
             DB::commit();
             return redirect()->route('pendaftaran.pasien-baru')
-                ->with('success', "Pasien berhasil didaftarkan! No. Rekam Medis: {$noRM}");
+                ->with('success', "Pasien berhasil didaftarkan! No. Rekam Medis: {$noRM}. Password telah dikirim ke email pasien.");
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('pendaftaran.pasien-baru')
@@ -317,7 +339,7 @@ class PendaftaranController extends Controller
             }
 
             auth()->user()->update([
-                'password' => Hash::make($request->new_password)
+                'password' => $request->new_password
             ]);
         }
 
