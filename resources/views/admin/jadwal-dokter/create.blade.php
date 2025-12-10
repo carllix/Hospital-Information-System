@@ -6,7 +6,7 @@
 @section('content')
 <x-toast type="error" :message="session('error')" />
 
-<div class="max-w-2xl mx-auto">
+<div class="mx-auto">
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
@@ -96,7 +96,7 @@
             </div>
 
             <div class="flex items-center justify-end gap-4 pt-4">
-                <a href="{{ route('admin.jadwal-dokter.index') }}" class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                <a href="{{ route('admin.jadwal-dokter.index') }}" class="px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     Batal
                 </a>
                 <button type="submit" class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#e05d8c] transition-colors">
