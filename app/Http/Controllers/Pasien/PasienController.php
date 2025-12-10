@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Pasien;
 
 use App\Http\Controllers\Controller;
 use App\Models\Dokter;
+use App\Models\JadwalDokter;
 use App\Models\Pemeriksaan;
+use App\Models\Pendaftaran;
 use App\Models\Tagihan;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
@@ -207,6 +211,133 @@ class PasienController extends Controller
     public function healthMonitoring(): View
     {
         return view('pasien.health-monitoring');
+    }
+
+    public function pendaftaranKunjungan(): View
+    {
+        // Get list of unique specializations from active doctors
+        $spesialisasiList = Dokter::where('is_deleted', false)
+            ->distinct()
+            ->orderBy('spesialisasi')
+            ->pluck('spesialisasi');
+
+        return view('pasien.pendaftaran-kunjungan', compact('spesialisasiList'));
+    }
+
+    public function getDokterBySpesialisasi(Request $request)
+    {
+        $request->validate([
+            'spesialisasi' => 'required|string',
+        ]);
+
+        $dokters = Dokter::where('spesialisasi', $request->spesialisasi)
+            ->where('is_deleted', false)
+            ->select('dokter_id', 'nama_lengkap', 'spesialisasi')
+            ->orderBy('nama_lengkap')
+            ->get();
+
+        return response()->json($dokters);
+    }
+
+    public function getJadwalByDokter(Request $request)
+    {
+        $request->validate([
+            'dokter_id' => 'required|exists:dokter,dokter_id',
+        ]);
+
+        $jadwals = JadwalDokter::where('dokter_id', $request->dokter_id)
+            ->where('is_deleted', false)
+            ->orderBy('hari_praktik')
+            ->orderBy('waktu_mulai')
+            ->get()
+            ->map(function ($jadwal) {
+                return [
+                    'jadwal_id' => $jadwal->jadwal_id,
+                    'hari_praktik' => $jadwal->hari_praktik,
+                    'waktu_mulai' => \Carbon\Carbon::parse($jadwal->waktu_mulai)->format('H:i'),
+                    'waktu_selesai' => \Carbon\Carbon::parse($jadwal->waktu_selesai)->format('H:i'),
+                    'max_pasien' => $jadwal->max_pasien,
+                ];
+            });
+
+        return response()->json($jadwals);
+    }
+
+    public function storePendaftaranKunjungan(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'jadwal_id' => 'required|exists:jadwal_dokter,jadwal_id',
+            'tanggal_kunjungan' => 'required|date|after_or_equal:today',
+            'keluhan_utama' => 'required|string|max:500',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $pasien = auth()->user()->pasien;
+            $jadwal = JadwalDokter::with('dokter')->findOrFail($request->jadwal_id);
+
+            // Count existing registrations for this doctor on the visit date
+            $lastAntrian = Pendaftaran::whereHas('jadwalDokter', function ($q) use ($jadwal) {
+                    $q->where('dokter_id', $jadwal->dokter_id);
+                })
+                ->whereDate('tanggal_kunjungan', $request->tanggal_kunjungan)
+                ->count();
+
+            // Check if max_pasien limit is reached
+            if ($lastAntrian >= $jadwal->max_pasien) {
+                DB::rollBack();
+                return redirect()->route('pasien.pendaftaran-kunjungan')
+                    ->with('error', "Kuota pendaftaran untuk jadwal ini sudah penuh (max: {$jadwal->max_pasien} pasien)");
+            }
+
+            // Generate queue number with format
+            $nameParts = explode(' ', trim($jadwal->dokter->nama_lengkap));
+            if (count($nameParts) >= 2) {
+                $initials = strtoupper(substr($nameParts[0], 0, 1) . substr($nameParts[1], 0, 1));
+            } else {
+                $initials = 'D' . strtoupper(substr($nameParts[0], 0, 1));
+            }
+
+            $dokterId = str_pad($jadwal->dokter_id, 3, '0', STR_PAD_LEFT);
+            $tanggal = \Carbon\Carbon::parse($request->tanggal_kunjungan)->format('dmY');
+            $queueNumber = str_pad($lastAntrian + 1, 2, '0', STR_PAD_LEFT);
+            $nomorAntrian = $initials . $dokterId . $tanggal . $queueNumber;
+
+            Pendaftaran::create([
+                'pasien_id' => $pasien->pasien_id,
+                'jadwal_id' => $request->jadwal_id,
+                'tanggal_daftar' => now(),
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                'nomor_antrian' => $nomorAntrian,
+                'keluhan_utama' => $request->keluhan_utama,
+                'staf_pendaftaran_id' => null, // Online registration
+                'status' => 'menunggu',
+            ]);
+
+            DB::commit();
+            return redirect()->route('pasien.pendaftaran-kunjungan')
+                ->with('success', "Pendaftaran berhasil! Nomor Antrian: {$nomorAntrian} - Dr. {$jadwal->dokter->nama_lengkap} ({$jadwal->hari_praktik}, {$request->tanggal_kunjungan})");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('pasien.pendaftaran-kunjungan')
+                ->with('error', 'Pendaftaran gagal: ' . $e->getMessage());
+        }
+    }
+
+    public function jadwalKunjungan(): View
+    {
+        $pasien = auth()->user()->pasien;
+
+        // Get upcoming appointments (today and future, not completed/cancelled)
+        $jadwalKunjungan = Pendaftaran::with(['jadwalDokter.dokter', 'pemeriksaan'])
+            ->where('pasien_id', $pasien->pasien_id)
+            ->whereDate('tanggal_kunjungan', '>=', today())
+            ->whereIn('status', ['menunggu', 'dipanggil', 'diperiksa'])
+            ->orderBy('tanggal_kunjungan', 'asc')
+            ->orderBy('tanggal_daftar', 'asc')
+            ->get();
+
+        return view('pasien.jadwal-kunjungan', compact('jadwalKunjungan'));
     }
 
     public function jadwalDokter(Request $request): View
