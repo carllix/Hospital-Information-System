@@ -8,9 +8,11 @@ use App\Models\User;
 use App\Models\Staf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use App\Mail\PasswordNotification;
 
 class StafController extends Controller
 {
@@ -19,11 +21,11 @@ class StafController extends Controller
         $query = Staf::where('is_deleted', false)->with('user');
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
-                $q->where('nama_lengkap', 'like', "%{$search}%")
-                    ->orWhere('nip_rs', 'like', "%{$search}%")
-                    ->orWhere('nik', 'like', "%{$search}%");
+                $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(nip_rs) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(nik) LIKE ?', ["%{$search}%"]);
             });
         }
 
@@ -72,10 +74,12 @@ class StafController extends Controller
                 'is_deleted' => false,
             ]);
 
+            $nip_rs = $this->generateNipRS();
+
             // Create staf record
             $staf = Staf::create([
                 'user_id' => $user->user_id,
-                'nip_rs' => $this->generateNipRS(),
+                'nip_rs' => $nip_rs,
                 'nama_lengkap' => $validated['nama_lengkap'],
                 'nik' => $validated['nik'],
                 'tempat_lahir' => $validated['tempat_lahir'],
@@ -90,12 +94,26 @@ class StafController extends Controller
                 'is_deleted' => false,
             ]);
 
+            // Send password notification email
+            try {
+                Mail::to($user->email)->send(
+                    new PasswordNotification(
+                        namaLengkap: $validated['nama_lengkap'],
+                        email: $user->email,
+                        password: $password,
+                        role: 'staf',
+                        identifier: $nip_rs
+                    )
+                );
+            } catch (\Exception $e) {
+                // Log email error but don't fail registration
+                Log::error('Failed to send password notification email: ' . $e->getMessage());
+            }
+
             DB::commit();
 
             return redirect()->route('admin.staf.show', $staf->staf_id)
-                ->with('success', 'Staf berhasil ditambahkan!')
-                ->with('password', $password)
-                ->with('email', $validated['email']);
+                ->with('success', "Staf berhasil ditambahkan! NIP RS: {$nip_rs}. Password telah dikirim ke email staf.");
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -205,15 +223,15 @@ class StafController extends Controller
         // Get the last NIP from dokter table
         $lastDokter = Dokter::orderBy('dokter_id', 'desc')->first();
         $lastNumberDokter = 0;
-        if ($lastDokter && $lastDokter->nip) {
-            $lastNumberDokter = (int) substr($lastDokter->nip, 5);
+        if ($lastDokter && $lastDokter->nip_rs) {
+            $lastNumberDokter = (int) substr($lastDokter->nip_rs, 5);
         }
 
         // Get the last NIP from staf table
         $lastStaf = Staf::orderBy('staf_id', 'desc')->first();
         $lastNumberStaf = 0;
-        if ($lastStaf && $lastStaf->nip) {
-            $lastNumberStaf = (int) substr($lastStaf->nip, 5);
+        if ($lastStaf && $lastStaf->nip_rs) {
+            $lastNumberStaf = (int) substr($lastStaf->nip_rs, 5);
         }
 
         $lastNumber = max($lastNumberDokter, $lastNumberStaf);

@@ -15,9 +15,9 @@ class JadwalDokterController extends Controller
         $query = JadwalDokter::where('is_deleted', false)->with('dokter');
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = strtolower($request->search);
             $query->whereHas('dokter', function ($q) use ($search) {
-                $q->where('nama_lengkap', 'like', "%{$search}%");
+                $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"]);
             });
         }
 

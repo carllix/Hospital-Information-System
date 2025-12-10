@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Antrian Hari Ini')
-@section('dashboard-title', 'Antrian Hari Ini')
+@section('title', 'Antrian Pasien')
+@section('dashboard-title', 'Antrian Pasien')
 
 @section('content')
 <x-toast type="success" :message="session('success')" />
@@ -11,8 +11,8 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h2 class="text-xl font-bold text-gray-800">Antrian Hari Ini</h2>
-                <p class="text-sm text-gray-600 mt-1">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
+                <h2 class="text-xl font-bold text-gray-800">Daftar Antrian</h2>
+                <p class="text-sm text-gray-600 mt-1" id="tanggalDisplay">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
             </div>
             <div class="text-right">
                 <p class="text-sm text-gray-600">Total Antrian</p>
@@ -20,23 +20,40 @@
             </div>
         </div>
 
-        <!-- Filter Dokter -->
-        <div class="max-w-xs">
-            <label for="dokter_id" class="block text-sm font-medium text-gray-700 mb-2">
-                Filter Dokter
-            </label>
-            <select
-                name="dokter_id"
-                id="dokter_id"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
-            >
-                <option value="">Semua Dokter</option>
-                @foreach($dokters as $dokter)
-                <option value="{{ $dokter->dokter_id }}">
-                    {{ $dokter->nama_lengkap }}
-                </option>
-                @endforeach
-            </select>
+        <!-- Filters -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Filter Tanggal -->
+            <div>
+                <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-2">
+                    Pilih Tanggal
+                </label>
+                <input
+                    type="date"
+                    name="tanggal"
+                    id="tanggal"
+                    value="{{ $tanggal }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                >
+            </div>
+
+            <!-- Filter Dokter -->
+            <div>
+                <label for="dokter_id" class="block text-sm font-medium text-gray-700 mb-2">
+                    Filter Dokter
+                </label>
+                <select
+                    name="dokter_id"
+                    id="dokter_id"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                >
+                    <option value="">Semua Dokter</option>
+                    @foreach($dokters as $dokter)
+                    <option value="{{ $dokter->dokter_id }}">
+                        {{ $dokter->nama_lengkap }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
         </div>
     </div>
 
@@ -47,7 +64,7 @@
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <p class="mt-4 text-gray-600">Tidak ada antrian hari ini</p>
+                <p class="mt-4 text-gray-600">Tidak ada antrian untuk tanggal yang dipilih</p>
             </div>
             @else
             <div class="overflow-x-auto">
@@ -90,10 +107,10 @@
                                 <div class="text-sm text-gray-600">{{ $pendaftaran->pasien->no_rekam_medis }}</div>
                             </td>
                             <td class="px-6 py-4">
-                                @if($pendaftaran->dokter)
-                                <div class="text-sm font-medium text-gray-900">{{ $pendaftaran->dokter->nama_lengkap }}</div>
-                                @if($pendaftaran->dokter->spesialisasi)
-                                <div class="text-xs text-gray-500">{{ $pendaftaran->dokter->spesialisasi }}</div>
+                                @if($pendaftaran->jadwalDokter?->dokter)
+                                <div class="text-sm font-medium text-gray-900">{{ $pendaftaran->jadwalDokter->dokter->nama_lengkap }}</div>
+                                @if($pendaftaran->jadwalDokter->dokter->spesialisasi)
+                                <div class="text-xs text-gray-500">{{ $pendaftaran->jadwalDokter->dokter->spesialisasi }}</div>
                                 @endif
                                 @else
                                 <div class="text-sm text-gray-500">-</div>
@@ -181,7 +198,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const tanggalInput = document.getElementById('tanggal');
     const dokterId = document.getElementById('dokter_id');
+    const tanggalDisplay = document.getElementById('tanggalDisplay');
     let debounceTimer = null;
 
     function debounce(func, delay) {
@@ -191,8 +210,22 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+    function formatTanggal(dateString) {
+        const date = new Date(dateString);
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        const dayName = days[date.getDay()];
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+
+        return `${dayName}, ${day} ${month} ${year}`;
+    }
+
     function fetchData() {
         const params = new URLSearchParams({
+            tanggal: tanggalInput.value,
             dokter_id: dokterId.value
         });
 
@@ -217,6 +250,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (newTotal) {
                     document.getElementById('totalAntrian').textContent = newTotal.textContent;
                 }
+
+                // Update tanggal display
+                if (tanggalInput.value) {
+                    tanggalDisplay.textContent = formatTanggal(tanggalInput.value);
+                }
             }
         };
 
@@ -224,8 +262,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const debouncedFetch = debounce(() => fetchData(), 500);
+    tanggalInput.addEventListener('change', debouncedFetch);
     dokterId.addEventListener('change', debouncedFetch);
 
+    // Auto-refresh every 30 seconds
     setInterval(fetchData, 30000);
 });
 

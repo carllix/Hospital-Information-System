@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Pasien;
 
 use App\Http\Controllers\Controller;
 use App\Models\Dokter;
+use App\Models\JadwalDokter;
 use App\Models\Pemeriksaan;
+use App\Models\Pendaftaran;
 use App\Models\Tagihan;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
@@ -21,20 +25,20 @@ class PasienController extends Controller
     {
         $pasien = auth()->user()->pasien;
 
-        $query = Tagihan::with(['detailTagihan', 'pembayaran', 'pendaftaran'])
-            ->where('pasien_id', $pasien->pasien_id);
+        $query = Tagihan::with(['detailTagihan', 'pembayaran', 'pemeriksaan.pendaftaran'])
+            ->whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            });
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->filled('jenis')) {
-            $query->where('jenis_tagihan', $request->jenis);
-        }
-
         $tagihans = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        $totalBelumBayar = Tagihan::where('pasien_id', $pasien->pasien_id)
+        $totalBelumBayar = Tagihan::whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            })
             ->where('status', 'belum_bayar')
             ->sum('total_tagihan');
 
@@ -45,8 +49,10 @@ class PasienController extends Controller
     {
         $pasien = auth()->user()->pasien;
 
-        $tagihan = Tagihan::with(['detailTagihan', 'pembayaran', 'pendaftaran'])
-            ->where('pasien_id', $pasien->pasien_id)
+        $tagihan = Tagihan::with(['detailTagihan', 'pembayaran', 'pemeriksaan.pendaftaran'])
+            ->whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            })
             ->where('tagihan_id', $id)
             ->firstOrFail();
 
@@ -55,13 +61,13 @@ class PasienController extends Controller
             'data' => [
                 'tagihan_id' => $tagihan->tagihan_id,
                 'tanggal' => $tagihan->created_at->translatedFormat('j F Y H:i'),
-                'jenis_tagihan' => ucfirst($tagihan->jenis_tagihan),
-                'nomor_antrian' => $tagihan->pendaftaran->nomor_antrian ?? null,
+                'nomor_antrian' => $tagihan->pemeriksaan->pendaftaran->nomor_antrian ?? null,
                 'total_tagihan' => number_format($tagihan->total_tagihan, 0, ',', '.'),
                 'status' => $tagihan->status,
                 'detail_items' => $tagihan->detailTagihan->map(function ($detail) {
                     return [
                         'nama_item' => $detail->nama_item,
+                        'jenis_item' => ucfirst($detail->jenis_item),
                         'jumlah' => $detail->jumlah,
                         'harga_satuan' => number_format($detail->harga_satuan, 0, ',', '.'),
                         'subtotal' => number_format($detail->subtotal, 0, ',', '.'),
@@ -81,14 +87,16 @@ class PasienController extends Controller
     {
         $pasien = auth()->user()->pasien;
 
-        $query = Pemeriksaan::with(['dokter', 'pendaftaran', 'resep.detailResep', 'permintaanLab.hasilLab'])
-            ->where('pasien_id', $pasien->pasien_id);
+        $query = Pemeriksaan::with(['pendaftaran.jadwalDokter.dokter', 'resep.detailResep', 'permintaanLab.hasilLab'])
+            ->whereHas('pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            });
 
         if ($request->filled('search')) {
             $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(diagnosa) LIKE ?', ["%{$search}%"])
-                    ->orWhereHas('dokter', function ($q) use ($search) {
+                    ->orWhereHas('pendaftaran.jadwalDokter.dokter', function ($q) use ($search) {
                         $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"]);
                     });
             });
@@ -103,7 +111,7 @@ class PasienController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('status_pasien', $request->status);
+            $query->where('status', $request->status);
         }
 
         $query->orderBy('tanggal_pemeriksaan', 'desc');
@@ -122,15 +130,19 @@ class PasienController extends Controller
         $pasien = auth()->user()->pasien;
 
         $pemeriksaan = Pemeriksaan::with([
-            'dokter',
+            'pendaftaran.jadwalDokter.dokter',
             'pendaftaran',
             'resep.detailResep.obat',
-            'permintaanLab.hasilLab.petugasLab',
-            'rujukan.dokterPerujuk'
+            'permintaanLab.hasilLab',
+            'rujukan'
         ])
-            ->where('pasien_id', $pasien->pasien_id)
+            ->whereHas('pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            })
             ->where('pemeriksaan_id', $id)
             ->firstOrFail();
+
+        $dokter = $pemeriksaan->pendaftaran->jadwalDokter->dokter;
 
         return response()->json([
             'success' => true,
@@ -138,8 +150,8 @@ class PasienController extends Controller
                 'pemeriksaan_id' => $pemeriksaan->pemeriksaan_id,
                 'tanggal_pemeriksaan' => $pemeriksaan->tanggal_pemeriksaan->translatedFormat('j F Y H:i'),
                 'dokter' => [
-                    'nama' => $pemeriksaan->dokter->nama_lengkap,
-                    'spesialisasi' => $pemeriksaan->dokter->spesialisasi ?? '-',
+                    'nama' => $dokter->nama_lengkap,
+                    'spesialisasi' => $dokter->spesialisasi ?? '-',
                 ],
                 'keluhan' => $pemeriksaan->pendaftaran->keluhan_utama ?? '-',
                 'anamnesa' => $pemeriksaan->anamnesa ?? '-',
@@ -154,7 +166,7 @@ class PasienController extends Controller
                 'icd10_code' => $pemeriksaan->icd10_code ?? '-',
                 'tindakan_medis' => $pemeriksaan->tindakan_medis ?? '-',
                 'catatan_dokter' => $pemeriksaan->catatan_dokter ?? '-',
-                'status_pasien' => $pemeriksaan->status_pasien,
+                'status' => $pemeriksaan->status,
                 'resep' => $pemeriksaan->resep ? [
                     'tanggal_resep' => $pemeriksaan->resep->tanggal_resep->translatedFormat('j F Y'),
                     'status' => $pemeriksaan->resep->status,
@@ -185,12 +197,12 @@ class PasienController extends Controller
                     ];
                 }),
                 'rujukan' => $pemeriksaan->rujukan ? [
+                    'tujuan_rujukan' => $pemeriksaan->rujukan->tujuan_rujukan,
                     'rs_tujuan' => $pemeriksaan->rujukan->rs_tujuan ?? '-',
                     'dokter_spesialis' => $pemeriksaan->rujukan->dokter_spesialis_tujuan ?? '-',
                     'alasan_rujukan' => $pemeriksaan->rujukan->alasan_rujukan,
                     'diagnosa_sementara' => $pemeriksaan->rujukan->diagnosa_sementara ?? '-',
                     'tanggal_rujukan' => $pemeriksaan->rujukan->tanggal_rujukan->translatedFormat('j F Y'),
-                    'dokter_perujuk' => $pemeriksaan->rujukan->dokterPerujuk->nama_lengkap,
                 ] : null,
             ]
         ]);
@@ -201,9 +213,136 @@ class PasienController extends Controller
         return view('pasien.health-monitoring');
     }
 
+    public function pendaftaranKunjungan(): View
+    {
+        // Get list of unique specializations from active doctors
+        $spesialisasiList = Dokter::where('is_deleted', false)
+            ->distinct()
+            ->orderBy('spesialisasi')
+            ->pluck('spesialisasi');
+
+        return view('pasien.pendaftaran-kunjungan', compact('spesialisasiList'));
+    }
+
+    public function getDokterBySpesialisasi(Request $request)
+    {
+        $request->validate([
+            'spesialisasi' => 'required|string',
+        ]);
+
+        $dokters = Dokter::where('spesialisasi', $request->spesialisasi)
+            ->where('is_deleted', false)
+            ->select('dokter_id', 'nama_lengkap', 'spesialisasi')
+            ->orderBy('nama_lengkap')
+            ->get();
+
+        return response()->json($dokters);
+    }
+
+    public function getJadwalByDokter(Request $request)
+    {
+        $request->validate([
+            'dokter_id' => 'required|exists:dokter,dokter_id',
+        ]);
+
+        $jadwals = JadwalDokter::where('dokter_id', $request->dokter_id)
+            ->where('is_deleted', false)
+            ->orderBy('hari_praktik')
+            ->orderBy('waktu_mulai')
+            ->get()
+            ->map(function ($jadwal) {
+                return [
+                    'jadwal_id' => $jadwal->jadwal_id,
+                    'hari_praktik' => $jadwal->hari_praktik,
+                    'waktu_mulai' => \Carbon\Carbon::parse($jadwal->waktu_mulai)->format('H:i'),
+                    'waktu_selesai' => \Carbon\Carbon::parse($jadwal->waktu_selesai)->format('H:i'),
+                    'max_pasien' => $jadwal->max_pasien,
+                ];
+            });
+
+        return response()->json($jadwals);
+    }
+
+    public function storePendaftaranKunjungan(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'jadwal_id' => 'required|exists:jadwal_dokter,jadwal_id',
+            'tanggal_kunjungan' => 'required|date|after_or_equal:today',
+            'keluhan_utama' => 'required|string|max:500',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $pasien = auth()->user()->pasien;
+            $jadwal = JadwalDokter::with('dokter')->findOrFail($request->jadwal_id);
+
+            // Count existing registrations for this doctor on the visit date
+            $lastAntrian = Pendaftaran::whereHas('jadwalDokter', function ($q) use ($jadwal) {
+                    $q->where('dokter_id', $jadwal->dokter_id);
+                })
+                ->whereDate('tanggal_kunjungan', $request->tanggal_kunjungan)
+                ->count();
+
+            // Check if max_pasien limit is reached
+            if ($lastAntrian >= $jadwal->max_pasien) {
+                DB::rollBack();
+                return redirect()->route('pasien.pendaftaran-kunjungan')
+                    ->with('error', "Kuota pendaftaran untuk jadwal ini sudah penuh (max: {$jadwal->max_pasien} pasien)");
+            }
+
+            // Generate queue number with format
+            $nameParts = explode(' ', trim($jadwal->dokter->nama_lengkap));
+            if (count($nameParts) >= 2) {
+                $initials = strtoupper(substr($nameParts[0], 0, 1) . substr($nameParts[1], 0, 1));
+            } else {
+                $initials = 'D' . strtoupper(substr($nameParts[0], 0, 1));
+            }
+
+            $dokterId = str_pad($jadwal->dokter_id, 3, '0', STR_PAD_LEFT);
+            $tanggal = \Carbon\Carbon::parse($request->tanggal_kunjungan)->format('dmY');
+            $queueNumber = str_pad($lastAntrian + 1, 2, '0', STR_PAD_LEFT);
+            $nomorAntrian = $initials . $dokterId . $tanggal . $queueNumber;
+
+            Pendaftaran::create([
+                'pasien_id' => $pasien->pasien_id,
+                'jadwal_id' => $request->jadwal_id,
+                'tanggal_daftar' => now(),
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                'nomor_antrian' => $nomorAntrian,
+                'keluhan_utama' => $request->keluhan_utama,
+                'staf_pendaftaran_id' => null, // Online registration
+                'status' => 'menunggu',
+            ]);
+
+            DB::commit();
+            return redirect()->route('pasien.pendaftaran-kunjungan')
+                ->with('success', "Pendaftaran berhasil! Nomor Antrian: {$nomorAntrian} - Dr. {$jadwal->dokter->nama_lengkap} ({$jadwal->hari_praktik}, {$request->tanggal_kunjungan})");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('pasien.pendaftaran-kunjungan')
+                ->with('error', 'Pendaftaran gagal: ' . $e->getMessage());
+        }
+    }
+
+    public function jadwalKunjungan(): View
+    {
+        $pasien = auth()->user()->pasien;
+
+        // Get upcoming appointments (today and future, not completed/cancelled)
+        $jadwalKunjungan = Pendaftaran::with(['jadwalDokter.dokter', 'pemeriksaan'])
+            ->where('pasien_id', $pasien->pasien_id)
+            ->whereDate('tanggal_kunjungan', '>=', today())
+            ->whereIn('status', ['menunggu', 'dipanggil', 'diperiksa'])
+            ->orderBy('tanggal_kunjungan', 'asc')
+            ->orderBy('tanggal_daftar', 'asc')
+            ->get();
+
+        return view('pasien.jadwal-kunjungan', compact('jadwalKunjungan'));
+    }
+
     public function jadwalDokter(Request $request): View
     {
-        $query = Dokter::query();
+        $query = Dokter::with('jadwalDokter')->where('is_deleted', false);
 
         if ($request->filled('search')) {
             $search = strtolower($request->search);
@@ -215,6 +354,18 @@ class PasienController extends Controller
         }
 
         $dokters = $query->orderBy('nama_lengkap')->get();
+
+        // Transform jadwal data for the view
+        $dokters->each(function ($dokter) {
+            $dokter->jadwal_praktik = $dokter->jadwalDokter->where('is_deleted', false)->map(function ($jadwal) {
+                return [
+                    'hari' => $jadwal->hari_praktik,
+                    'jam_mulai' => \Carbon\Carbon::parse($jadwal->waktu_mulai)->format('H:i'),
+                    'jam_selesai' => \Carbon\Carbon::parse($jadwal->waktu_selesai)->format('H:i'),
+                    'max_pasien' => $jadwal->max_pasien,
+                ];
+            })->values();
+        });
 
         $spesialisasiList = [
             'Umum',
@@ -236,7 +387,9 @@ class PasienController extends Controller
             'Patologi Klinik'
         ];
 
-        return view('pendaftaran.jadwal-dokter', compact('dokters', 'spesialisasiList'));
+        $routeName = 'pasien.jadwal-dokter';
+
+        return view('pendaftaran.jadwal-dokter', compact('dokters', 'spesialisasiList', 'routeName'));
     }
 
     public function profile(): View

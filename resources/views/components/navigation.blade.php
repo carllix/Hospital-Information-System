@@ -9,7 +9,7 @@ $stafMenus = [
     ['name' => 'Pendaftaran Pasien Baru', 'route' => '/pendaftaran/pasien-baru', 'icon' => 'profile'],
     ['name' => 'Pendaftaran Kunjungan', 'route' => '/pendaftaran/kunjungan', 'icon' => 'medical'],
     ['name' => 'Data Pasien', 'route' => '/pendaftaran/data-pasien', 'icon' => 'profile'],
-    ['name' => 'Antrian Hari Ini', 'route' => '/pendaftaran/antrian', 'icon' => 'dashboard'],
+    ['name' => 'Daftar Antrian', 'route' => '/pendaftaran/antrian', 'icon' => 'dashboard'],
     ['name' => 'Jadwal Dokter', 'route' => '/pendaftaran/jadwal-dokter', 'icon' => 'profile'],
     ['name' => 'Riwayat Pendaftaran', 'route' => '/pendaftaran/riwayat', 'icon' => 'medical'],
     ['name' => 'Profil Saya', 'route' => '/pendaftaran/profile', 'icon' => 'profile'],
@@ -40,8 +40,10 @@ $stafMenus = [
 $roleMenus = [
 'pasien' => [
     ['name' => 'Dashboard', 'route' => '/pasien/dashboard', 'icon' => 'dashboard'],
-    ['name' => 'Pembayaran', 'route' => '/pasien/pembayaran', 'icon' => 'payment'],
+    ['name' => 'Pendaftaran Kunjungan', 'route' => '/pasien/pendaftaran-kunjungan', 'icon' => 'medical'],
+    ['name' => 'Jadwal Kunjungan', 'route' => '/pasien/jadwal-kunjungan', 'icon' => 'medical'],
     ['name' => 'Rekam Medis', 'route' => '/pasien/rekam-medis', 'icon' => 'medical'],
+    ['name' => 'Pembayaran', 'route' => '/pasien/pembayaran', 'icon' => 'payment'],
     ['name' => 'Health Monitoring', 'route' => '/pasien/health-monitoring', 'icon' => 'health'],
     ['name' => 'Jadwal Dokter', 'route' => '/pasien/jadwal-dokter', 'icon' => 'medical'],
     ['name' => 'Profil', 'route' => '/pasien/profile', 'icon' => 'profile'],
