@@ -31,48 +31,53 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
     // Pasien Routes
-    Route::get('/pasien/dashboard', [PasienController::class, 'dashboard'])->name('pasien.dashboard');
+    Route::prefix('pasien')->name('pasien.')->middleware(['auth', 'role:pasien'])->group(function () {
+        Route::get('/dashboard', [PasienController::class, 'dashboard'])->name('dashboard');
 
-    // Pendaftaran Kunjungan Online
-    Route::get('/pasien/pendaftaran-kunjungan', [PasienController::class, 'pendaftaranKunjungan'])->name('pasien.pendaftaran-kunjungan');
-    Route::post('/pasien/get-dokter', [PasienController::class, 'getDokterBySpesialisasi'])->name('pasien.get-dokter');
-    Route::post('/pasien/get-jadwal', [PasienController::class, 'getJadwalByDokter'])->name('pasien.get-jadwal');
-    Route::post('/pasien/pendaftaran-kunjungan', [PasienController::class, 'storePendaftaranKunjungan'])->name('pasien.pendaftaran-kunjungan.store');
+        // Pendaftaran Kunjungan Online
+        Route::get('/pendaftaran-kunjungan', [PasienController::class, 'pendaftaranKunjungan'])->name('pendaftaran-kunjungan');
+        Route::post('/get-dokter', [PasienController::class, 'getDokterBySpesialisasi'])->name('get-dokter');
+        Route::post('/get-jadwal', [PasienController::class, 'getJadwalByDokter'])->name('get-jadwal');
+        Route::post('/pendaftaran-kunjungan', [PasienController::class, 'storePendaftaranKunjungan'])->name('pendaftaran-kunjungan.store');
 
-    // Jadwal & Monitoring
-    Route::get('/pasien/jadwal-kunjungan', [PasienController::class, 'jadwalKunjungan'])->name('pasien.jadwal-kunjungan');
-    Route::get('/pasien/pembayaran', [PasienController::class, 'pembayaran'])->name('pasien.pembayaran');
-    Route::get('/pasien/pembayaran/{id}', [PasienController::class, 'pembayaranDetail'])->name('pasien.pembayaran.detail');
-    Route::get('/pasien/rekam-medis', [PasienController::class, 'rekamMedis'])->name('pasien.rekam-medis');
-    Route::get('/pasien/rekam-medis/{id}', [PasienController::class, 'rekamMedisDetail'])->name('pasien.rekam-medis.detail');
-    Route::get('/pasien/health-monitoring', [PasienController::class, 'healthMonitoring'])->name('pasien.health-monitoring');
-    Route::get('/pasien/jadwal-dokter', [PasienController::class, 'jadwalDokter'])->name('pasien.jadwal-dokter');
+        // Jadwal & Monitoring
+        Route::get('/jadwal-kunjungan', [PasienController::class, 'jadwalKunjungan'])->name('jadwal-kunjungan');
+        Route::get('/pembayaran', [PasienController::class, 'pembayaran'])->name('pembayaran');
+        Route::get('/pembayaran/{id}', [PasienController::class, 'pembayaranDetail'])->name('pembayaran.detail');
+        Route::get('/rekam-medis', [PasienController::class, 'rekamMedis'])->name('rekam-medis');
+        Route::get('/rekam-medis/{id}', [PasienController::class, 'rekamMedisDetail'])->name('rekam-medis.detail');
+        Route::get('/health-monitoring', [PasienController::class, 'healthMonitoring'])->name('health-monitoring');
+        Route::get('/wearable-data', [PasienController::class, 'getLatestWearableData'])->name('wearable-data');
+        Route::get('/jadwal-dokter', [PasienController::class, 'jadwalDokter'])->name('jadwal-dokter');
 
-    // Profile
-    Route::get('/pasien/profile', [PasienController::class, 'profile'])->name('pasien.profile');
-    Route::get('/pasien/profile/edit', [PasienController::class, 'editProfile'])->name('pasien.profile.edit');
-    Route::put('/pasien/profile', [PasienController::class, 'updateProfile'])->name('pasien.profile.update');
+        // Profile
+        Route::get('/profile', [PasienController::class, 'profile'])->name('profile');
+        Route::get('/profile/edit', [PasienController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/profile', [PasienController::class, 'updateProfile'])->name('profile.update');
+    });
 
     // Pendaftaran Routes
-    Route::get('/pendaftaran/dashboard', [PendaftaranController::class, 'dashboard'])->name('pendaftaran.dashboard');
-    Route::get('/pendaftaran/pasien-baru', [PendaftaranController::class, 'pasienBaru'])->name('pendaftaran.pasien-baru');
-    Route::post('/pendaftaran/pasien-baru', [PendaftaranController::class, 'storePasienBaru'])->name('pendaftaran.pasien-baru.store');
-    Route::get('/pendaftaran/kunjungan', [PendaftaranController::class, 'kunjungan'])->name('pendaftaran.kunjungan');
-    Route::post('/pendaftaran/search-pasien', [PendaftaranController::class, 'searchPasien'])->name('pendaftaran.search-pasien');
-    Route::post('/pendaftaran/get-dokter', [PendaftaranController::class, 'getDokterBySpesialisasi'])->name('pendaftaran.get-dokter');
-    Route::post('/pendaftaran/get-jadwal', [PendaftaranController::class, 'getJadwalByDokter'])->name('pendaftaran.get-jadwal');
-    Route::post('/pendaftaran/store', [PendaftaranController::class, 'storePendaftaran'])->name('pendaftaran.store');
-    Route::get('/pendaftaran/data-pasien', [PendaftaranController::class, 'dataPasien'])->name('pendaftaran.data-pasien');
-    Route::get('/pendaftaran/antrian', [PendaftaranController::class, 'antrian'])->name('pendaftaran.antrian');
-    Route::patch('/pendaftaran/{id}/status', [PendaftaranController::class, 'updateStatus'])->name('pendaftaran.update-status');
-    Route::get('/pendaftaran/jadwal-dokter', [PendaftaranController::class, 'jadwalDokter'])->name('pendaftaran.jadwal-dokter');
-    Route::get('/pendaftaran/riwayat', [PendaftaranController::class, 'riwayat'])->name('pendaftaran.riwayat');
-    Route::get('/pendaftaran/profile', [PendaftaranController::class, 'profile'])->name('pendaftaran.profile');
-    Route::get('/pendaftaran/profile/edit', [PendaftaranController::class, 'editProfile'])->name('pendaftaran.profile.edit');
-    Route::put('/pendaftaran/profile', [PendaftaranController::class, 'updateProfile'])->name('pendaftaran.profile.update');
+    Route::prefix('pendaftaran')->name('pendaftaran.')->middleware(['auth', 'role:staf,pendaftaran'])->group(function () {
+        Route::get('/dashboard', [PendaftaranController::class, 'dashboard'])->name('dashboard');
+        Route::get('/pasien-baru', [PendaftaranController::class, 'pasienBaru'])->name('pasien-baru');
+        Route::post('/pasien-baru', [PendaftaranController::class, 'storePasienBaru'])->name('pasien-baru.store');
+        Route::get('/kunjungan', [PendaftaranController::class, 'kunjungan'])->name('kunjungan');
+        Route::post('/search-pasien', [PendaftaranController::class, 'searchPasien'])->name('search-pasien');
+        Route::post('/get-dokter', [PendaftaranController::class, 'getDokterBySpesialisasi'])->name('get-dokter');
+        Route::post('/get-jadwal', [PendaftaranController::class, 'getJadwalByDokter'])->name('get-jadwal');
+        Route::post('/store', [PendaftaranController::class, 'storePendaftaran'])->name('store');
+        Route::get('/data-pasien', [PendaftaranController::class, 'dataPasien'])->name('data-pasien');
+        Route::get('/antrian', [PendaftaranController::class, 'antrian'])->name('antrian');
+        Route::patch('/{id}/status', [PendaftaranController::class, 'updateStatus'])->name('update-status');
+        Route::get('/jadwal-dokter', [PendaftaranController::class, 'jadwalDokter'])->name('jadwal-dokter');
+        Route::get('/riwayat', [PendaftaranController::class, 'riwayat'])->name('riwayat');
+        Route::get('/profile', [PendaftaranController::class, 'profile'])->name('profile');
+        Route::get('/profile/edit', [PendaftaranController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/profile', [PendaftaranController::class, 'updateProfile'])->name('profile.update');
+    });
 
     // Dokter Routes
-    Route::prefix('dokter')->name('dokter.')->group(function () {
+    Route::prefix('dokter')->name('dokter.')->middleware(['auth', 'role:dokter'])->group(function () {
         Route::get('/dashboard', [DokterController::class, 'dashboard'])->name('dashboard');
         Route::get('/antrian', [DokterController::class, 'antrian'])->name('antrian');
         Route::patch('/panggil-pasien/{id}', [DokterController::class, 'panggilPasien'])->name('panggil-pasien');
@@ -104,7 +109,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Farmasi Routes
-    Route::prefix('farmasi')->name('farmasi.')->group(function () {
+    Route::prefix('farmasi')->name('farmasi.')->middleware(['auth', 'role:staf,farmasi'])->group(function () {
         Route::get('/dashboard', [FarmasiController::class, 'dashboard'])->name('dashboard');
 
         // Resep
@@ -127,7 +132,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Lab Routes
-    Route::prefix('lab')->name('lab.')->group(function () {
+    Route::prefix('lab')->name('lab.')->middleware(['auth', 'role:staf,laboratorium'])->group(function () {
         Route::get('/dashboard', [LabController::class, 'dashboard'])->name('dashboard');
 
         // Permintaan Lab
@@ -149,8 +154,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/profile', [LabController::class, 'updateProfile'])->name('profile.update');
     });
 
-    // Kasir Klinik Routes
-    Route::prefix('kasir-klinik')->name('kasir-klinik.')->middleware(['auth', 'role:kasir_klinik'])->group(function () {
+    // Kasir Routes (Unified for Klinik, Apotek, and Lab)
+    Route::prefix('kasir')->name('kasir.')->middleware(['auth', 'role:staf,kasir'])->group(function () {
         Route::get('/', [KasirKlinikController::class, 'dashboard'])->name('dashboard');
         Route::get('/dashboard', [KasirKlinikController::class, 'dashboard'])->name('dashboard');
         Route::get('/riwayat', [KasirKlinikController::class, 'riwayat'])->name('riwayat');
@@ -158,17 +163,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/tagihan/{tagihan}', [KasirKlinikController::class, 'show'])->name('show');
         Route::post('/tagihan/{tagihan}/bayar', [KasirKlinikController::class, 'processPayment'])->name('processPayment');
         Route::get('/tagihan/{tagihan}/invoice', [KasirKlinikController::class, 'invoice'])->name('invoice');
-    });
-
-    // Kasir Apotek Routes
-    Route::prefix('kasir-apotek')->name('kasir-apotek.')->middleware(['auth', 'role:kasir_apotek'])->group(function () {
-        Route::get('/', [KasirApotekController::class, 'dashboard'])->name('dashboard');
-        Route::get('/index', [KasirApotekController::class, 'dashboard'])->name('index');
-        Route::get('/riwayat', [KasirApotekController::class, 'riwayat'])->name('riwayat');
-        Route::get('/laporan', [KasirApotekController::class, 'laporan'])->name('laporan');
-        Route::get('/tagihan/{tagihan}', [KasirApotekController::class, 'show'])->name('show');
-        Route::post('/tagihan/{tagihan}/bayar', [KasirApotekController::class, 'processPayment'])->name('processPayment');
-        Route::get('/tagihan/{tagihan}/invoice', [KasirApotekController::class, 'invoice'])->name('invoice');
     });
 
     // Kasir Lab Routes

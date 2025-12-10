@@ -8,6 +8,7 @@ use App\Models\JadwalDokter;
 use App\Models\Pemeriksaan;
 use App\Models\Pendaftaran;
 use App\Models\Tagihan;
+use App\Models\WearableData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,35 @@ class PasienController extends Controller
 {
     public function dashboard(): View
     {
-        return view('pasien.dashboard');
+        $pasien = auth()->user()->pasien;
+
+        // Jadwal Kunjungan Mendatang
+        $jadwalKunjunganMendatang = Pendaftaran::where('pasien_id', $pasien->pasien_id)
+            ->whereIn('status', ['menunggu', 'dipanggil', 'diperiksa'])
+            ->where('tanggal_kunjungan', '>=', today())
+            ->count();
+
+        // Total Kunjungan
+        $totalKunjungan = Pendaftaran::where('pasien_id', $pasien->pasien_id)->count();
+
+        // Riwayat Pemeriksaan
+        $riwayatPemeriksaan = Pemeriksaan::whereHas('pendaftaran', function ($q) use ($pasien) {
+            $q->where('pasien_id', $pasien->pasien_id);
+        })->count();
+
+        // Total Tagihan Belum Bayar
+        $totalBelumBayar = Tagihan::whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
+            $q->where('pasien_id', $pasien->pasien_id);
+        })
+            ->whereIn('status', ['belum_bayar', 'sebagian'])
+            ->sum('total_tagihan');
+
+        return view('pasien.dashboard', compact(
+            'jadwalKunjunganMendatang',
+            'totalKunjungan',
+            'riwayatPemeriksaan',
+            'totalBelumBayar'
+        ));
     }
 
     public function pembayaran(Request $request): View
@@ -37,8 +66,8 @@ class PasienController extends Controller
         $tagihans = $query->orderBy('created_at', 'desc')->paginate(10);
 
         $totalBelumBayar = Tagihan::whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
-                $q->where('pasien_id', $pasien->pasien_id);
-            })
+            $q->where('pasien_id', $pasien->pasien_id);
+        })
             ->where('status', 'belum_bayar')
             ->sum('total_tagihan');
 
@@ -210,7 +239,54 @@ class PasienController extends Controller
 
     public function healthMonitoring(): View
     {
-        return view('pasien.health-monitoring');
+        $pasien = auth()->user()->pasien;
+
+        // Get latest wearable data
+        $latestData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->first();
+
+        // Get data for charts (last 50 points for better performance)
+        $chartData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->limit(50)
+            ->get()
+            ->reverse()
+            ->values();
+
+        // Get historical data (last 20 records for table)
+        $historicalData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->limit(20)
+            ->get();
+
+        return view('pasien.health-monitoring', compact('latestData', 'chartData', 'historicalData'));
+    }
+
+    public function getLatestWearableData()
+    {
+        $pasien = auth()->user()->pasien;
+
+        $latestData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->first();
+
+        if (!$latestData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No data available'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'heart_rate' => $latestData->heart_rate,
+                'oxygen_saturation' => $latestData->oxygen_saturation,
+                'timestamp' => $latestData->timestamp->format('Y-m-d H:i:s'),
+                'timestamp_display' => $latestData->timestamp->translatedFormat('j F Y H:i'),
+            ]
+        ]);
     }
 
     public function pendaftaranKunjungan(): View
@@ -278,8 +354,8 @@ class PasienController extends Controller
 
             // Count existing registrations for this doctor on the visit date
             $lastAntrian = Pendaftaran::whereHas('jadwalDokter', function ($q) use ($jadwal) {
-                    $q->where('dokter_id', $jadwal->dokter_id);
-                })
+                $q->where('dokter_id', $jadwal->dokter_id);
+            })
                 ->whereDate('tanggal_kunjungan', $request->tanggal_kunjungan)
                 ->count();
 
@@ -315,7 +391,7 @@ class PasienController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->route('pasien.pendaftaran-kunjungan')
+            return redirect()->route('pasien.jadwal-kunjungan')
                 ->with('success', "Pendaftaran berhasil! Nomor Antrian: {$nomorAntrian} - Dr. {$jadwal->dokter->nama_lengkap} ({$jadwal->hari_praktik}, {$request->tanggal_kunjungan})");
         } catch (\Exception $e) {
             DB::rollBack();

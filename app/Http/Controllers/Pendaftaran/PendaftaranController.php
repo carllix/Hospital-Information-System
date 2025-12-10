@@ -23,7 +23,31 @@ class PendaftaranController extends Controller
 {
     public function dashboard(): View
     {
-        return view('pendaftaran.dashboard');
+        $staf = auth()->user()->staf;
+
+        // Pendaftaran Hari Ini
+        $pendaftaranHariIni = Pendaftaran::whereDate('tanggal_daftar', today())->count();
+
+        // Total Pasien Terdaftar
+        $totalPasien = Pasien::where('is_deleted', false)->count();
+
+        // Antrian Menunggu (hari ini)
+        $antrianMenunggu = Pendaftaran::whereDate('tanggal_kunjungan', today())
+            ->where('status', 'menunggu')
+            ->count();
+
+        // Pendaftaran oleh staf ini (bulan ini)
+        $pendaftaranBulanIni = Pendaftaran::where('staf_pendaftaran_id', $staf->staf_id)
+            ->whereMonth('tanggal_daftar', now()->month)
+            ->whereYear('tanggal_daftar', now()->year)
+            ->count();
+
+        return view('pendaftaran.dashboard', compact(
+            'pendaftaranHariIni',
+            'totalPasien',
+            'antrianMenunggu',
+            'pendaftaranBulanIni'
+        ));
     }
 
     public function pasienBaru(): View
@@ -182,8 +206,8 @@ class PendaftaranController extends Controller
 
             // Count existing registrations for this doctor on the visit date
             $lastAntrian = Pendaftaran::whereHas('jadwalDokter', function ($q) use ($jadwal) {
-                    $q->where('dokter_id', $jadwal->dokter_id);
-                })
+                $q->where('dokter_id', $jadwal->dokter_id);
+            })
                 ->whereDate('tanggal_kunjungan', $request->tanggal_kunjungan)
                 ->count();
 
