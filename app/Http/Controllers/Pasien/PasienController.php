@@ -8,6 +8,7 @@ use App\Models\JadwalDokter;
 use App\Models\Pemeriksaan;
 use App\Models\Pendaftaran;
 use App\Models\Tagihan;
+use App\Models\WearableData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -238,7 +239,54 @@ class PasienController extends Controller
 
     public function healthMonitoring(): View
     {
-        return view('pasien.health-monitoring');
+        $pasien = auth()->user()->pasien;
+
+        // Get latest wearable data
+        $latestData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->first();
+
+        // Get data for charts (last 50 points for better performance)
+        $chartData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->limit(50)
+            ->get()
+            ->reverse()
+            ->values();
+
+        // Get historical data (last 20 records for table)
+        $historicalData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->limit(20)
+            ->get();
+
+        return view('pasien.health-monitoring', compact('latestData', 'chartData', 'historicalData'));
+    }
+
+    public function getLatestWearableData()
+    {
+        $pasien = auth()->user()->pasien;
+
+        $latestData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->first();
+
+        if (!$latestData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No data available'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'heart_rate' => $latestData->heart_rate,
+                'oxygen_saturation' => $latestData->oxygen_saturation,
+                'timestamp' => $latestData->timestamp->format('Y-m-d H:i:s'),
+                'timestamp_display' => $latestData->timestamp->translatedFormat('j F Y H:i'),
+            ]
+        ]);
     }
 
     public function pendaftaranKunjungan(): View
