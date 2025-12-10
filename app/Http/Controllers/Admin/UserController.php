@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordNotification;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -16,7 +19,7 @@ class UserController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('email', 'like', "%{$search}%");
+            $query->whereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%']);
         }
 
         if ($request->filled('role')) {
@@ -124,6 +127,32 @@ class UserController extends Controller
 
             return redirect()->route('admin.users.index')
                 ->with('success', 'User berhasil dihapus!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function resetPassword(string $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->is_deleted) {
+            abort(404);
+        }
+
+        try {
+            // Generate random password
+            $newPassword = Str::random(12);
+
+            // Update user password
+            $user->update([
+                'password' => Hash::make($newPassword)
+            ]);
+
+            // Send email notification
+            Mail::to($user->email)->send(new PasswordNotification($newPassword));
+
+            return back()->with('success', 'Password berhasil direset dan dikirim ke email pengguna!');
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
