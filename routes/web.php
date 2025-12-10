@@ -32,12 +32,23 @@ Route::middleware('auth')->group(function () {
 
     // Pasien Routes
     Route::get('/pasien/dashboard', [PasienController::class, 'dashboard'])->name('pasien.dashboard');
+
+    // Pendaftaran Kunjungan Online
+    Route::get('/pasien/pendaftaran-kunjungan', [PasienController::class, 'pendaftaranKunjungan'])->name('pasien.pendaftaran-kunjungan');
+    Route::post('/pasien/get-dokter', [PasienController::class, 'getDokterBySpesialisasi'])->name('pasien.get-dokter');
+    Route::post('/pasien/get-jadwal', [PasienController::class, 'getJadwalByDokter'])->name('pasien.get-jadwal');
+    Route::post('/pasien/pendaftaran-kunjungan', [PasienController::class, 'storePendaftaranKunjungan'])->name('pasien.pendaftaran-kunjungan.store');
+
+    // Jadwal & Monitoring
+    Route::get('/pasien/jadwal-kunjungan', [PasienController::class, 'jadwalKunjungan'])->name('pasien.jadwal-kunjungan');
     Route::get('/pasien/pembayaran', [PasienController::class, 'pembayaran'])->name('pasien.pembayaran');
     Route::get('/pasien/pembayaran/{id}', [PasienController::class, 'pembayaranDetail'])->name('pasien.pembayaran.detail');
     Route::get('/pasien/rekam-medis', [PasienController::class, 'rekamMedis'])->name('pasien.rekam-medis');
     Route::get('/pasien/rekam-medis/{id}', [PasienController::class, 'rekamMedisDetail'])->name('pasien.rekam-medis.detail');
     Route::get('/pasien/health-monitoring', [PasienController::class, 'healthMonitoring'])->name('pasien.health-monitoring');
     Route::get('/pasien/jadwal-dokter', [PasienController::class, 'jadwalDokter'])->name('pasien.jadwal-dokter');
+
+    // Profile
     Route::get('/pasien/profile', [PasienController::class, 'profile'])->name('pasien.profile');
     Route::get('/pasien/profile/edit', [PasienController::class, 'editProfile'])->name('pasien.profile.edit');
     Route::put('/pasien/profile', [PasienController::class, 'updateProfile'])->name('pasien.profile.update');
@@ -48,6 +59,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/pendaftaran/pasien-baru', [PendaftaranController::class, 'storePasienBaru'])->name('pendaftaran.pasien-baru.store');
     Route::get('/pendaftaran/kunjungan', [PendaftaranController::class, 'kunjungan'])->name('pendaftaran.kunjungan');
     Route::post('/pendaftaran/search-pasien', [PendaftaranController::class, 'searchPasien'])->name('pendaftaran.search-pasien');
+    Route::post('/pendaftaran/get-dokter', [PendaftaranController::class, 'getDokterBySpesialisasi'])->name('pendaftaran.get-dokter');
+    Route::post('/pendaftaran/get-jadwal', [PendaftaranController::class, 'getJadwalByDokter'])->name('pendaftaran.get-jadwal');
     Route::post('/pendaftaran/store', [PendaftaranController::class, 'storePendaftaran'])->name('pendaftaran.store');
     Route::get('/pendaftaran/data-pasien', [PendaftaranController::class, 'dataPasien'])->name('pendaftaran.data-pasien');
     Route::get('/pendaftaran/antrian', [PendaftaranController::class, 'antrian'])->name('pendaftaran.antrian');
@@ -172,7 +185,13 @@ Route::middleware('auth')->group(function () {
     // Admin Routes
     Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+
+        // Dokter Routes with Jadwal
         Route::resource('dokter', \App\Http\Controllers\Admin\DokterController::class);
+        Route::post('/dokter/{id}/jadwal', [\App\Http\Controllers\Admin\DokterController::class, 'storeJadwal'])->name('dokter.jadwal.store');
+        Route::put('/dokter/{dokterId}/jadwal/{jadwalId}', [\App\Http\Controllers\Admin\DokterController::class, 'updateJadwal'])->name('dokter.jadwal.update');
+        Route::delete('/dokter/{dokterId}/jadwal/{jadwalId}', [\App\Http\Controllers\Admin\DokterController::class, 'destroyJadwal'])->name('dokter.jadwal.destroy');
+
         Route::resource('staf', \App\Http\Controllers\Admin\StafController::class);
         Route::resource('jadwal-dokter', \App\Http\Controllers\Admin\JadwalDokterController::class);
         Route::resource('obat', \App\Http\Controllers\Admin\ObatController::class);

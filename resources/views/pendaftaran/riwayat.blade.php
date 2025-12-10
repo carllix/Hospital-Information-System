@@ -124,10 +124,12 @@
             <table class="w-full">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Daftar</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kunjungan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Antrian</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pasien</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dokter</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jadwal</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keluhan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Staff</th>
@@ -139,6 +141,9 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {{ $pendaftaran->tanggal_daftar->format('d/m/Y H:i') }}
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ \Carbon\Carbon::parse($pendaftaran->tanggal_kunjungan)->format('d/m/Y') }}
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#fff5f8] text-[#d14a7a]">
                                 {{ $pendaftaran->nomor_antrian }}
@@ -149,9 +154,20 @@
                             <div class="text-gray-500">{{ $pendaftaran->pasien->no_rekam_medis }}</div>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-900">
-                            {{ $pendaftaran->dokter->nama_lengkap ?? '-' }}
-                            @if($pendaftaran->dokter?->spesialisasi)
-                            <div class="text-xs text-gray-500">{{ $pendaftaran->dokter->spesialisasi }}</div>
+                            {{ $pendaftaran->jadwalDokter->dokter->nama_lengkap ?? '-' }}
+                            @if($pendaftaran->jadwalDokter?->dokter?->spesialisasi)
+                            <div class="text-xs text-gray-500">{{ $pendaftaran->jadwalDokter->dokter->spesialisasi }}</div>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            @if($pendaftaran->jadwalDokter)
+                            <div class="font-medium">{{ $pendaftaran->jadwalDokter->hari_praktik }}</div>
+                            <div class="text-xs text-gray-500">
+                                {{ \Carbon\Carbon::parse($pendaftaran->jadwalDokter->waktu_mulai)->format('H:i') }} -
+                                {{ \Carbon\Carbon::parse($pendaftaran->jadwalDokter->waktu_selesai)->format('H:i') }}
+                            </div>
+                            @else
+                            <span class="text-gray-400">-</span>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-900">
