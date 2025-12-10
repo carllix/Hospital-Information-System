@@ -34,10 +34,8 @@
                     <select id="status" name="status"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d]">
                         <option value="">Semua Status</option>
-                        <option value="selesai_penanganan" {{ request('status') == 'selesai_penanganan' ? 'selected' : '' }}>Selesai</option>
-                        <option value="dirujuk" {{ request('status') == 'dirujuk' ? 'selected' : '' }}>Dirujuk</option>
-                        <option value="perlu_resep" {{ request('status') == 'perlu_resep' ? 'selected' : '' }}>Perlu Resep</option>
-                        <option value="perlu_lab" {{ request('status') == 'perlu_lab' ? 'selected' : '' }}>Perlu Lab</option>
+                        <option value="dalam_pemeriksaan" {{ request('status') == 'dalam_pemeriksaan' ? 'selected' : '' }}>Dalam Pemeriksaan</option>
+                        <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
                     </select>
                 </div>
             </div>
@@ -229,18 +227,12 @@
         const modalContent = document.getElementById('modalContent');
 
         let statusBadge = '';
-        switch(data.status_pasien) {
-            case 'selesai_penanganan':
+        switch(data.status) {
+            case 'selesai':
                 statusBadge = '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-green-100 text-green-800">Selesai</span>';
                 break;
-            case 'dirujuk':
-                statusBadge = '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-blue-100 text-blue-800">Dirujuk</span>';
-                break;
-            case 'perlu_resep':
-                statusBadge = '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-yellow-100 text-yellow-800">Perlu Resep</span>';
-                break;
-            case 'perlu_lab':
-                statusBadge = '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-orange-100 text-orange-800">Perlu Lab</span>';
+            case 'dalam_pemeriksaan':
+                statusBadge = '<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-blue-100 text-blue-800">Dalam Pemeriksaan</span>';
                 break;
         }
 
@@ -450,7 +442,7 @@
                         </div>
                         ${data.rujukan.dokter_spesialis !== '-' ? `
                             <div>
-                                <p class="text-sm text-gray-600">Dokter Spesialis</p>
+                                <p class="text-sm text-gray-600">Dokter Spesialis Tujuan</p>
                                 <p class="text-base text-gray-900">${data.rujukan.dokter_spesialis}</p>
                             </div>
                         ` : ''}
@@ -463,8 +455,8 @@
                             <p class="text-base text-gray-900">${data.rujukan.diagnosa_sementara}</p>
                         </div>
                         <div class="pt-2 border-t border-gray-200">
+                            <p class="text-xs text-gray-600">Tujuan Rujukan: ${data.rujukan.tujuan_rujukan}</p>
                             <p class="text-xs text-gray-600">Tanggal Rujukan: ${data.rujukan.tanggal_rujukan}</p>
-                            <p class="text-xs text-gray-600">Dokter Perujuk: ${data.rujukan.dokter_perujuk}</p>
                         </div>
                     </div>
                 </div>

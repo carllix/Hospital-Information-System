@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
             spesialisasi: spesialisasiSelect.value
         });
 
-        const url = '{{ route("pendaftaran.jadwal-dokter") }}?' + params.toString();
+        const url = '{{ route($routeName ?? "pendaftaran.jadwal-dokter") }}?' + params.toString();
 
         const xhr = new XMLHttpRequest();
         xhr.open('GET', url, true);

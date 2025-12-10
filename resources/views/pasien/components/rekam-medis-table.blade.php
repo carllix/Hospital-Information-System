@@ -17,9 +17,9 @@
                         {{ $item->tanggal_pemeriksaan->translatedFormat('j F Y H:i') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">{{ $item->dokter->nama_lengkap }}</div>
-                        @if($item->dokter->spesialisasi)
-                            <div class="text-sm text-gray-500">{{ $item->dokter->spesialisasi }}</div>
+                        <div class="text-sm font-medium text-gray-900">{{ $item->pendaftaran->jadwalDokter->dokter->nama_lengkap }}</div>
+                        @if($item->pendaftaran->jadwalDokter->dokter->spesialisasi)
+                            <div class="text-sm text-gray-500">{{ $item->pendaftaran->jadwalDokter->dokter->spesialisasi }}</div>
                         @endif
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-900">
@@ -34,21 +34,13 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        @if($item->status_pasien == 'selesai_penanganan')
+                        @if($item->status == 'selesai')
                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-green-100 text-green-800">
                                 Selesai
                             </span>
-                        @elseif($item->status_pasien == 'dirujuk')
+                        @elseif($item->status == 'dalam_pemeriksaan')
                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-blue-100 text-blue-800">
-                                Dirujuk
-                            </span>
-                        @elseif($item->status_pasien == 'perlu_resep')
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-yellow-100 text-yellow-800">
-                                Perlu Resep
-                            </span>
-                        @elseif($item->status_pasien == 'perlu_lab')
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-orange-100 text-orange-800">
-                                Perlu Lab
+                                Dalam Pemeriksaan
                             </span>
                         @endif
                     </td>

@@ -1,76 +1,34 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Pendaftaran Kunjungan')
-@section('dashboard-title', 'Pendaftaran Kunjungan')
+@section('dashboard-title', 'Pendaftaran Kunjungan Online')
 
 @section('content')
 <x-toast type="success" :message="session('success')" />
 <x-toast type="error" :message="session('error')" />
 
 <div class="space-y-6">
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Cari Pasien</h2>
-        <p class="text-sm text-gray-600 mb-4">Cari pasien berdasarkan NIK</p>
-
-        <div class="flex gap-3">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Masukkan NIK (16 digit)"
-                maxlength="16"
-                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
-            >
-            <button
-                id="searchBtn"
-                class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium hover:cursor-pointer"
-            >
-                Cari
-            </button>
-        </div>
-
-        <div id="searchResults" class="mt-4 hidden">
-            <h3 class="text-sm font-semibold text-gray-700 mb-3">Hasil Pencarian:</h3>
-            <div id="resultsContainer" class="space-y-2"></div>
-        </div>
-
-        <div id="noResults" class="mt-4 hidden">
-            <div class="bg-[#fff5f8] p-4 rounded-lg">
-                <p class="text-sm text-[#d14a7a]">Pasien tidak ditemukan. Silakan daftarkan sebagai pasien baru.</p>
-                <a href="{{ route('pendaftaran.pasien-baru') }}" class="text-sm text-[#f56e9d] hover:text-[#d14a7a] font-medium inline-block mt-2">
-                    → Daftar Pasien Baru
-                </a>
+    <!-- Info Card -->
+    <div class="bg-gradient-to-r from-[#f56e9d] to-[#d14a7a] rounded-lg shadow-md p-6 text-white">
+        <div class="flex items-start gap-4">
+            <div class="flex-shrink-0">
+                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h2 class="text-xl font-bold mb-2">Daftar Kunjungan Online</h2>
+                <p class="text-sm opacity-90">Pilih dokter dan jadwal yang Anda inginkan, lalu isi keluhan Anda. Nomor antrian akan diberikan setelah pendaftaran berhasil.</p>
             </div>
         </div>
     </div>
 
-    <div id="formPendaftaran" class="bg-white rounded-lg shadow-md p-6 hidden">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Form Pendaftaran Kunjungan</h2>
+    <!-- Form Pendaftaran -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">Form Pendaftaran</h2>
 
-        <div id="selectedPatientInfo" class="p-4 rounded-lg mb-6 border border-gray-200">
-            <h3 class="text-sm font-semibold text-[#d14a7a] mb-2">Data Pasien:</h3>
-            <div class="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                    <span class="text-gray-600">No. Rekam Medis:</span>
-                    <span id="infoRM" class="font-medium text-gray-800 ml-2"></span>
-                </div>
-                <div>
-                    <span class="text-gray-600">NIK:</span>
-                    <span id="infoNIK" class="font-medium text-gray-800 ml-2"></span>
-                </div>
-                <div>
-                    <span class="text-gray-600">Nama:</span>
-                    <span id="infoNama" class="font-medium text-gray-800 ml-2"></span>
-                </div>
-                <div>
-                    <span class="text-gray-600">No. Telepon:</span>
-                    <span id="infoTelepon" class="font-medium text-gray-800 ml-2"></span>
-                </div>
-            </div>
-        </div>
-
-        <form method="POST" action="{{ route('pendaftaran.store') }}">
+        <form method="POST" action="{{ route('pasien.pendaftaran-kunjungan.store') }}">
             @csrf
-            <input type="hidden" name="pasien_id" id="pasienId">
             <input type="hidden" name="jadwal_id" id="jadwalIdHidden">
 
             <div class="mb-4">
@@ -87,7 +45,7 @@
                         <option value="{{ $spesialisasi }}">{{ $spesialisasi }}</option>
                     @endforeach
                 </select>
-                <p class="text-xs text-gray-500 mt-1">Pilih spesialisasi dokter yang dibutuhkan</p>
+                <p class="text-xs text-gray-500 mt-1">Pilih spesialisasi dokter yang Anda butuhkan</p>
             </div>
 
             <div class="mb-4">
@@ -102,7 +60,7 @@
                 >
                     <option value="">Pilih Dokter</option>
                 </select>
-                <p class="text-xs text-gray-500 mt-1">Pilih dokter terlebih dahulu setelah memilih spesialisasi</p>
+                <p class="text-xs text-gray-500 mt-1">Pilih dokter setelah memilih spesialisasi</p>
             </div>
 
             <div class="mb-4">
@@ -143,7 +101,7 @@
                 <p class="text-xs text-gray-500 mt-1" id="tanggalKunjunganHint">Pilih jadwal terlebih dahulu untuk melihat tanggal yang tersedia</p>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-6">
                 <label for="keluhan_utama" class="block text-sm font-medium text-gray-700 mb-2">
                     Keluhan Utama <span class="text-red-500">*</span>
                 </label>
@@ -154,7 +112,7 @@
                     required
                     maxlength="500"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('keluhan_utama') border-red-500 @enderror"
-                    placeholder="Jelaskan keluhan pasien..."
+                    placeholder="Jelaskan keluhan yang Anda alami..."
                 ></textarea>
                 <p class="text-xs text-gray-500 mt-1">Maksimal 500 karakter</p>
                 @error('keluhan_utama')
@@ -163,16 +121,15 @@
             </div>
 
             <div class="flex gap-3">
-                <button
-                    type="button"
-                    id="cancelBtn"
-                    class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium hover:cursor-pointer"
+                <a
+                    href="{{ route('pasien.dashboard') }}"
+                    class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
                     Batal
-                </button>
+                </a>
                 <button
                     type="submit"
-                    class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium hover:cursor-pointer"
+                    class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium"
                 >
                     Daftar Kunjungan
                 </button>
@@ -183,15 +140,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-    const searchResults = document.getElementById('searchResults');
-    const noResults = document.getElementById('noResults');
-    const resultsContainer = document.getElementById('resultsContainer');
-    const formPendaftaran = document.getElementById('formPendaftaran');
-    const cancelBtn = document.getElementById('cancelBtn');
-
-    // Cascading dropdowns
     const spesialisasiSelect = document.getElementById('spesialisasi');
     const dokterSelect = document.getElementById('dokter_id');
     const jadwalSelect = document.getElementById('jadwal_id');
@@ -200,19 +148,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const tanggalKunjunganHint = document.getElementById('tanggalKunjunganHint');
 
     let selectedJadwalData = null;
-
-    searchBtn.addEventListener('click', searchPasien);
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchPasien();
-        }
-    });
-
-    cancelBtn.addEventListener('click', function() {
-        formPendaftaran.classList.add('hidden');
-        document.getElementById('keluhan_utama').value = '';
-        resetForm();
-    });
 
     // Handle specialization change
     spesialisasiSelect.addEventListener('change', function() {
@@ -236,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dokterSelect.disabled = true;
         dokterSelect.innerHTML = '<option value="">Memuat...</option>';
 
-        fetch('{{ route("pendaftaran.get-dokter") }}', {
+        fetch('{{ route("pasien.get-dokter") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -287,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
         jadwalSelect.disabled = true;
         jadwalSelect.innerHTML = '<option value="">Memuat...</option>';
 
-        fetch('{{ route("pendaftaran.get-jadwal") }}', {
+        fetch('{{ route("pasien.get-jadwal") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -361,18 +296,6 @@ document.addEventListener('DOMContentLoaded', function() {
             this.value = getNextAvailableDate(selectedJadwalData.hari_praktik);
         }
     });
-
-    function resetForm() {
-        spesialisasiSelect.value = '';
-        dokterSelect.innerHTML = '<option value="">Pilih Dokter</option>';
-        dokterSelect.disabled = true;
-        jadwalSelect.innerHTML = '<option value="">Pilih Jadwal Praktik</option>';
-        jadwalSelect.disabled = true;
-        tanggalInput.disabled = true;
-        tanggalInput.value = '{{ today()->format('Y-m-d') }}';
-        jadwalIdHidden.value = '';
-        selectedJadwalData = null;
-    }
 
     function getDayName(date) {
         const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -450,90 +373,6 @@ document.addEventListener('DOMContentLoaded', function() {
             toast.classList.add('opacity-0', 'translate-y-[-20px]');
             setTimeout(() => toast.remove(), 300);
         }, 5000);
-    }
-
-    function searchPasien() {
-        const search = searchInput.value.trim();
-
-        if (search.length < 16) {
-            showToast('warning', 'NIK harus 16 digit');
-            return;
-        }
-
-        searchBtn.disabled = true;
-        searchBtn.textContent = 'Mencari...';
-
-        fetch('{{ route("pendaftaran.search-pasien") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ search: search })
-        })
-        .then(response => response.json())
-        .then(data => {
-            resultsContainer.innerHTML = '';
-            formPendaftaran.classList.add('hidden');
-
-            if (data.length === 0) {
-                searchResults.classList.add('hidden');
-                noResults.classList.remove('hidden');
-            } else {
-                noResults.classList.add('hidden');
-                searchResults.classList.remove('hidden');
-
-                data.forEach(pasien => {
-                    const resultCard = document.createElement('div');
-                    resultCard.className = 'border border-[#fdd5e0] rounded-lg p-4 hover:bg-[#fff5f8] cursor-pointer transition-colors';
-                    resultCard.innerHTML = `
-                        <div class="grid grid-cols-2 gap-3 text-sm">
-                            <div>
-                                <span class="text-gray-600">No. RM:</span>
-                                <span class="font-medium text-gray-800 ml-2">${pasien.no_rekam_medis}</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-600">NIK:</span>
-                                <span class="font-medium text-gray-800 ml-2">${pasien.nik}</span>
-                            </div>
-                            <div class="col-span-2">
-                                <span class="text-gray-600">Nama:</span>
-                                <span class="font-medium text-gray-800 ml-2">${pasien.nama_lengkap}</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-600">No. Telepon:</span>
-                                <span class="font-medium text-gray-800 ml-2">${pasien.no_telepon}</span>
-                            </div>
-                            <div class="col-span-2">
-                                <span class="text-gray-600">Alamat:</span>
-                                <span class="font-medium text-gray-800 ml-2">${pasien.alamat}</span>
-                            </div>
-                        </div>
-                    `;
-                    resultCard.addEventListener('click', () => selectPasien(pasien));
-                    resultsContainer.appendChild(resultCard);
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('error', 'Terjadi kesalahan saat mencari pasien');
-        })
-        .finally(() => {
-            searchBtn.disabled = false;
-            searchBtn.textContent = 'Cari';
-        });
-    }
-
-    function selectPasien(pasien) {
-        document.getElementById('pasienId').value = pasien.pasien_id;
-        document.getElementById('infoRM').textContent = pasien.no_rekam_medis;
-        document.getElementById('infoNIK').textContent = pasien.nik;
-        document.getElementById('infoNama').textContent = pasien.nama_lengkap;
-        document.getElementById('infoTelepon').textContent = pasien.no_telepon;
-
-        searchResults.classList.add('hidden');
-        formPendaftaran.classList.remove('hidden');
     }
 });
 </script>

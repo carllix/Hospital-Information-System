@@ -30,23 +30,8 @@
                     >
                         <option value="">Semua Status</option>
                         <option value="belum_bayar" {{ request('status') === 'belum_bayar' ? 'selected' : '' }}>Belum Bayar</option>
+                        <option value="sebagian" {{ request('status') === 'sebagian' ? 'selected' : '' }}>Sebagian</option>
                         <option value="lunas" {{ request('status') === 'lunas' ? 'selected' : '' }}>Lunas</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="jenis_filter" class="block text-sm font-medium text-gray-700 mb-2">
-                        Jenis Tagihan
-                    </label>
-                    <select
-                        id="jenis_filter"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#f56e9d]"
-                    >
-                        <option value="">Semua Jenis</option>
-                        <option value="konsultasi" {{ request('jenis') === 'konsultasi' ? 'selected' : '' }}>Konsultasi</option>
-                        <option value="obat" {{ request('jenis') === 'obat' ? 'selected' : '' }}>Obat</option>
-                        <option value="lab" {{ request('jenis') === 'lab' ? 'selected' : '' }}>Laboratorium</option>
-                        <option value="tindakan" {{ request('jenis') === 'tindakan' ? 'selected' : '' }}>Tindakan</option>
                     </select>
                 </div>
             </div>
@@ -71,9 +56,6 @@
                                 Tanggal
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Jenis
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 No. Pendaftaran
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -95,11 +77,8 @@
                                 <div class="text-xs text-gray-500">{{ $tagihan->created_at->format('H:i') }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900 capitalize">{{ ucfirst($tagihan->jenis_tagihan) }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900">
-                                    {{ $tagihan->pendaftaran ? $tagihan->pendaftaran->nomor_antrian : '-' }}
+                                    {{ $tagihan->pemeriksaan->pendaftaran->nomor_antrian ?? '-' }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -111,6 +90,10 @@
                                 @if($tagihan->status === 'lunas')
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-green-100 text-green-800">
                                     Lunas
+                                </span>
+                                @elseif($tagihan->status === 'sebagian')
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-yellow-100 text-yellow-800">
+                                    Sebagian
                                 </span>
                                 @else
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-red-100 text-red-800">
@@ -167,7 +150,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const statusFilter = document.getElementById('status_filter');
-    const jenisFilter = document.getElementById('jenis_filter');
     let debounceTimer = null;
 
     function debounce(func, delay) {
@@ -179,8 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function fetchData() {
         const params = new URLSearchParams({
-            status: statusFilter.value,
-            jenis: jenisFilter.value
+            status: statusFilter.value
         });
 
         const url = '{{ route("pasien.pembayaran") }}?' + params.toString();
@@ -195,14 +176,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const doc = parser.parseFromString(xhr.responseText, 'text/html');
 
                 const newContent = doc.getElementById('tagihanContent');
-                const newTotal = doc.querySelector('.text-3xl.font-bold.text-red-500');
+                const newTotal = doc.querySelector('.text-3xl.font-bold.text-\\[\\#f56e9d\\]');
 
                 if (newContent) {
                     document.getElementById('tagihanContent').innerHTML = newContent.innerHTML;
                 }
 
                 if (newTotal) {
-                    document.querySelector('.text-3xl.font-bold.text-red-500').textContent = newTotal.textContent;
+                    document.querySelector('.text-3xl.font-bold.text-\\[\\#f56e9d\\]').textContent = newTotal.textContent;
                 }
 
                 // Update URL without reload
@@ -216,7 +197,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const debouncedFetch = debounce(() => fetchData(), 500);
 
     statusFilter.addEventListener('change', debouncedFetch);
-    jenisFilter.addEventListener('change', debouncedFetch);
 });
 
 window.openDetailTagihan = function(tagihanId) {
@@ -259,9 +239,14 @@ window.openDetailTagihan = function(tagihanId) {
 function renderDetailTagihan(data) {
     const modalContent = document.getElementById('detailTagihanContent');
 
-    let statusBadge = data.status === 'lunas'
-        ? '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Lunas</span>'
-        : '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Belum Bayar</span>';
+    let statusBadge;
+    if (data.status === 'lunas') {
+        statusBadge = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Lunas</span>';
+    } else if (data.status === 'sebagian') {
+        statusBadge = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Sebagian</span>';
+    } else {
+        statusBadge = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Belum Bayar</span>';
+    }
 
     let html = `
         <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-200">
@@ -281,10 +266,6 @@ function renderDetailTagihan(data) {
                     <p class="text-base">${statusBadge}</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Jenis Tagihan</p>
-                    <p class="text-base font-semibold text-gray-900">${data.jenis_tagihan}</p>
-                </div>
-                <div>
                     <p class="text-sm text-gray-500">No. Pendaftaran</p>
                     <p class="text-base font-semibold text-gray-900">${data.nomor_antrian || '-'}</p>
                 </div>
@@ -297,6 +278,7 @@ function renderDetailTagihan(data) {
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jenis</th>
                             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
                             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jumlah</th>
                             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Harga Satuan</th>
@@ -310,6 +292,14 @@ function renderDetailTagihan(data) {
         data.detail_items.forEach(item => {
             html += `
                 <tr>
+                    <td class="px-4 py-2 text-sm text-gray-900">
+                        <span class="px-2 py-1 text-xs rounded-full ${
+                            item.jenis_item === 'Konsultasi' ? 'bg-blue-100 text-blue-800' :
+                            item.jenis_item === 'Tindakan' ? 'bg-purple-100 text-purple-800' :
+                            item.jenis_item === 'Obat' ? 'bg-green-100 text-green-800' :
+                            'bg-orange-100 text-orange-800'
+                        }">${item.jenis_item}</span>
+                    </td>
                     <td class="px-4 py-2 text-sm text-gray-900">${item.nama_item}</td>
                     <td class="px-4 py-2 text-sm text-gray-900">${item.jumlah}</td>
                     <td class="px-4 py-2 text-sm text-gray-900">Rp ${item.harga_satuan}</td>
@@ -320,7 +310,7 @@ function renderDetailTagihan(data) {
     } else {
         html += `
             <tr>
-                <td colspan="4" class="px-4 py-4 text-sm text-gray-500 text-center">Tidak ada detail item</td>
+                <td colspan="5" class="px-4 py-4 text-sm text-gray-500 text-center">Tidak ada detail item</td>
             </tr>
         `;
     }
