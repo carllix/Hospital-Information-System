@@ -76,27 +76,27 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DokterController::class, 'dashboard'])->name('dashboard');
         Route::get('/antrian', [DokterController::class, 'antrian'])->name('antrian');
         Route::patch('/panggil-pasien/{id}', [DokterController::class, 'panggilPasien'])->name('panggil-pasien');
-        
+
         // Pemeriksaan
         Route::get('/pemeriksaan/{id}', [DokterController::class, 'formPemeriksaan'])->name('form-pemeriksaan');
         Route::post('/pemeriksaan', [DokterController::class, 'storePemeriksaan'])->name('store-pemeriksaan');
-        
+
         // Resep
         Route::get('/resep/{pemeriksaanId}', [DokterController::class, 'formResep'])->name('form-resep');
         Route::post('/resep', [DokterController::class, 'storeResep'])->name('store-resep');
-        
+
         // Lab
         Route::get('/lab/{pemeriksaanId}', [DokterController::class, 'formLab'])->name('form-lab');
         Route::post('/lab', [DokterController::class, 'storeLab'])->name('store-lab');
-        
+
         // Rujukan
         Route::get('/rujukan/{pemeriksaanId}', [DokterController::class, 'formRujukan'])->name('form-rujukan');
         Route::post('/rujukan', [DokterController::class, 'storeRujukan'])->name('store-rujukan');
-        
+
         // Riwayat & Detail
         Route::get('/riwayat', [DokterController::class, 'riwayat'])->name('riwayat');
         Route::get('/pemeriksaan/detail/{id}', [DokterController::class, 'detailPemeriksaan'])->name('detail-pemeriksaan');
-        
+
         // Profile
         Route::get('/profile', [DokterController::class, 'profile'])->name('profile');
         Route::get('/profile/edit', [DokterController::class, 'editProfile'])->name('profile.edit');
@@ -106,13 +106,13 @@ Route::middleware('auth')->group(function () {
     // Farmasi Routes
     Route::prefix('farmasi')->name('farmasi.')->group(function () {
         Route::get('/dashboard', [FarmasiController::class, 'dashboard'])->name('dashboard');
-        
+
         // Resep
         Route::get('/resep', [FarmasiController::class, 'daftarResep'])->name('daftar-resep');
         Route::get('/resep/{id}', [FarmasiController::class, 'detailResep'])->name('detail-resep');
         Route::patch('/resep/{id}/proses', [FarmasiController::class, 'prosesResep'])->name('proses-resep');
         Route::patch('/resep/{id}/selesaikan', [FarmasiController::class, 'selesaikanResep'])->name('selesaikan-resep');
-        
+
         // Stok Obat
         Route::get('/stok-obat', [FarmasiController::class, 'stokObat'])->name('stok-obat');
         Route::get('/obat/tambah', [FarmasiController::class, 'tambahObat'])->name('tambah-obat');
@@ -121,7 +121,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/obat/{id}', [FarmasiController::class, 'updateObat'])->name('update-obat');
         Route::patch('/obat/{id}/stok', [FarmasiController::class, 'updateStok'])->name('update-stok');
         Route::delete('/obat/{id}', [FarmasiController::class, 'deleteObat'])->name('delete-obat');
-        
+
         // Laporan
         Route::get('/laporan', [FarmasiController::class, 'laporanResep'])->name('laporan-resep');
     });
@@ -129,20 +129,20 @@ Route::middleware('auth')->group(function () {
     // Lab Routes
     Route::prefix('lab')->name('lab.')->group(function () {
         Route::get('/dashboard', [LabController::class, 'dashboard'])->name('dashboard');
-        
+
         // Permintaan Lab
         Route::get('/permintaan', [LabController::class, 'daftarPermintaan'])->name('daftar-permintaan');
         Route::get('/permintaan/{id}', [LabController::class, 'detailPermintaan'])->name('detail-permintaan');
         Route::patch('/permintaan/{id}/ambil', [LabController::class, 'ambilPermintaan'])->name('ambil-permintaan');
-        
+
         // Input Hasil Lab
         Route::get('/hasil/{id}', [LabController::class, 'formHasil'])->name('form-hasil');
         Route::post('/hasil', [LabController::class, 'storeHasil'])->name('store-hasil');
-        
+
         // Riwayat & Laporan
         Route::get('/riwayat', [LabController::class, 'riwayat'])->name('riwayat');
         Route::get('/laporan', [LabController::class, 'laporan'])->name('laporan');
-        
+
         // Profile
         Route::get('/profile', [LabController::class, 'profile'])->name('profile');
         Route::get('/profile/edit', [LabController::class, 'editProfile'])->name('profile.edit');
@@ -197,5 +197,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('obat', \App\Http\Controllers\Admin\ObatController::class);
         Route::resource('layanan', \App\Http\Controllers\Admin\LayananController::class);
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+        Route::post('/users/{id}/reset-password', [\App\Http\Controllers\Admin\UserController::class, 'resetPassword'])->name('users.reset-password');
     });
 });
