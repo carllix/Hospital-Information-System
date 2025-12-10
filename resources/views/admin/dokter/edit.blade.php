@@ -6,7 +6,7 @@
 @section('content')
 <x-toast type="error" :message="session('error')" />
 
-<div class="max-w-4xl mx-auto">
+<div class="mx-auto">
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
@@ -22,7 +22,7 @@
             @csrf
             @method('PUT')
 
-            <div class="border-b pb-6">
+            <div class="pb-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Informasi Akun</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            <div class="border-b pb-6">
+            <div class="pb-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Data Pribadi</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="md:col-span-2">
@@ -118,56 +118,60 @@
                 </div>
             </div>
 
-            <div class="border-b pb-6">
+            <div class="pb-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Alamat</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="md:col-span-3">
-                        <label for="alamat" class="block text-sm font-medium text-gray-700 mb-2">
-                            Alamat Lengkap <span class="text-red-500">*</span>
-                        </label>
-                        <textarea name="alamat" id="alamat" rows="3" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('alamat') border-red-500 @enderror">{{ old('alamat', $dokter->alamat) }}</textarea>
-                        @error('alamat')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="alamat" class="block text-sm font-medium text-gray-700 mb-2">
+                                Alamat Lengkap <span class="text-red-500">*</span>
+                            </label>
+                            <textarea name="alamat" id="alamat" rows="3" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('alamat') border-red-500 @enderror">{{ old('alamat', $dokter->alamat) }}</textarea>
+                            @error('alamat')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="provinsi" class="block text-sm font-medium text-gray-700 mb-2">
+                                Provinsi <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi', $dokter->provinsi) }}" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('provinsi') border-red-500 @enderror">
+                            @error('provinsi')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="provinsi" class="block text-sm font-medium text-gray-700 mb-2">
-                            Provinsi <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi', $dokter->provinsi) }}" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('provinsi') border-red-500 @enderror">
-                        @error('provinsi')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="kota_kabupaten" class="block text-sm font-medium text-gray-700 mb-2">
+                                Kota/Kabupaten <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="kota_kabupaten" id="kota_kabupaten" value="{{ old('kota_kabupaten', $dokter->kota_kabupaten) }}" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kota_kabupaten') border-red-500 @enderror">
+                            @error('kota_kabupaten')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <div>
-                        <label for="kota_kabupaten" class="block text-sm font-medium text-gray-700 mb-2">
-                            Kota/Kabupaten <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="kota_kabupaten" id="kota_kabupaten" value="{{ old('kota_kabupaten', $dokter->kota_kabupaten) }}" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kota_kabupaten') border-red-500 @enderror">
-                        @error('kota_kabupaten')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="kecamatan" class="block text-sm font-medium text-gray-700 mb-2">
-                            Kecamatan <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" name="kecamatan" id="kecamatan" value="{{ old('kecamatan', $dokter->kecamatan) }}" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kecamatan') border-red-500 @enderror">
-                        @error('kecamatan')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <div>
+                            <label for="kecamatan" class="block text-sm font-medium text-gray-700 mb-2">
+                                Kecamatan <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="kecamatan" id="kecamatan" value="{{ old('kecamatan', $dokter->kecamatan) }}" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('kecamatan') border-red-500 @enderror">
+                            @error('kecamatan')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="border-b pb-6">
+            <div class="pb-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Informasi Profesi</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -190,13 +194,12 @@
                         @error('no_str')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
-                        <p class="mt-1 text-xs text-gray-500">Nomor Surat Tanda Registrasi</p>
                     </div>
                 </div>
             </div>
 
             <div class="flex items-center justify-end gap-4 pt-4">
-                <a href="{{ route('admin.dokter.show', $dokter->dokter_id) }}" class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                <a href="{{ route('admin.dokter.show', $dokter->dokter_id) }}" class="px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     Batal
                 </a>
                 <button type="submit" class="px-6 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#e05d8c] transition-colors">
