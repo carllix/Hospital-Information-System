@@ -26,10 +26,10 @@
 
             <!-- Info Box -->
             <div style="background-color: #f9fafb; border-left: 4px solid #f56e9d; padding: 24px; border-radius: 0 8px 8px 0; margin-bottom: 24px;">
-                @if($noRekamMedis)
+                @if($identifier)
                 <div style="margin-bottom: 16px;">
-                    <p style="font-weight: 600; color: #111827; margin: 0 0 4px 0;">No. Rekam Medis:</p>
-                    <p style="color: #f56e9d; font-weight: 600; margin: 0;">{{ $noRekamMedis }}</p>
+                    <p style="font-weight: 600; color: #111827; margin: 0 0 4px 0;">{{ $identifierLabel }}:</p>
+                    <p style="color: #f56e9d; font-weight: 600; margin: 0;">{{ $identifier }}</p>
                 </div>
                 @endif
                 <div style="margin-bottom: 16px;">
