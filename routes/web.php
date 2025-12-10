@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/rekam-medis', [PasienController::class, 'rekamMedis'])->name('rekam-medis');
         Route::get('/rekam-medis/{id}', [PasienController::class, 'rekamMedisDetail'])->name('rekam-medis.detail');
         Route::get('/health-monitoring', [PasienController::class, 'healthMonitoring'])->name('health-monitoring');
+        Route::get('/wearable-data', [PasienController::class, 'getLatestWearableData'])->name('wearable-data');
         Route::get('/jadwal-dokter', [PasienController::class, 'jadwalDokter'])->name('jadwal-dokter');
 
         // Profile
