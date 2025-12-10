@@ -14,9 +14,10 @@ class RoleMiddleware
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      * @param  string  $role
+     * @param  string|null  $bagian
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string $role, string $bagian = null): Response
     {
         // Check if user is authenticated
         if (!auth()->check()) {
@@ -26,8 +27,7 @@ class RoleMiddleware
         $user = auth()->user();
 
         // Check if user has the required role
-        // Adjust this based on your User model structure
-        if (!$this->userHasRole($user, $role)) {
+        if (!$this->userHasRole($user, $role, $bagian)) {
             // If user doesn't have the role, redirect to appropriate dashboard or abort
             if ($user->role) {
                 return redirect($user->getDashboardRoute())->with('error', 'Akses ditolak. Anda tidak memiliki izin untuk halaman ini.');
@@ -39,13 +39,27 @@ class RoleMiddleware
     }
 
     /**
-     * Check if user has the specified role
+     * Check if user has the specified role and bagian (for staf)
      */
-    private function userHasRole($user, string $role): bool
+    private function userHasRole($user, string $role, ?string $bagian = null): bool
     {
-        // Option 1: If you have a 'role' column in users table
-        return $user->role === $role;
-        
+        // Check basic role
+        if ($user->role !== $role) {
+            return false;
+        }
+
+        // If role is 'staf' and bagian is specified, check the bagian
+        if ($role === 'staf' && $bagian !== null) {
+            // Get staf data related to this user
+            $staf = $user->staf; // Assuming User has staf relationship
+
+            if (!$staf || $staf->bagian !== $bagian) {
+                return false;
+            }
+        }
+
+        return true;
+
         // Option 2: If you have a different role structure, uncomment and modify:
         // return $user->hasRole($role);
     }

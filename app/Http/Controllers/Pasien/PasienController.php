@@ -18,7 +18,35 @@ class PasienController extends Controller
 {
     public function dashboard(): View
     {
-        return view('pasien.dashboard');
+        $pasien = auth()->user()->pasien;
+
+        // Jadwal Kunjungan Mendatang
+        $jadwalKunjunganMendatang = Pendaftaran::where('pasien_id', $pasien->pasien_id)
+            ->whereIn('status', ['menunggu', 'dipanggil', 'diperiksa'])
+            ->where('tanggal_kunjungan', '>=', today())
+            ->count();
+
+        // Total Kunjungan
+        $totalKunjungan = Pendaftaran::where('pasien_id', $pasien->pasien_id)->count();
+
+        // Riwayat Pemeriksaan
+        $riwayatPemeriksaan = Pemeriksaan::whereHas('pendaftaran', function ($q) use ($pasien) {
+            $q->where('pasien_id', $pasien->pasien_id);
+        })->count();
+
+        // Total Tagihan Belum Bayar
+        $totalBelumBayar = Tagihan::whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
+            $q->where('pasien_id', $pasien->pasien_id);
+        })
+            ->whereIn('status', ['belum_bayar', 'sebagian'])
+            ->sum('total_tagihan');
+
+        return view('pasien.dashboard', compact(
+            'jadwalKunjunganMendatang',
+            'totalKunjungan',
+            'riwayatPemeriksaan',
+            'totalBelumBayar'
+        ));
     }
 
     public function pembayaran(Request $request): View
@@ -37,8 +65,8 @@ class PasienController extends Controller
         $tagihans = $query->orderBy('created_at', 'desc')->paginate(10);
 
         $totalBelumBayar = Tagihan::whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
-                $q->where('pasien_id', $pasien->pasien_id);
-            })
+            $q->where('pasien_id', $pasien->pasien_id);
+        })
             ->where('status', 'belum_bayar')
             ->sum('total_tagihan');
 
@@ -278,8 +306,8 @@ class PasienController extends Controller
 
             // Count existing registrations for this doctor on the visit date
             $lastAntrian = Pendaftaran::whereHas('jadwalDokter', function ($q) use ($jadwal) {
-                    $q->where('dokter_id', $jadwal->dokter_id);
-                })
+                $q->where('dokter_id', $jadwal->dokter_id);
+            })
                 ->whereDate('tanggal_kunjungan', $request->tanggal_kunjungan)
                 ->count();
 
@@ -315,7 +343,7 @@ class PasienController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->route('pasien.pendaftaran-kunjungan')
+            return redirect()->route('pasien.jadwal-kunjungan')
                 ->with('success', "Pendaftaran berhasil! Nomor Antrian: {$nomorAntrian} - Dr. {$jadwal->dokter->nama_lengkap} ({$jadwal->hari_praktik}, {$request->tanggal_kunjungan})");
         } catch (\Exception $e) {
             DB::rollBack();
