@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Pendaftaran;
 
 use App\Http\Controllers\Controller;
 use App\Mail\PasswordNotification;
+use App\Models\Dokter;
+use App\Models\JadwalDokter;
 use App\Models\Pasien;
 use App\Models\Pendaftaran;
 use App\Models\Staf;
 use App\Models\User;
-use App\Models\Dokter;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -56,6 +57,7 @@ class PendaftaranController extends Controller
                 'email' => $request->email,
                 'password' => $randomPassword,
                 'role' => 'pasien',
+                'is_deleted' => false,
             ]);
 
             $noRM = $user->generateNoRekamMedis();
@@ -103,11 +105,28 @@ class PendaftaranController extends Controller
 
     public function kunjungan(): View
     {
-        $dokters = Dokter::select('dokter_id', 'nama_lengkap', 'spesialisasi', 'jadwal_praktik')
-            ->orderBy('nama_lengkap')
+        // Get today's day name in Indonesian
+        $hariIni = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu'
+        ][now()->format('l')];
+
+        // Load jadwal for today with dokter information
+        $jadwals = JadwalDokter::with('dokter')
+            ->where('hari_praktik', $hariIni)
+            ->where('is_deleted', false)
+            ->whereHas('dokter', function ($q) {
+                $q->where('is_deleted', false);
+            })
+            ->orderBy('waktu_mulai')
             ->get();
 
-        return view('pendaftaran.kunjungan', compact('dokters'));
+        return view('pendaftaran.kunjungan', compact('jadwals', 'hariIni'));
     }
 
     public function searchPasien(Request $request)
@@ -127,27 +146,40 @@ class PendaftaranController extends Controller
     {
         $request->validate([
             'pasien_id' => 'required|exists:pasien,pasien_id',
-            'dokter_id' => 'required|exists:dokter,dokter_id',
+            'jadwal_id' => 'required|exists:jadwal_dokter,jadwal_id',
+            'tanggal_kunjungan' => 'required|date|after_or_equal:today',
             'keluhan_utama' => 'required|string|max:500',
         ]);
 
         DB::beginTransaction();
         try {
+            // Get jadwal with dokter information
+            $jadwal = JadwalDokter::with('dokter')->findOrFail($request->jadwal_id);
+
+            // Count existing registrations for this jadwal on the visit date
             $today = now()->format('Y-m-d');
-            $lastAntrian = Pendaftaran::where('dokter_id', $request->dokter_id)
-                ->whereDate('tanggal_daftar', $today)
+            $lastAntrian = Pendaftaran::where('jadwal_id', $request->jadwal_id)
+                ->whereDate('tanggal_kunjungan', $request->tanggal_kunjungan)
                 ->count();
 
-            $dokter = Dokter::find($request->dokter_id);
-            $initial = strtoupper(substr($dokter->nama_lengkap, 0, 1));
+            // Check if max_pasien limit is reached
+            if ($lastAntrian >= $jadwal->max_pasien) {
+                DB::rollBack();
+                return redirect()->route('pendaftaran.kunjungan')
+                    ->with('error', "Kuota pendaftaran untuk jadwal ini sudah penuh (max: {$jadwal->max_pasien} pasien)");
+            }
+
+            // Generate queue number based on doctor's initial
+            $initial = strtoupper(substr($jadwal->dokter->nama_lengkap, 0, 1));
             $nomorAntrian = $initial . str_pad($lastAntrian + 1, 3, '0', STR_PAD_LEFT);
 
             $staf = Staf::where('user_id', auth()->id())->first();
 
             Pendaftaran::create([
                 'pasien_id' => $request->pasien_id,
-                'dokter_id' => $request->dokter_id,
+                'jadwal_id' => $request->jadwal_id,
                 'tanggal_daftar' => now(),
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
                 'nomor_antrian' => $nomorAntrian,
                 'keluhan_utama' => $request->keluhan_utama,
                 'staf_pendaftaran_id' => $staf?->staf_id,
@@ -156,7 +188,7 @@ class PendaftaranController extends Controller
 
             DB::commit();
             return redirect()->route('pendaftaran.kunjungan')
-                ->with('success', "Pendaftaran berhasil! Nomor Antrian: {$nomorAntrian} - {$dokter->nama_lengkap}");
+                ->with('success', "Pendaftaran berhasil! Nomor Antrian: {$nomorAntrian} - Dr. {$jadwal->dokter->nama_lengkap} ({$jadwal->hari_praktik}, {$request->tanggal_kunjungan})");
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('pendaftaran.kunjungan')
@@ -188,17 +220,22 @@ class PendaftaranController extends Controller
 
     public function antrian(Request $request): View
     {
-        $query = Pendaftaran::with(['pasien', 'dokter'])
-            ->whereDate('tanggal_daftar', today())
+        $query = Pendaftaran::with(['pasien', 'jadwalDokter.dokter'])
+            ->whereDate('tanggal_kunjungan', today())
             ->whereIn('status', ['menunggu', 'dipanggil'])
             ->orderBy('nomor_antrian');
 
         if ($request->filled('dokter_id')) {
-            $query->where('dokter_id', $request->dokter_id);
+            $query->whereHas('jadwalDokter', function ($q) use ($request) {
+                $q->where('dokter_id', $request->dokter_id);
+            });
         }
 
         $pendaftarans = $query->get();
-        $dokters = Dokter::select('dokter_id', 'nama_lengkap')->orderBy('nama_lengkap')->get();
+        $dokters = Dokter::where('is_deleted', false)
+            ->select('dokter_id', 'nama_lengkap')
+            ->orderBy('nama_lengkap')
+            ->get();
 
         return view('pendaftaran.antrian', compact('pendaftarans', 'dokters'));
     }
@@ -230,7 +267,7 @@ class PendaftaranController extends Controller
 
     public function jadwalDokter(Request $request): View
     {
-        $query = Dokter::query();
+        $query = Dokter::with('jadwalDokter')->where('is_deleted', false);
 
         if ($request->filled('search')) {
             $search = strtolower($request->search);
@@ -242,6 +279,18 @@ class PendaftaranController extends Controller
         }
 
         $dokters = $query->orderBy('nama_lengkap')->get();
+
+        // Transform jadwal data for the view
+        $dokters->each(function ($dokter) {
+            $dokter->jadwal_praktik = $dokter->jadwalDokter->where('is_deleted', false)->map(function ($jadwal) {
+                return [
+                    'hari' => $jadwal->hari_praktik,
+                    'jam_mulai' => \Carbon\Carbon::parse($jadwal->waktu_mulai)->format('H:i'),
+                    'jam_selesai' => \Carbon\Carbon::parse($jadwal->waktu_selesai)->format('H:i'),
+                    'max_pasien' => $jadwal->max_pasien,
+                ];
+            })->values();
+        });
 
         $spesialisasiList = [
             'Umum',
@@ -263,12 +312,14 @@ class PendaftaranController extends Controller
             'Patologi Klinik'
         ];
 
-        return view('pendaftaran.jadwal-dokter', compact('dokters', 'spesialisasiList'));
+        $routeName = 'pendaftaran.jadwal-dokter';
+
+        return view('pendaftaran.jadwal-dokter', compact('dokters', 'spesialisasiList', 'routeName'));
     }
 
     public function riwayat(Request $request): View
     {
-        $query = Pendaftaran::with(['pasien', 'dokter', 'stafPendaftaran'])
+        $query = Pendaftaran::with(['pasien', 'jadwalDokter.dokter', 'stafPendaftaran'])
             ->orderBy('tanggal_daftar', 'desc');
 
         if ($request->filled('tanggal_dari')) {
@@ -284,7 +335,9 @@ class PendaftaranController extends Controller
         }
 
         if ($request->filled('dokter_id')) {
-            $query->where('dokter_id', $request->dokter_id);
+            $query->whereHas('jadwalDokter', function ($q) use ($request) {
+                $q->where('dokter_id', $request->dokter_id);
+            });
         }
 
         if ($request->filled('search')) {
@@ -297,7 +350,10 @@ class PendaftaranController extends Controller
         }
 
         $pendaftarans = $query->paginate(10);
-        $dokters = Dokter::select('dokter_id', 'nama_lengkap')->orderBy('nama_lengkap')->get();
+        $dokters = Dokter::where('is_deleted', false)
+            ->select('dokter_id', 'nama_lengkap')
+            ->orderBy('nama_lengkap')
+            ->get();
 
         return view('pendaftaran.riwayat', compact('pendaftarans', 'dokters'));
     }

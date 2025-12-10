@@ -21,20 +21,20 @@ class PasienController extends Controller
     {
         $pasien = auth()->user()->pasien;
 
-        $query = Tagihan::with(['detailTagihan', 'pembayaran', 'pendaftaran'])
-            ->where('pasien_id', $pasien->pasien_id);
+        $query = Tagihan::with(['detailTagihan', 'pembayaran', 'pemeriksaan.pendaftaran'])
+            ->whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            });
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->filled('jenis')) {
-            $query->where('jenis_tagihan', $request->jenis);
-        }
-
         $tagihans = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        $totalBelumBayar = Tagihan::where('pasien_id', $pasien->pasien_id)
+        $totalBelumBayar = Tagihan::whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            })
             ->where('status', 'belum_bayar')
             ->sum('total_tagihan');
 
@@ -45,8 +45,10 @@ class PasienController extends Controller
     {
         $pasien = auth()->user()->pasien;
 
-        $tagihan = Tagihan::with(['detailTagihan', 'pembayaran', 'pendaftaran'])
-            ->where('pasien_id', $pasien->pasien_id)
+        $tagihan = Tagihan::with(['detailTagihan', 'pembayaran', 'pemeriksaan.pendaftaran'])
+            ->whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            })
             ->where('tagihan_id', $id)
             ->firstOrFail();
 
@@ -55,13 +57,13 @@ class PasienController extends Controller
             'data' => [
                 'tagihan_id' => $tagihan->tagihan_id,
                 'tanggal' => $tagihan->created_at->translatedFormat('j F Y H:i'),
-                'jenis_tagihan' => ucfirst($tagihan->jenis_tagihan),
-                'nomor_antrian' => $tagihan->pendaftaran->nomor_antrian ?? null,
+                'nomor_antrian' => $tagihan->pemeriksaan->pendaftaran->nomor_antrian ?? null,
                 'total_tagihan' => number_format($tagihan->total_tagihan, 0, ',', '.'),
                 'status' => $tagihan->status,
                 'detail_items' => $tagihan->detailTagihan->map(function ($detail) {
                     return [
                         'nama_item' => $detail->nama_item,
+                        'jenis_item' => ucfirst($detail->jenis_item),
                         'jumlah' => $detail->jumlah,
                         'harga_satuan' => number_format($detail->harga_satuan, 0, ',', '.'),
                         'subtotal' => number_format($detail->subtotal, 0, ',', '.'),
@@ -81,14 +83,16 @@ class PasienController extends Controller
     {
         $pasien = auth()->user()->pasien;
 
-        $query = Pemeriksaan::with(['dokter', 'pendaftaran', 'resep.detailResep', 'permintaanLab.hasilLab'])
-            ->where('pasien_id', $pasien->pasien_id);
+        $query = Pemeriksaan::with(['pendaftaran.jadwalDokter.dokter', 'resep.detailResep', 'permintaanLab.hasilLab'])
+            ->whereHas('pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            });
 
         if ($request->filled('search')) {
             $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(diagnosa) LIKE ?', ["%{$search}%"])
-                    ->orWhereHas('dokter', function ($q) use ($search) {
+                    ->orWhereHas('pendaftaran.jadwalDokter.dokter', function ($q) use ($search) {
                         $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"]);
                     });
             });
@@ -103,7 +107,7 @@ class PasienController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('status_pasien', $request->status);
+            $query->where('status', $request->status);
         }
 
         $query->orderBy('tanggal_pemeriksaan', 'desc');
@@ -122,15 +126,19 @@ class PasienController extends Controller
         $pasien = auth()->user()->pasien;
 
         $pemeriksaan = Pemeriksaan::with([
-            'dokter',
+            'pendaftaran.jadwalDokter.dokter',
             'pendaftaran',
             'resep.detailResep.obat',
-            'permintaanLab.hasilLab.petugasLab',
-            'rujukan.dokterPerujuk'
+            'permintaanLab.hasilLab',
+            'rujukan'
         ])
-            ->where('pasien_id', $pasien->pasien_id)
+            ->whereHas('pendaftaran', function ($q) use ($pasien) {
+                $q->where('pasien_id', $pasien->pasien_id);
+            })
             ->where('pemeriksaan_id', $id)
             ->firstOrFail();
+
+        $dokter = $pemeriksaan->pendaftaran->jadwalDokter->dokter;
 
         return response()->json([
             'success' => true,
@@ -138,8 +146,8 @@ class PasienController extends Controller
                 'pemeriksaan_id' => $pemeriksaan->pemeriksaan_id,
                 'tanggal_pemeriksaan' => $pemeriksaan->tanggal_pemeriksaan->translatedFormat('j F Y H:i'),
                 'dokter' => [
-                    'nama' => $pemeriksaan->dokter->nama_lengkap,
-                    'spesialisasi' => $pemeriksaan->dokter->spesialisasi ?? '-',
+                    'nama' => $dokter->nama_lengkap,
+                    'spesialisasi' => $dokter->spesialisasi ?? '-',
                 ],
                 'keluhan' => $pemeriksaan->pendaftaran->keluhan_utama ?? '-',
                 'anamnesa' => $pemeriksaan->anamnesa ?? '-',
@@ -154,7 +162,7 @@ class PasienController extends Controller
                 'icd10_code' => $pemeriksaan->icd10_code ?? '-',
                 'tindakan_medis' => $pemeriksaan->tindakan_medis ?? '-',
                 'catatan_dokter' => $pemeriksaan->catatan_dokter ?? '-',
-                'status_pasien' => $pemeriksaan->status_pasien,
+                'status' => $pemeriksaan->status,
                 'resep' => $pemeriksaan->resep ? [
                     'tanggal_resep' => $pemeriksaan->resep->tanggal_resep->translatedFormat('j F Y'),
                     'status' => $pemeriksaan->resep->status,
@@ -185,12 +193,12 @@ class PasienController extends Controller
                     ];
                 }),
                 'rujukan' => $pemeriksaan->rujukan ? [
+                    'tujuan_rujukan' => $pemeriksaan->rujukan->tujuan_rujukan,
                     'rs_tujuan' => $pemeriksaan->rujukan->rs_tujuan ?? '-',
                     'dokter_spesialis' => $pemeriksaan->rujukan->dokter_spesialis_tujuan ?? '-',
                     'alasan_rujukan' => $pemeriksaan->rujukan->alasan_rujukan,
                     'diagnosa_sementara' => $pemeriksaan->rujukan->diagnosa_sementara ?? '-',
                     'tanggal_rujukan' => $pemeriksaan->rujukan->tanggal_rujukan->translatedFormat('j F Y'),
-                    'dokter_perujuk' => $pemeriksaan->rujukan->dokterPerujuk->nama_lengkap,
                 ] : null,
             ]
         ]);
@@ -203,7 +211,7 @@ class PasienController extends Controller
 
     public function jadwalDokter(Request $request): View
     {
-        $query = Dokter::query();
+        $query = Dokter::with('jadwalDokter')->where('is_deleted', false);
 
         if ($request->filled('search')) {
             $search = strtolower($request->search);
@@ -215,6 +223,18 @@ class PasienController extends Controller
         }
 
         $dokters = $query->orderBy('nama_lengkap')->get();
+
+        // Transform jadwal data for the view
+        $dokters->each(function ($dokter) {
+            $dokter->jadwal_praktik = $dokter->jadwalDokter->where('is_deleted', false)->map(function ($jadwal) {
+                return [
+                    'hari' => $jadwal->hari_praktik,
+                    'jam_mulai' => \Carbon\Carbon::parse($jadwal->waktu_mulai)->format('H:i'),
+                    'jam_selesai' => \Carbon\Carbon::parse($jadwal->waktu_selesai)->format('H:i'),
+                    'max_pasien' => $jadwal->max_pasien,
+                ];
+            })->values();
+        });
 
         $spesialisasiList = [
             'Umum',
@@ -236,7 +256,9 @@ class PasienController extends Controller
             'Patologi Klinik'
         ];
 
-        return view('pendaftaran.jadwal-dokter', compact('dokters', 'spesialisasiList'));
+        $routeName = 'pasien.jadwal-dokter';
+
+        return view('pendaftaran.jadwal-dokter', compact('dokters', 'spesialisasiList', 'routeName'));
     }
 
     public function profile(): View

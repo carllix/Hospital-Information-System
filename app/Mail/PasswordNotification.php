@@ -15,17 +15,34 @@ class PasswordNotification extends Mailable
     public $namaLengkap;
     public $email;
     public $password;
-    public $noRekamMedis;
+    public $identifier;
+    public $identifierLabel;
+    public $role;
 
     /**
      * Create a new message instance.
+     *
+     * @param string $namaLengkap Nama lengkap user
+     * @param string $email Email user
+     * @param string $password Password yang digenerate
+     * @param string $role Role user (pasien, dokter, staf)
+     * @param string|null $identifier No Rekam Medis (pasien) atau NIP RS (dokter/staf)
      */
-    public function __construct(string $namaLengkap, string $email, string $password, ?string $noRekamMedis = null)
+    public function __construct(string $namaLengkap, string $email, string $password, string $role, ?string $identifier = null)
     {
         $this->namaLengkap = $namaLengkap;
         $this->email = $email;
         $this->password = $password;
-        $this->noRekamMedis = $noRekamMedis;
+        $this->role = $role;
+        $this->identifier = $identifier;
+
+        // Set label berdasarkan role
+        $this->identifierLabel = match($role) {
+            'pasien' => 'No. Rekam Medis',
+            'dokter' => 'NIP RS',
+            'staf' => 'NIP RS',
+            default => 'ID'
+        };
     }
 
     /**
@@ -33,8 +50,15 @@ class PasswordNotification extends Mailable
      */
     public function envelope(): Envelope
     {
+        $subject = match($this->role) {
+            'pasien' => 'Informasi Akun Pasien - Ganesha Hospital',
+            'dokter' => 'Informasi Akun Dokter - Ganesha Hospital',
+            'staf' => 'Informasi Akun Staff - Ganesha Hospital',
+            default => 'Informasi Akun - Ganesha Hospital'
+        };
+
         return new Envelope(
-            subject: 'Informasi Akun Pasien - Rumah Sakit',
+            subject: $subject,
         );
     }
 
