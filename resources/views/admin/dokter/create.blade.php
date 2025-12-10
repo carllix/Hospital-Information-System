@@ -173,8 +173,27 @@
                         <label for="spesialisasi" class="block text-sm font-medium text-gray-700 mb-2">
                             Spesialisasi <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="spesialisasi" id="spesialisasi" value="{{ old('spesialisasi') }}" required
+                        <select name="spesialisasi" id="spesialisasi" required
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('spesialisasi') border-red-500 @enderror">
+                            <option value="">Pilih Spesialisasi</option>
+                            <option value="Umum" {{ old('spesialisasi') === 'Umum' ? 'selected' : '' }}>Umum</option>
+                            <option value="Penyakit Dalam" {{ old('spesialisasi') === 'Penyakit Dalam' ? 'selected' : '' }}>Penyakit Dalam</option>
+                            <option value="Anak" {{ old('spesialisasi') === 'Anak' ? 'selected' : '' }}>Anak</option>
+                            <option value="Kandungan" {{ old('spesialisasi') === 'Kandungan' ? 'selected' : '' }}>Kandungan</option>
+                            <option value="Jantung" {{ old('spesialisasi') === 'Jantung' ? 'selected' : '' }}>Jantung</option>
+                            <option value="Bedah" {{ old('spesialisasi') === 'Bedah' ? 'selected' : '' }}>Bedah</option>
+                            <option value="Mata" {{ old('spesialisasi') === 'Mata' ? 'selected' : '' }}>Mata</option>
+                            <option value="THT" {{ old('spesialisasi') === 'THT' ? 'selected' : '' }}>THT</option>
+                            <option value="Kulit dan Kelamin" {{ old('spesialisasi') === 'Kulit dan Kelamin' ? 'selected' : '' }}>Kulit dan Kelamin</option>
+                            <option value="Saraf" {{ old('spesialisasi') === 'Saraf' ? 'selected' : '' }}>Saraf</option>
+                            <option value="Jiwa" {{ old('spesialisasi') === 'Jiwa' ? 'selected' : '' }}>Jiwa</option>
+                            <option value="Paru" {{ old('spesialisasi') === 'Paru' ? 'selected' : '' }}>Paru</option>
+                            <option value="Orthopedi" {{ old('spesialisasi') === 'Orthopedi' ? 'selected' : '' }}>Orthopedi</option>
+                            <option value="Urologi" {{ old('spesialisasi') === 'Urologi' ? 'selected' : '' }}>Urologi</option>
+                            <option value="Radiologi" {{ old('spesialisasi') === 'Radiologi' ? 'selected' : '' }}>Radiologi</option>
+                            <option value="Anestesi" {{ old('spesialisasi') === 'Anestesi' ? 'selected' : '' }}>Anestesi</option>
+                            <option value="Patologi Klinik" {{ old('spesialisasi') === 'Patologi Klinik' ? 'selected' : '' }}>Patologi Klinik</option>
+                        </select>
                         @error('spesialisasi')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
