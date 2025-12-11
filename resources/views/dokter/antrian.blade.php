@@ -100,14 +100,25 @@
                                     @endif
                                 </td>
 
-                                {{-- 5. AKSI: Tombol tetap jelas tapi ukurannya pas --}}
-                                <td class="py-4 px-6 align-middle text-right">
+                                                         
+                            <td class="py-4 px-6 align-middle text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    {{-- TOMBOL MONITORING BARU --}}
+                                    <a href="{{ route('dokter.monitoring-pasien', $antrian->pasien_id) }}" 
+                                    class="inline-flex items-center justify-center p-2 rounded-lg text-gray-500 hover:text-pink-600 hover:bg-pink-50 border border-transparent hover:border-pink-100 transition-all"
+                                    title="Monitoring Vital Sign">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                        </svg>
+                                    </a>
+
                                     <a href="{{ route('dokter.form-pemeriksaan', $antrian->pendaftaran_id) }}" 
-                                       class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-pink-600 rounded-lg hover:bg-pink-700 transition-colors shadow-sm">
+                                    class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-pink-600 rounded-lg hover:bg-pink-700 transition-colors shadow-sm">
                                         <span>Periksa</span>
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                                     </a>
-                                </td>
+                                </div>
+                            </td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use App\Models\WearableData;
 
 class DokterController extends Controller
 {
@@ -491,5 +492,60 @@ class DokterController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal memperbarui profil: ' . $e->getMessage())->withInput();
         }
+    }
+/**
+     * Halaman Monitoring Wearable Device Pasien
+     */
+    public function monitoringPasien($pasienId): View
+    {
+        $pasien = Pasien::findOrFail($pasienId);
+
+        // Ambil data terakhir
+        $latestData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->first();
+
+        // Ambil data untuk Grafik (50 data terakhir, dibalik urutannya agar kronologis)
+        $chartData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->limit(50)
+            ->get()
+            ->reverse()
+            ->values();
+
+        // Ambil data historis untuk Tabel (20 data terakhir)
+        $historicalData = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->orderBy('timestamp', 'desc')
+            ->limit(20)
+            ->get();
+
+        return view('dokter.monitoring-pasien', compact('pasien', 'latestData', 'chartData', 'historicalData'));
+    }
+
+    /**
+     * API untuk AJAX Update Data Monitoring Pasien
+     */
+    public function getPasienWearableData($pasienId)
+    {
+        $latestData = WearableData::where('pasien_id', $pasienId)
+            ->orderBy('timestamp', 'desc')
+            ->first();
+
+        if (!$latestData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No data available'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'heart_rate' => $latestData->heart_rate,
+                'oxygen_saturation' => $latestData->oxygen_saturation,
+                'timestamp' => $latestData->timestamp->format('Y-m-d H:i:s'),
+                'timestamp_display' => $latestData->timestamp->translatedFormat('j F Y H:i'),
+            ]
+        ]);
     }
 }
