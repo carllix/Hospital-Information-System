@@ -101,11 +101,20 @@
                         @foreach($permintaanMenungguList as $permintaan)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $permintaan->pasien->nama_lengkap }}</div>
-                                <div class="text-sm text-gray-500">RM: {{ $permintaan->pasien->no_rekam_medis }}</div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{-- Mengambil nama pasien via pemeriksaan -> pendaftaran --}}
+                                    {{ $permintaan->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    {{-- Pastikan kolom ini sesuai dengan database (no_rm) --}}
+                                    RM: {{ $permintaan->pemeriksaan->pendaftaran->pasien->no_rm ?? '-' }}
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $permintaan->dokter->nama_lengkap }}</div>
+                                <div class="text-sm text-gray-900">
+                                    {{-- Mengambil dokter via pendaftaran -> jadwalDokter --}}
+                                    {{ $permintaan->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? 'Dokter Tidak Ditemukan' }}
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
@@ -113,21 +122,11 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $permintaan->tanggal_permintaan->format('d/m/Y H:i') }}
+                                {{ \Carbon\Carbon::parse($permintaan->created_at)->format('d M Y H:i') }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                    Menunggu
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <form action="{{ route('lab.ambil-permintaan', $permintaan->permintaan_lab_id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="text-pink-600 hover:text-pink-900">
-                                        Ambil
-                                    </button>
-                                </form>
+                            
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Proses</a>
                             </td>
                         </tr>
                         @endforeach

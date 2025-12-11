@@ -53,53 +53,70 @@
                             <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50 bg-white">
+                    <tbody class="divide-y divide-gray-100 bg-white">
                         @foreach($permintaanList as $permintaan)
                         <tr class="hover:bg-gray-50/80 transition-all duration-200 group">
                             {{-- Kolom Pasien --}}
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
-                                    <span class="font-bold text-gray-900 text-sm">{{ $permintaan->pasien->nama_lengkap }}</span>
+                                    {{-- PERBAIKAN: Akses via pemeriksaan -> pendaftaran -> pasien --}}
+                                    <span class="font-bold text-gray-900 text-sm">
+                                        {{ $permintaan->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}
+                                    </span>
                                     <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">{{ $permintaan->pasien->no_rekam_medis }}</span>
+                                        <span class="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
+                                            {{-- Pastikan kolom ini sesuai database, biasanya no_rm atau no_rekam_medis --}}
+                                            {{ $permintaan->pemeriksaan->pendaftaran->pasien->no_rm ?? $permintaan->pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? '-' }}
+                                        </span>
                                     </div>
-                                    <span class="text-xs text-gray-400 mt-1">{{ $permintaan->tanggal_permintaan->format('d M Y, H:i') }}</span>
+                                    <span class="text-xs text-gray-400 mt-1">
+                                        {{ $permintaan->tanggal_permintaan ? \Carbon\Carbon::parse($permintaan->tanggal_permintaan)->format('d M Y, H:i') : '-' }}
+                                    </span>
                                 </div>
                             </td>
 
                             {{-- Kolom Dokter --}}
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
-                                    <span class="text-sm font-medium text-gray-900">{{ $permintaan->dokter->nama_lengkap }}</span>
-                                    <span class="text-xs text-gray-500">{{ $permintaan->dokter->spesialisasi }}</span>
+                                    {{-- PERBAIKAN: Akses via pemeriksaan -> pendaftaran -> jadwalDokter -> dokter --}}
+                                    <span class="text-sm font-medium text-gray-900">
+                                        {{ $permintaan->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? 'Dokter Tidak Ditemukan' }}
+                                    </span>
+                                    <span class="text-xs text-gray-500 mt-0.5">
+                                        {{ $permintaan->pemeriksaan->pendaftaran->jadwalDokter->dokter->spesialis ?? 'Umum' }}
+                                    </span>
                                 </div>
                             </td>
 
                             {{-- Kolom Jenis Pemeriksaan --}}
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
-                                    {{ ucwords(str_replace('_', ' ', $permintaan->jenis_pemeriksaan)) }}
-                                </span>
+                                <div class="flex flex-wrap gap-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+                                        {{ ucwords(str_replace('_', ' ', $permintaan->jenis_pemeriksaan)) }}
+                                    </span>
+                                </div>
+                                @if($permintaan->catatan_klinis)
+                                    <p class="text-xs text-gray-500 mt-2 line-clamp-2" title="{{ $permintaan->catatan_klinis }}">
+                                        <span class="font-medium">Catatan:</span> {{Str::limit($permintaan->catatan_klinis, 30)}}
+                                    </p>
+                                @endif
                             </td>
 
                             {{-- Kolom Status --}}
                             <td class="px-6 py-4">
-                                @if($permintaan->status == 'menunggu')
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
-                                        <span class="w-1.5 h-1.5 bg-amber-500 rounded-full mr-1.5 animate-pulse"></span>
+                                @if($permintaan->status === 'menunggu')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
                                         Menunggu
                                     </span>
-                                @elseif($permintaan->status == 'diproses')
-                                    <div class="flex flex-col items-start gap-1">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                                            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5 animate-bounce"></span>
-                                            Diproses
-                                        </span>
-                                        <span class="text-[10px] text-gray-400">Oleh: {{ $permintaan->petugasLab->nama_lengkap ?? 'Petugas' }}</span>
-                                    </div>
-                                @elseif($permintaan->status == 'selesai')
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                @elseif($permintaan->status === 'diproses')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+                                        Diproses
+                                    </span>
+                                @elseif($permintaan->status === 'selesai')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
                                         Selesai
                                     </span>
                                 @endif
@@ -108,28 +125,13 @@
                             {{-- Kolom Aksi --}}
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    {{-- Tombol Detail (Selalu muncul) --}}
                                     <a href="{{ route('lab.detail-permintaan', $permintaan->permintaan_lab_id) }}" 
-                                       class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                       title="Lihat Detail">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                       class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-200"
+                                       title="Lihat Detail & Proses">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
                                     </a>
-
-                                    {{-- Logika Tombol Aksi --}}
-                                    @if($permintaan->status == 'menunggu')
-                                        <form action="{{ route('lab.ambil-permintaan', $permintaan->permintaan_lab_id) }}" method="POST">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="px-3 py-1.5 text-xs font-medium text-pink-700 bg-pink-50 border border-pink-200 rounded-lg hover:bg-pink-100 transition-colors shadow-sm">
-                                                Ambil Tugas
-                                            </button>
-                                        </form>
-                                    @elseif($permintaan->status == 'diproses' && $permintaan->petugas_lab_id == Auth::user()->staf->staf_id)
-                                        <a href="{{ route('lab.form-hasil', $permintaan->permintaan_lab_id) }}" 
-                                           class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 shadow-sm transition-colors">
-                                            Input Hasil
-                                        </a>
-                                    @endif
                                 </div>
                             </td>
                         </tr>

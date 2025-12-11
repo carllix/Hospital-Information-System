@@ -163,8 +163,14 @@
                                 <span class="text-gray-400 text-xs block">{{ $permintaan->tanggal_permintaan->format('H:i') }}</span>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-gray-900">{{ $permintaan->pasien->nama_lengkap }}</div>
-                                <div class="text-xs text-gray-500">{{ $permintaan->pasien->no_rekam_medis }}</div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{-- Mengambil nama via pemeriksaan -> pendaftaran -> pasien --}}
+                                    {{ $permintaan->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    {{-- Mengambil No RM --}}
+                                    {{ $permintaan->pemeriksaan->pendaftaran->pasien->no_rm ?? $permintaan->pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? '-' }}
+                                </div>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
