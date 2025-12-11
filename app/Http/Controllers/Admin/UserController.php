@@ -149,8 +149,31 @@ class UserController extends Controller
                 'password' => Hash::make($newPassword)
             ]);
 
+            // Get nama lengkap based on role
+            $namaLengkap = match ($user->role) {
+                'pasien' => $user->pasien?->nama_lengkap ?? 'User',
+                'dokter' => $user->dokter?->nama_lengkap ?? 'User',
+                'staf' => $user->staf?->nama_lengkap ?? 'User',
+                default => 'User'
+            };
+
+            // Get identifier based on role
+            $identifier = match ($user->role) {
+                'pasien' => $user->pasien?->no_rekam_medis,
+                'dokter' => $user->dokter?->nip_rs,
+                'staf' => $user->staf?->nip_rs,
+                default => null
+            };
+
             // Send email notification
-            Mail::to($user->email)->send(new PasswordNotification($newPassword));
+            Mail::to($user->email)->send(new PasswordNotification(
+                $namaLengkap,
+                $user->email,
+                $newPassword,
+                $user->role,
+                $identifier,
+                true // isReset = true untuk reset password
+            ));
 
             return back()->with('success', 'Password berhasil direset dan dikirim ke email pengguna!');
         } catch (\Exception $e) {
