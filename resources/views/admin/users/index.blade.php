@@ -132,23 +132,39 @@
 </div>
 
 <!-- Modal Reset Password -->
-<div id="resetPasswordModal" class="ml-68 fixed inset-0 hidden items-center justify-center z-50">
-    <div class="absolute inset-0 bg-black opacity-30"></div>
-    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative z-10">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">Reset Password</h3>
-        <p class="text-gray-600 mb-6">
-            Apakah Anda yakin ingin mereset password untuk <strong id="userEmail"></strong>?
-            <br><br>
-            Password baru akan digenerate secara otomatis dan dikirim ke email pengguna.
-        </p>
-        <form id="resetPasswordForm" method="POST" class="space-y-4">
+<div id="resetPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 lg:ml-64">
+    <div id="modalBackdrop" class="absolute inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="hideResetPasswordModal()"></div>
+    <div class="ml-68 bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="modalContent">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex items-start gap-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Reset Password</h3>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Apakah Anda yakin ingin mereset password untuk <strong id="userEmail"></strong>?
+                        Password baru akan digenerate secara otomatis dan dikirim ke email pengguna.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <form id="resetPasswordForm" method="POST" onsubmit="handleResetPassword(event)">
             @csrf
-            <div class="flex items-center justify-end gap-2">
-                <button type="button" onclick="hideResetPasswordModal()" class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="p-6 flex gap-3 justify-end">
+                <button
+                    type="button"
+                    onclick="hideResetPasswordModal()"
+                    id="cancelBtn"
+                    class="px-3 py-2 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
                     Batal
                 </button>
-                <button type="submit" class="px-4 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#e05d8c] transition-colors">
-                    Reset Password
+                <button
+                    type="submit"
+                    id="resetBtn"
+                    class="px-3 py-2 text-xs bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium shadow-sm flex items-center gap-2 disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:cursor-not-allowed">
+                    <svg id="spinnerIcon" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span id="btnText">Ya, Reset Password</span>
                 </button>
             </div>
         </form>
@@ -211,6 +227,8 @@
         // Reset Password Modal
         window.showResetPasswordModal = function(userId, email) {
             const modal = document.getElementById('resetPasswordModal');
+            const modalContent = document.getElementById('modalContent');
+            const modalBackdrop = document.getElementById('modalBackdrop');
             const form = document.getElementById('resetPasswordForm');
             const userEmailSpan = document.getElementById('userEmail');
 
@@ -218,21 +236,59 @@
             userEmailSpan.textContent = email;
 
             modal.classList.remove('hidden');
-            modal.classList.add('flex');
+
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+                modalBackdrop.classList.remove('opacity-0');
+                modalBackdrop.classList.add('opacity-20');
+            }, 10);
         };
 
         window.hideResetPasswordModal = function() {
             const modal = document.getElementById('resetPasswordModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            const modalContent = document.getElementById('modalContent');
+            const modalBackdrop = document.getElementById('modalBackdrop');
+
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-20');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                // Reset button state
+                const resetBtn = document.getElementById('resetBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
+                const spinnerIcon = document.getElementById('spinnerIcon');
+                const btnText = document.getElementById('btnText');
+
+                resetBtn.disabled = false;
+                cancelBtn.disabled = false;
+                spinnerIcon.classList.add('hidden');
+                btnText.textContent = 'Ya, Reset Password';
+                resetBtn.classList.remove('bg-gray-400', 'hover:bg-gray-400');
+                resetBtn.classList.add('bg-[#f56e9d]', 'hover:bg-[#d14a7a]');
+            }, 200);
         };
 
-        // Close modal when clicking outside
-        document.getElementById('resetPasswordModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                window.hideResetPasswordModal();
-            }
-        });
+        window.handleResetPassword = function(event) {
+            event.preventDefault();
+
+            const resetBtn = document.getElementById('resetBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const spinnerIcon = document.getElementById('spinnerIcon');
+            const btnText = document.getElementById('btnText');
+
+            // Disable buttons and show spinner
+            resetBtn.disabled = true;
+            cancelBtn.disabled = true;
+            spinnerIcon.classList.remove('hidden');
+            btnText.textContent = 'Memproses...';
+
+            // Submit form
+            event.target.submit();
+        };
     });
 </script>
 @endsection

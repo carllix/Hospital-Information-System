@@ -101,11 +101,8 @@
                     <label for="harga" class="block text-sm font-medium text-gray-700 mb-2">
                         Harga <span class="text-red-500">*</span>
                     </label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-2.5 text-gray-500">Rp</span>
-                        <input type="number" name="harga" id="harga" value="{{ old('harga', $obat->harga) }}" min="0" step="0.01" required
-                            class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('harga') border-red-500 @enderror">
-                    </div>
+                    <input type="number" name="harga" id="harga" value="{{ old('harga', $obat->harga) }}" min="0" step="0.01" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('harga') border-red-500 @enderror">
                     @error('harga')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -123,7 +120,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-end gap-4 pt-4 border-t">
+            <div class="flex items-center justify-end gap-4 pt-4">
                 <a href="{{ route('admin.obat.show', $obat->obat_id) }}" class="px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     Batal
                 </a>

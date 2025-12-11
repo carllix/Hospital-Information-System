@@ -18,6 +18,7 @@ class PasswordNotification extends Mailable
     public $identifier;
     public $identifierLabel;
     public $role;
+    public $isReset;
 
     /**
      * Create a new message instance.
@@ -27,17 +28,19 @@ class PasswordNotification extends Mailable
      * @param string $password Password yang digenerate
      * @param string $role Role user (pasien, dokter, staf)
      * @param string|null $identifier No Rekam Medis (pasien) atau NIP RS (dokter/staf)
+     * @param bool $isReset Apakah ini reset password atau akun baru
      */
-    public function __construct(string $namaLengkap, string $email, string $password, string $role, ?string $identifier = null)
+    public function __construct(string $namaLengkap, string $email, string $password, string $role, ?string $identifier = null, bool $isReset = false)
     {
         $this->namaLengkap = $namaLengkap;
         $this->email = $email;
         $this->password = $password;
         $this->role = $role;
         $this->identifier = $identifier;
+        $this->isReset = $isReset;
 
         // Set label berdasarkan role
-        $this->identifierLabel = match($role) {
+        $this->identifierLabel = match ($role) {
             'pasien' => 'No. Rekam Medis',
             'dokter' => 'NIP RS',
             'staf' => 'NIP RS',
@@ -50,12 +53,16 @@ class PasswordNotification extends Mailable
      */
     public function envelope(): Envelope
     {
-        $subject = match($this->role) {
-            'pasien' => 'Informasi Akun Pasien - Ganesha Hospital',
-            'dokter' => 'Informasi Akun Dokter - Ganesha Hospital',
-            'staf' => 'Informasi Akun Staff - Ganesha Hospital',
-            default => 'Informasi Akun - Ganesha Hospital'
-        };
+        if ($this->isReset) {
+            $subject = 'Reset Password - Ganesha Hospital';
+        } else {
+            $subject = match ($this->role) {
+                'pasien' => 'Informasi Akun Pasien - Ganesha Hospital',
+                'dokter' => 'Informasi Akun Dokter - Ganesha Hospital',
+                'staf' => 'Informasi Akun Staff - Ganesha Hospital',
+                default => 'Informasi Akun - Ganesha Hospital'
+            };
+        }
 
         return new Envelope(
             subject: $subject,
