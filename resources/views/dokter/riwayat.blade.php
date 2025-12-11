@@ -65,13 +65,16 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex flex-col">
-                                        <span class="text-sm font-semibold text-gray-900">{{ $pemeriksaan->pasien->nama_lengkap }}</span>
+                                        {{-- PERBAIKAN DI SINI: Menggunakan $pemeriksaan->pendaftaran->pasien --}}
+                                        <span class="text-sm font-semibold text-gray-900">
+                                            {{ $pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}
+                                        </span>
                                         <div class="flex items-center gap-2 mt-1">
                                             <span class="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                                                {{ $pemeriksaan->pasien->no_rm }}
+                                                {{ $pemeriksaan->pendaftaran->pasien->no_rm ?? '-' }}
                                             </span>
                                             <span class="text-xs text-gray-400">
-                                                {{ \Carbon\Carbon::parse($pemeriksaan->pasien->tanggal_lahir)->age }} Thn
+                                                {{ $pemeriksaan->pendaftaran->pasien ? \Carbon\Carbon::parse($pemeriksaan->pendaftaran->pasien->tanggal_lahir)->age . ' Thn' : '-' }}
                                             </span>
                                         </div>
                                     </div>
@@ -89,25 +92,29 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($pemeriksaan->status_pasien === 'selesai_penanganan')
+                                    @if($pemeriksaan->status === 'selesai_penanganan' || $pemeriksaan->status === 'selesai')
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                                             <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
                                             Selesai
                                         </span>
-                                    @elseif($pemeriksaan->status_pasien === 'perlu_resep')
+                                    @elseif($pemeriksaan->status === 'perlu_resep')
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
                                             <span class="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
                                             Resep Obat
                                         </span>
-                                    @elseif($pemeriksaan->status_pasien === 'perlu_lab')
+                                    @elseif($pemeriksaan->status === 'perlu_lab')
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
                                             <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1.5"></span>
                                             Cek Lab
                                         </span>
-                                    @elseif($pemeriksaan->status_pasien === 'dirujuk')
+                                    @elseif($pemeriksaan->status === 'dirujuk')
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
                                             <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mr-1.5"></span>
                                             Rujukan
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
+                                            {{ ucwords(str_replace('_', ' ', $pemeriksaan->status)) }}
                                         </span>
                                     @endif
                                 </td>

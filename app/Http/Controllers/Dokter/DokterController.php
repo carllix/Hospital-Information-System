@@ -36,15 +36,19 @@ class DokterController extends Controller
             
         // Pasien yang sudah diperiksa oleh dokter ini hari ini
         $pasienDitanganiHariIni = Pemeriksaan::whereDate('tanggal_pemeriksaan', today())
-            ->where('dokter_id', $dokter->dokter_id)
+            ->whereHas('pendaftaran.jadwalDokter', function($q) use ($dokter) {
+                $q->where('dokter_id', $dokter->dokter_id);
+            })
             ->count();
             
         // Total pasien bulan ini
         $totalPasienBulanIni = Pemeriksaan::whereMonth('tanggal_pemeriksaan', now()->month)
             ->whereYear('tanggal_pemeriksaan', now()->year)
-            ->where('dokter_id', $dokter->dokter_id)
+            ->whereHas('pendaftaran.jadwalDokter', function($q) use ($dokter) {
+                $q->where('dokter_id', $dokter->dokter_id);
+            })
             ->count();
-            
+                    
         // Antrian hari ini - Semua pasien yang belum diperiksa
         $antrianPasien = Pendaftaran::with(['pasien'])
             ->whereDate('tanggal_daftar', today())
@@ -413,13 +417,18 @@ class DokterController extends Controller
      * Riwayat Pemeriksaan
      * Hanya tampilkan pemeriksaan yang dilakukan oleh dokter yang login
      */
-    public function riwayat(): View
+    public function riwayat()
     {
-        $dokter = Auth::user()->dokter;
+        $user = auth()->user();
+        $dokter = $user->dokter;
         
-        // Filter berdasarkan dokter_id di tabel pemeriksaan
-        $riwayatPemeriksaan = Pemeriksaan::with(['pasien', 'pendaftaran'])
-            ->where('dokter_id', $dokter->dokter_id) // Filter per dokter
+        // REVISI:
+        // 1. Ubah with(['pasien']) jadi with(['pendaftaran.pasien']) karena pasien ada di pendaftaran
+        // 2. Gunakan whereHas untuk filter dokter_id via jadwalDokter
+        $riwayatPemeriksaan = Pemeriksaan::with(['pendaftaran.pasien', 'pendaftaran'])
+            ->whereHas('pendaftaran.jadwalDokter', function($query) use ($dokter) {
+                $query->where('dokter_id', $dokter->dokter_id);
+            })
             ->orderBy('tanggal_pemeriksaan', 'desc')
             ->paginate(20);
             
