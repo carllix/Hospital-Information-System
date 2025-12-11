@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Layanan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class LayananController extends Controller
@@ -14,10 +15,10 @@ class LayananController extends Controller
         $query = Layanan::where('is_deleted', false);
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
-                $q->where('nama_layanan', 'like', "%{$search}%")
-                    ->orWhere('kode_layanan', 'like', "%{$search}%");
+                $q->whereRaw('LOWER(nama_layanan) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(kode_layanan) LIKE ?', ["%{$search}%"]);
             });
         }
 
@@ -98,12 +99,7 @@ class LayananController extends Controller
         ]);
 
         try {
-            $layanan->update([
-                'kode_layanan' => $validated['kode_layanan'],
-                'nama_layanan' => $validated['nama_layanan'],
-                'kategori' => $validated['kategori'],
-                'harga' => $validated['harga'],
-            ]);
+            $layanan->update($validated);
 
             return redirect()->route('admin.layanan.show', $layanan->layanan_id)
                 ->with('success', 'Data layanan berhasil diperbarui!');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Obat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class ObatController extends Controller
@@ -14,10 +15,11 @@ class ObatController extends Controller
         $query = Obat::where('is_deleted', false);
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
-                $q->where('nama_obat', 'like', "%{$search}%")
-                    ->orWhere('kode_obat', 'like', "%{$search}%");
+                $q->whereRaw('LOWER(nama_obat) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(kode_obat) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(kategori) LIKE ?', ["%{$search}%"]);
             });
         }
 
@@ -25,13 +27,20 @@ class ObatController extends Controller
             $query->where('kategori', $request->kategori);
         }
 
-        if ($request->filled('low_stock') && $request->low_stock == '1') {
-            $query->whereColumn('stok', '<=', 'stok_minimum');
+        if ($request->filled('stok_status')) {
+            if ($request->stok_status === 'habis') {
+                $query->where('stok', '<=', 0);
+            } elseif ($request->stok_status === 'menipis') {
+                $query->whereColumn('stok', '<=', 'stok_minimum')
+                    ->where('stok', '>', 0);
+            }
         }
 
         $obats = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('admin.obat.index', compact('obats'));
+        $kategoriList = ['tablet', 'kapsul', 'sirup', 'salep', 'injeksi', 'lainnya'];
+
+        return view('admin.obat.index', compact('obats', 'kategoriList'));
     }
 
     public function create()
@@ -114,16 +123,7 @@ class ObatController extends Controller
         ]);
 
         try {
-            $obat->update([
-                'kode_obat' => $validated['kode_obat'],
-                'nama_obat' => $validated['nama_obat'],
-                'kategori' => $validated['kategori'],
-                'satuan' => $validated['satuan'],
-                'stok' => $validated['stok'],
-                'stok_minimum' => $validated['stok_minimum'],
-                'harga' => $validated['harga'],
-                'deskripsi' => $validated['deskripsi'],
-            ]);
+            $obat->update($validated);
 
             return redirect()->route('admin.obat.show', $obat->obat_id)
                 ->with('success', 'Data obat berhasil diperbarui!');
