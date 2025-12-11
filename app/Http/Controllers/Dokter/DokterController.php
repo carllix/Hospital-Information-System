@@ -74,6 +74,7 @@ class DokterController extends Controller
         $dokter = Auth::user()->dokter;
         
         // Semua antrian yang belum diperiksa
+        // Menampilkan yang 'menunggu' maupun yang sudah 'dipanggil' oleh staf depan
         $antrianPasien = Pendaftaran::with(['pasien'])
             ->whereDate('tanggal_daftar', today())
             ->whereIn('status', ['menunggu', 'dipanggil'])
@@ -84,20 +85,7 @@ class DokterController extends Controller
         return view('dokter.antrian', compact('antrianPasien'));
     }
 
-    /**
-     * Panggil Pasien (Update Status)
-     */
-    public function panggilPasien(Request $request, $id): RedirectResponse
-    {
-        try {
-            $pendaftaran = Pendaftaran::findOrFail($id);
-            $pendaftaran->update(['status' => 'dipanggil']);
-            
-            return back()->with('success', 'Pasien berhasil dipanggil!');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal memanggil pasien: ' . $e->getMessage());
-        }
-    }
+    // Method panggilPasien telah DIHAPUS karena tanggung jawab staf
 
     /**
      * Form Pemeriksaan Pasien
@@ -415,16 +403,12 @@ class DokterController extends Controller
 
     /**
      * Riwayat Pemeriksaan
-     * Hanya tampilkan pemeriksaan yang dilakukan oleh dokter yang login
      */
     public function riwayat()
     {
         $user = auth()->user();
         $dokter = $user->dokter;
         
-        // REVISI:
-        // 1. Ubah with(['pasien']) jadi with(['pendaftaran.pasien']) karena pasien ada di pendaftaran
-        // 2. Gunakan whereHas untuk filter dokter_id via jadwalDokter
         $riwayatPemeriksaan = Pemeriksaan::with(['pendaftaran.pasien', 'pendaftaran'])
             ->whereHas('pendaftaran.jadwalDokter', function($query) use ($dokter) {
                 $query->where('dokter_id', $dokter->dokter_id);

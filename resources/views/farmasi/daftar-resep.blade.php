@@ -5,7 +5,6 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Filter Section -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <form method="GET" action="{{ route('farmasi.daftar-resep') }}" class="flex items-end space-x-4">
             <div class="flex-1">
@@ -23,7 +22,6 @@
         </form>
     </div>
 
-    <!-- Resep List -->
     <div class="bg-white rounded-lg shadow-md">
         <div class="px-6 py-4 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-800">
@@ -60,14 +58,20 @@
                                 #{{ $resep->resep_id }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $resep->pasien->nama_lengkap }}</div>
-                                <div class="text-sm text-gray-500">{{ $resep->pasien->no_rekam_medis }}</div>
+                                {{-- PERBAIKAN: Akses Pasien via Relasi Panjang --}}
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{ $resep->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    {{ $resep->pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? $resep->pemeriksaan->pendaftaran->pasien->no_rm ?? '-' }}
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $resep->dokter->nama_lengkap }}
+                                {{-- PERBAIKAN: Akses Dokter via Relasi Panjang --}}
+                                {{ $resep->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $resep->tanggal_resep->format('d/m/Y H:i') }}
+                                {{ $resep->tanggal_resep ? $resep->tanggal_resep->format('d/m/Y H:i') : '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($resep->status == 'menunggu')
