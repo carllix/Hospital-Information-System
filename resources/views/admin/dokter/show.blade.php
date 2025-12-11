@@ -163,19 +163,18 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
                                 </button>
-                                <form action="{{ route('admin.dokter.jadwal.destroy', [$dokter->dokter_id, $jadwal->jadwal_id]) }}"
-                                    method="POST"
-                                    class="inline-block"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?')">
+                                <button
+                                    type="button"
+                                    onclick="showDeleteJadwalModal({{ $jadwal->jadwal_id }}, '{{ $jadwal->hari_praktik }} ({{ $jadwal->waktu_mulai }} - {{ $jadwal->waktu_selesai }})')"
+                                    class="text-red-600 hover:text-red-800 transition-colors"
+                                    title="Hapus">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                                <form id="deleteJadwalForm-{{ $jadwal->jadwal_id }}" action="{{ route('admin.dokter.jadwal.destroy', [$dokter->dokter_id, $jadwal->jadwal_id]) }}" method="POST" class="hidden">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit"
-                                        class="text-red-600 hover:text-red-800 transition-colors"
-                                        title="Hapus">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
                                 </form>
                             </div>
                         </td>
@@ -271,7 +270,80 @@
     </div>
 </div>
 
+<!-- Modal Konfirmasi Delete Jadwal -->
+<div id="deleteJadwalModal" class="ml-68 hidden fixed inset-0 z-50 flex items-center justify-center p-4 lg:ml-64">
+    <div id="deleteJadwalModalBackdrop" class="absolute inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="closeDeleteJadwalModal()"></div>
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="deleteJadwalModalContent">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex items-start gap-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Hapus Jadwal</h3>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Yakin ingin menghapus jadwal <strong id="deleteJadwalName"></strong>? Tindakan ini tidak dapat dibatalkan.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 flex gap-3 justify-end">
+            <button
+                type="button"
+                onclick="closeDeleteJadwalModal()"
+                class="px-3 py-2 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                Batal
+            </button>
+            <button
+                type="button"
+                onclick="confirmDeleteJadwal()"
+                class="px-3 py-2 text-xs bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium shadow-sm">
+                Ya, Hapus
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
+    let deleteJadwalId = null;
+
+    function showDeleteJadwalModal(id, name) {
+        deleteJadwalId = id;
+        document.getElementById('deleteJadwalName').textContent = name;
+
+        const modal = document.getElementById('deleteJadwalModal');
+        const modalContent = document.getElementById('deleteJadwalModalContent');
+        const modalBackdrop = document.getElementById('deleteJadwalModalBackdrop');
+
+        modal.classList.remove('hidden');
+
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-20');
+        }, 10);
+    }
+
+    function closeDeleteJadwalModal() {
+        const modal = document.getElementById('deleteJadwalModal');
+        const modalContent = document.getElementById('deleteJadwalModalContent');
+        const modalBackdrop = document.getElementById('deleteJadwalModalBackdrop');
+
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        modalBackdrop.classList.remove('opacity-20');
+        modalBackdrop.classList.add('opacity-0');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            deleteJadwalId = null;
+        }, 200);
+    }
+
+    function confirmDeleteJadwal() {
+        if (deleteJadwalId) {
+            document.getElementById('deleteJadwalForm-' + deleteJadwalId).submit();
+        }
+    }
+
     function showAddJadwalModal() {
         document.getElementById('addJadwalModal').classList.remove('hidden');
         document.getElementById('addJadwalModal').classList.add('flex');

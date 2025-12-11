@@ -11,7 +11,13 @@
     <div style="max-width: 600px; margin: 32px auto; padding: 16px;">
         <!-- Header -->
         <div style="background-color: #f56e9d; color: white; padding: 32px; border-radius: 8px 8px 0 0; text-align: center;">
-            <h1 style="margin: 0; font-size: 24px; font-weight: bold;">Selamat Datang di Ganesha Hospital</h1>
+            <h1 style="margin: 0; font-size: 24px; font-weight: bold;">
+                @if($isReset)
+                Reset Password - Ganesha Hospital
+                @else
+                Selamat Datang di Ganesha Hospital
+                @endif
+            </h1>
         </div>
 
         <!-- Content -->
@@ -21,7 +27,11 @@
             </p>
 
             <p style="color: #374151; margin-bottom: 24px;">
+                @if($isReset)
+                Password Anda telah berhasil direset. Berikut adalah password baru Anda:
+                @else
                 Akun Anda telah berhasil dibuat di Sistem Informasi Ganesha Hospital. Berikut adalah informasi akun Anda:
+                @endif
             </p>
 
             <!-- Info Box -->
@@ -53,11 +63,19 @@
             </div>
 
             <p style="color: #374151; margin-bottom: 24px;">
+                @if($isReset)
+                Anda dapat login ke sistem menggunakan email dan password baru di atas. Silakan ubah password Anda setelah login.
+                @else
                 Anda dapat login ke sistem menggunakan email dan password di atas.
+                @endif
             </p>
 
             <p style="color: #374151; margin: 0;">
+                @if($isReset)
+                Jika Anda tidak melakukan permintaan reset password, segera hubungi administrator kami.
+                @else
                 Jika Anda mengalami kesulitan atau memiliki pertanyaan, silakan hubungi petugas pendaftaran kami.
+                @endif
             </p>
 
             <!-- Footer -->
