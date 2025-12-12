@@ -41,24 +41,40 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <div class="flex flex-col items-center text-center mb-6">
                     <div class="h-20 w-20 rounded-full bg-pink-50 flex items-center justify-center text-pink-500 font-bold text-3xl mb-3">
-                        {{ substr($permintaan->pasien->nama_lengkap, 0, 1) }}
+                        {{-- PERBAIKAN: Akses inisial nama pasien --}}
+                        {{ substr($permintaan->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '?', 0, 1) }}
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900">{{ $permintaan->pasien->nama_lengkap }}</h3>
-                    <p class="text-sm text-gray-500 font-mono">{{ $permintaan->pasien->no_rekam_medis }}</p>
+                    {{-- PERBAIKAN: Akses nama lengkap --}}
+                    <h3 class="text-lg font-bold text-gray-900">
+                        {{ $permintaan->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}
+                    </h3>
+                    {{-- PERBAIKAN: Akses No RM --}}
+                    <p class="text-sm text-gray-500 font-mono">
+                        {{ $permintaan->pemeriksaan->pendaftaran->pasien->no_rm ?? $permintaan->pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? '-' }}
+                    </p>
                 </div>
                 
                 <div class="border-t border-gray-100 pt-4 space-y-3">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500">Gender</span>
-                        <span class="font-medium text-gray-700">{{ $permintaan->pasien->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
+                        <span class="font-medium text-gray-700">
+                            {{-- PERBAIKAN: Akses Gender --}}
+                            {{ ($permintaan->pemeriksaan->pendaftaran->pasien->jenis_kelamin ?? '') == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                        </span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500">Umur</span>
-                        <span class="font-medium text-gray-700">{{ \Carbon\Carbon::parse($permintaan->pasien->tanggal_lahir)->age }} Tahun</span>
+                        <span class="font-medium text-gray-700">
+                            {{-- PERBAIKAN: Hitung Umur --}}
+                            {{ $permintaan->pemeriksaan->pendaftaran->pasien ? \Carbon\Carbon::parse($permintaan->pemeriksaan->pendaftaran->pasien->tanggal_lahir)->age . ' Tahun' : '-' }}
+                        </span>
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500">Tanggal Lahir</span>
-                        <span class="font-medium text-gray-700">{{ \Carbon\Carbon::parse($permintaan->pasien->tanggal_lahir)->format('d M Y') }}</span>
+                        <span class="font-medium text-gray-700">
+                            {{-- PERBAIKAN: Tanggal Lahir --}}
+                            {{ $permintaan->pemeriksaan->pendaftaran->pasien ? \Carbon\Carbon::parse($permintaan->pemeriksaan->pendaftaran->pasien->tanggal_lahir)->format('d M Y') : '-' }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -94,15 +110,19 @@
                         <p class="text-xs text-gray-500 mb-1">Dokter Pengirim</p>
                         <div class="flex items-center gap-2">
                             <div class="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center text-xs text-gray-600 font-bold">
-                                {{ substr($permintaan->dokter->nama_lengkap, 0, 1) }}
+                                {{-- PERBAIKAN: Inisial Dokter --}}
+                                {{ substr($permintaan->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? 'D', 0, 1) }}
                             </div>
-                            <p class="text-sm font-medium text-gray-700">{{ $permintaan->dokter->nama_lengkap }}</p>
+                            <p class="text-sm font-medium text-gray-700">
+                                {{-- PERBAIKAN: Nama Dokter --}}
+                                {{ $permintaan->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? 'Dokter Tidak Ditemukan' }}
+                            </p>
                         </div>
                     </div>
 
                     <div>
                         <p class="text-xs text-gray-500 mb-1">Waktu Permintaan</p>
-                        <p class="text-sm text-gray-700">{{ $permintaan->tanggal_permintaan->format('d M Y, H:i') }}</p>
+                        <p class="text-sm text-gray-700">{{ $permintaan->tanggal_permintaan ? $permintaan->tanggal_permintaan->format('d M Y, H:i') : '-' }}</p>
                     </div>
 
                     @if($permintaan->catatan_permintaan)
@@ -159,7 +179,7 @@
                             <div class="flex items-center gap-3">
                                 <div class="text-sm">
                                     <p class="text-gray-500 text-xs">Diperiksa oleh:</p>
-                                    <p class="font-semibold text-gray-900">{{ $hasilPertama->petugasLab->nama_lengkap }}</p>
+                                    <p class="font-semibold text-gray-900">{{ $hasilPertama->petugasLab->nama_lengkap ?? 'Petugas' }}</p>
                                     <p class="text-xs text-gray-400">Petugas Lab</p>
                                 </div>
                             </div>

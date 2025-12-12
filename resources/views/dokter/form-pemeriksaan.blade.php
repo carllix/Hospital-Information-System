@@ -206,7 +206,7 @@
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
                                         <p class="font-semibold text-gray-900">{{ \Carbon\Carbon::parse($riwayat->tanggal_pemeriksaan)->isoFormat('D MMMM YYYY') }}</p>
-                                        <p class="text-sm text-gray-600">oleh {{ $riwayat->dokter->nama_lengkap }}</p>
+                                            <p class="text-sm text-gray-600">oleh {{ $riwayat->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? 'Dokter' }}</p>
                                     </div>
                                     <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
                                         {{ ucwords(str_replace('_', ' ', $riwayat->status_pasien)) }}

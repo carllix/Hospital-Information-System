@@ -106,6 +106,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [DokterController::class, 'profile'])->name('profile');
         Route::get('/profile/edit', [DokterController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profile', [DokterController::class, 'updateProfile'])->name('profile.update');
+
+        Route::get('/monitoring/{pasienId}', [DokterController::class, 'monitoringPasien'])->name('monitoring-pasien');
+        Route::get('/monitoring/{pasienId}/data', [DokterController::class, 'getPasienWearableData'])->name('monitoring.data');
     });
 
     // Farmasi Routes

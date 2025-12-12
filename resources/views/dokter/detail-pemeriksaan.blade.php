@@ -35,15 +35,17 @@
                 </h3>
                 <div class="flex items-start space-x-4">
                     <div class="w-16 h-16 bg-pink-50 rounded-full flex items-center justify-center text-2xl font-bold text-pink-600">
-                        {{ substr($pemeriksaan->pasien->nama_lengkap, 0, 1) }}
+                        {{-- PERBAIKAN: Ganti $pemeriksaan->pasien menjadi $pemeriksaan->pendaftaran->pasien --}}
+                        {{ substr($pemeriksaan->pendaftaran->pasien->nama_lengkap, 0, 1) }}
                     </div>
                     <div>
-                        <h4 class="text-xl font-bold text-gray-900">{{ $pemeriksaan->pasien->nama_lengkap }}</h4>
-                        <p class="text-gray-500 text-sm">No. RM: <span class="font-mono text-gray-700">{{ $pemeriksaan->pasien->no_rm }}</span></p>
+                        {{-- PERBAIKAN: Ganti $pemeriksaan->pasien menjadi $pemeriksaan->pendaftaran->pasien --}}
+                        <h4 class="text-xl font-bold text-gray-900">{{ $pemeriksaan->pendaftaran->pasien->nama_lengkap }}</h4>
+                        <p class="text-gray-500 text-sm">No. RM: <span class="font-mono text-gray-700">{{ $pemeriksaan->pendaftaran->pasien->no_rm }}</span></p>
                         <div class="flex items-center gap-3 mt-2 text-sm text-gray-600">
-                            <span>{{ $pemeriksaan->pasien->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
+                            <span>{{ $pemeriksaan->pendaftaran->pasien->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
                             <span>&bull;</span>
-                            <span>{{ \Carbon\Carbon::parse($pemeriksaan->pasien->tanggal_lahir)->age }} Tahun</span>
+                            <span>{{ \Carbon\Carbon::parse($pemeriksaan->pendaftaran->pasien->tanggal_lahir)->age }} Tahun</span>
                         </div>
                     </div>
                 </div>
@@ -92,7 +94,8 @@
                     <div>
                         <h4 class="text-sm font-bold text-gray-700 mb-1">Catatan Pemeriksaan / Anamnesa</h4>
                         <div class="p-3 bg-gray-50 rounded text-gray-700 text-sm leading-relaxed whitespace-pre-line">
-                            {{ $pemeriksaan->catatan_pemeriksaan ?? 'Tidak ada catatan.' }}
+                            {{-- PERBAIKAN: Ganti catatan_pemeriksaan dengan anamnesa sesuai fillable di model --}}
+                            {{ $pemeriksaan->anamnesa ?? 'Tidak ada catatan.' }}
                         </div>
                     </div>
                     <div>
@@ -123,8 +126,9 @@
                                 <span class="w-1.5 h-1.5 bg-green-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>
                                 <div>
                                     <p class="font-bold text-gray-800">{{ $detail->obat->nama_obat }}</p>
-                                    <p class="text-gray-500 text-xs">{{ $detail->jumlah }} {{ $detail->obat->satuan }} &bull; {{ $detail->dosis }}</p>
-                                    @if($detail->keterangan)
+                                    {{-- PERBAIKAN: Ganti 'dosis' dengan 'aturan_pakai' sesuai fillable DetailResep --}}
+                                    <p class="text-gray-500 text-xs">{{ $detail->jumlah }} {{ $detail->obat->satuan ?? 'item' }} &bull; {{ $detail->aturan_pakai }}</p>
+                                    @if($detail->keterangan ?? false)
                                         <p class="text-gray-400 text-xs italic">"{{ $detail->keterangan }}"</p>
                                     @endif
                                 </div>
@@ -149,8 +153,9 @@
                             <li class="flex items-start text-sm">
                                 <span class="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>
                                 <div>
-                                    <p class="font-medium text-gray-800">{{ $lab->jenis_pemeriksaan ?? 'Cek Lab' }}</p>
-                                    <p class="text-xs text-gray-500">{{ $lab->catatan ?? '-' }}</p>
+                                    {{-- PERBAIKAN: Ganti 'jenis_pemeriksaan' dengan 'jenis_test' sesuai fillable PermintaanLab --}}
+                                    <p class="font-medium text-gray-800">{{ $lab->jenis_test ?? 'Cek Lab' }}</p>
+                                    <p class="text-xs text-gray-500">{{ $lab->catatan_dokter ?? '-' }}</p>
                                     <span class="inline-block px-2 py-0.5 text-[10px] rounded bg-gray-100 text-gray-600 mt-1">
                                         {{ ucfirst($lab->status ?? 'pending') }}
                                     </span>
@@ -169,15 +174,18 @@
                     <h3 class="font-bold text-purple-800">Rujukan Keluar</h3>
                 </div>
                 <div class="p-4 text-sm">
+                    {{-- PERBAIKAN: Sesuaikan dengan fillable Rujukan (rs_tujuan, bukan rumah_sakit_tujuan) --}}
                     <p class="text-gray-500 text-xs">Rumah Sakit Tujuan</p>
-                    <p class="font-bold text-gray-800 mb-2">{{ $pemeriksaan->rujukan->rumah_sakit_tujuan }}</p>
+                    <p class="font-bold text-gray-800 mb-2">{{ $pemeriksaan->rujukan->rs_tujuan }}</p>
                     
-                    <p class="text-gray-500 text-xs">Poli Tujuan</p>
-                    <p class="font-medium text-gray-800 mb-2">{{ $pemeriksaan->rujukan->poli_tujuan }}</p>
+                    {{-- PERBAIKAN: Gunakan alasan_rujukan karena tidak ada poli_tujuan di fillable --}}
+                    <p class="text-gray-500 text-xs">Alasan Rujukan</p>
+                    <p class="font-medium text-gray-800 mb-2">{{ $pemeriksaan->rujukan->alasan_rujukan }}</p>
 
-                    @if($pemeriksaan->rujukan->catatan)
-                        <div class="mt-2 p-2 bg-gray-50 rounded text-gray-600 text-xs">
-                            {{ $pemeriksaan->rujukan->catatan }}
+                    @if($pemeriksaan->rujukan->diagnosa_sementara ?? false)
+                        <p class="text-gray-500 text-xs mt-2">Diagnosa Sementara</p>
+                        <div class="mt-1 p-2 bg-gray-50 rounded text-gray-600 text-xs">
+                            {{ $pemeriksaan->rujukan->diagnosa_sementara }}
                         </div>
                     @endif
                 </div>

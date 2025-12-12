@@ -40,8 +40,12 @@ class FarmasiController extends Controller
         // Obat yang habis
         $obatHabis = Obat::where('stok', '=', 0)->count();
         
-        // Daftar resep menunggu (terbaru)
-        $resepMenungguList = Resep::with(['pasien', 'dokter', 'detailResep.obat'])
+        // PERBAIKAN: Menggunakan relasi panjang pemeriksaan.pendaftaran...
+        $resepMenungguList = Resep::with([
+                'pemeriksaan.pendaftaran.pasien', 
+                'pemeriksaan.pendaftaran.jadwalDokter.dokter', 
+                'detailResep.obat'
+            ])
             ->where('status', 'menunggu')
             ->orderBy('tanggal_resep', 'asc')
             ->take(5)
@@ -65,7 +69,13 @@ class FarmasiController extends Controller
     {
         $status = $request->get('status', 'semua');
         
-        $query = Resep::with(['pasien', 'dokter', 'apoteker', 'detailResep.obat'])
+        // PERBAIKAN: Menggunakan relasi panjang
+        $query = Resep::with([
+                'pemeriksaan.pendaftaran.pasien', 
+                'pemeriksaan.pendaftaran.jadwalDokter.dokter', 
+                'apoteker', 
+                'detailResep.obat'
+            ])
             ->orderBy('tanggal_resep', 'desc');
         
         if ($status !== 'semua') {
@@ -82,9 +92,10 @@ class FarmasiController extends Controller
      */
     public function detailResep($id): View
     {
+        // PERBAIKAN: Menggunakan relasi panjang
         $resep = Resep::with([
-            'pasien',
-            'dokter',
+            'pemeriksaan.pendaftaran.pasien',
+            'pemeriksaan.pendaftaran.jadwalDokter.dokter',
             'apoteker',
             'pemeriksaan',
             'detailResep.obat'
@@ -337,7 +348,12 @@ class FarmasiController extends Controller
         $bulan = $request->get('bulan', now()->month);
         $tahun = $request->get('tahun', now()->year);
         
-        $resepList = Resep::with(['pasien', 'dokter', 'apoteker'])
+        // PERBAIKAN: Menggunakan relasi panjang
+        $resepList = Resep::with([
+                'pemeriksaan.pendaftaran.pasien', 
+                'pemeriksaan.pendaftaran.jadwalDokter.dokter', 
+                'apoteker'
+            ])
             ->whereMonth('tanggal_resep', $bulan)
             ->whereYear('tanggal_resep', $tahun)
             ->orderBy('tanggal_resep', 'desc')
@@ -353,12 +369,15 @@ class FarmasiController extends Controller
         return view('farmasi.laporan-resep', compact('resepList', 'statistik', 'bulan', 'tahun'));
     }
 
+    /**
+     * Selesaikan Resep & Buat Tagihan
+     */
     public function selesaikanResepDanBuatTagihan($id): RedirectResponse
     {
         try {
             DB::beginTransaction();
             
-            $resep = Resep::with(['detailResep.obat', 'pemeriksaan'])->findOrFail($id);
+            $resep = Resep::with(['detailResep.obat', 'pemeriksaan.pendaftaran'])->findOrFail($id);
             $apoteker = Auth::user()->staf;
             
             // Cek authorization
@@ -392,10 +411,13 @@ class FarmasiController extends Controller
             }
 
             // 1. Buat Tagihan
+            // PERBAIKAN: Ambil pasien_id dari relasi panjang
+            $pasienId = $resep->pemeriksaan->pendaftaran->pasien_id;
+
             $tagihan = \App\Models\Tagihan::create([
                 'pendaftaran_id' => $resep->pemeriksaan->pendaftaran_id,
-                'pasien_id' => $resep->pasien_id,
-                'jenis_tagihan' => 'obat', // Jenis Tagihan Obat
+                'pasien_id' => $pasienId, 
+                'jenis_tagihan' => 'obat',
                 'status' => 'belum_bayar',
                 'subtotal' => $totalTagihanObat, 
                 'total_tagihan' => $totalTagihanObat,

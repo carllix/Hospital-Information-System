@@ -34,6 +34,7 @@
             <div>
                 <p class="text-sm font-medium text-gray-500">Bulan Ini</p>
                 <h3 class="text-3xl font-bold text-gray-900 mt-2">
+                    {{-- Note: Ini hanya menghitung data di halaman aktif pagination --}}
                     {{ $riwayatPermintaan->where('tanggal_permintaan', '>=', now()->startOfMonth())->count() }}
                 </h3>
                 <p class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-lg mt-3 inline-block font-medium">
@@ -50,6 +51,7 @@
             <div>
                 <p class="text-sm font-medium text-gray-500">Minggu Ini</p>
                 <h3 class="text-3xl font-bold text-gray-900 mt-2">
+                    {{-- Note: Ini hanya menghitung data di halaman aktif pagination --}}
                     {{ $riwayatPermintaan->where('tanggal_permintaan', '>=', now()->startOfWeek())->count() }}
                 </h3>
                 <p class="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-lg mt-3 inline-block font-medium">
@@ -90,19 +92,33 @@
                         @foreach($riwayatPermintaan as $permintaan)
                         <tr class="hover:bg-gray-50 transition-colors group">
                             <td class="px-6 py-4">
-                                <span class="text-sm font-medium text-gray-900 block">{{ $permintaan->tanggal_permintaan->format('d/m/Y') }}</span>
-                                <span class="text-xs text-gray-500 block mt-0.5">{{ $permintaan->tanggal_permintaan->format('H:i') }} WIB</span>
+                                <span class="text-sm font-medium text-gray-900 block">
+                                    {{ $permintaan->tanggal_permintaan ? $permintaan->tanggal_permintaan->format('d/m/Y') : '-' }}
+                                </span>
+                                <span class="text-xs text-gray-500 block mt-0.5">
+                                    {{ $permintaan->tanggal_permintaan ? $permintaan->tanggal_permintaan->format('H:i') : '-' }} WIB
+                                </span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
-                                    <span class="text-sm font-bold text-gray-900">{{ $permintaan->pasien->nama_lengkap }}</span>
-                                    <span class="text-xs font-mono text-gray-500 mt-0.5">{{ $permintaan->pasien->no_rekam_medis }}</span>
+                                    {{-- PERBAIKAN: Akses Pasien --}}
+                                    <span class="text-sm font-bold text-gray-900">
+                                        {{ $permintaan->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}
+                                    </span>
+                                    <span class="text-xs font-mono text-gray-500 mt-0.5">
+                                        {{ $permintaan->pemeriksaan->pendaftaran->pasien->no_rm ?? $permintaan->pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? '-' }}
+                                    </span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
-                                    <span class="text-sm font-medium text-gray-900">{{ $permintaan->dokter->nama_lengkap }}</span>
-                                    <span class="text-xs text-gray-500">{{ $permintaan->dokter->spesialisasi }}</span>
+                                    {{-- PERBAIKAN: Akses Dokter --}}
+                                    <span class="text-sm font-medium text-gray-900">
+                                        {{ $permintaan->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? 'Dokter Tidak Ditemukan' }}
+                                    </span>
+                                    <span class="text-xs text-gray-500">
+                                        {{ $permintaan->pemeriksaan->pendaftaran->jadwalDokter->dokter->spesialis ?? 'Umum' }}
+                                    </span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
@@ -182,6 +198,7 @@
             @endphp
             @foreach($jenisPemeriksaanLabels as $key => $style)
                 @php
+                    // Note: Count ini hanya menghitung dari data pagination yang sedang aktif
                     $count = $riwayatPermintaan->where('jenis_pemeriksaan', $key)->count();
                 @endphp
                 <div class="flex flex-col items-center justify-center p-4 rounded-xl border {{ $style['color'] }} transition-transform hover:scale-105">

@@ -136,11 +136,17 @@
                                 <span class="font-mono text-xs font-bold bg-gray-100 text-gray-600 px-2 py-1 rounded">#{{ $resep->resep_id }}</span>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-gray-900">{{ $resep->pasien->nama_lengkap }}</div>
-                                <div class="text-xs text-gray-500">{{ $resep->pasien->no_rekam_medis }}</div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{-- PERBAIKAN: Akses Pasien via Relasi Panjang --}}
+                                    {{ $resep->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    {{ $resep->pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? $resep->pemeriksaan->pendaftaran->pasien->no_rm ?? '-' }}
+                                </div>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600">
-                                {{ $resep->dokter->nama_lengkap }}
+                                {{-- PERBAIKAN: Akses Dokter via Relasi Panjang --}}
+                                {{ $resep->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? '-' }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
                                 {{ $resep->apoteker ? $resep->apoteker->nama_lengkap : '-' }}
@@ -201,8 +207,10 @@
         .rounded-full { border: 1px solid #000; color: #000 !important; background: transparent !important; }
         
         /* Color Correction */
+        * {
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
+    }
 </style>
 @endsection
