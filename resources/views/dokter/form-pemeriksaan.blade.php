@@ -445,4 +445,12 @@
 @if(session('error'))
 <x-toast type="error" :message="session('error')" />
 @endif
+
+@if(session('success'))
+<x-toast type="success" :message="session('success')" />
+@endif
+
+@if($errors->any())
+<x-toast type="error" message="Terdapat kesalahan pada form. Silakan periksa kembali." />
+@endif
 @endsection
