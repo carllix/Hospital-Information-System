@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class RegisterController extends Controller
@@ -49,7 +50,15 @@ class RegisterController extends Controller
     {
         return $request->validate([
             'email' => ['required', 'email', 'max:100', 'unique:users,email'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+            ],
             'g-recaptcha-response' => ['required', 'captcha'],
             'nama_lengkap' => ['required', 'string', 'max:100'],
             'nik' => ['required', 'string', 'size:16', 'unique:pasien,nik'],
