@@ -12,7 +12,6 @@ $stafMenus = [
 ['name' => 'Daftar Antrian', 'route' => '/pendaftaran/antrian', 'icon' => 'clipboard-list'],
 ['name' => 'Jadwal Dokter', 'route' => '/pendaftaran/jadwal-dokter', 'icon' => 'calendar'],
 ['name' => 'Riwayat Pendaftaran', 'route' => '/pendaftaran/riwayat', 'icon' => 'clock'],
-['name' => 'Profil Saya', 'route' => '/pendaftaran/profile', 'icon' => 'profile'],
 ],
 'farmasi' => [
 ['name' => 'Dashboard', 'route' => '/farmasi/dashboard', 'icon' => 'dashboard'],
@@ -25,7 +24,6 @@ $stafMenus = [
 ['name' => 'Daftar Permintaan', 'route' => '/lab/permintaan', 'icon' => 'medical'],
 ['name' => 'Riwayat Pemeriksaan', 'route' => '/lab/riwayat', 'icon' => 'health'],
 ['name' => 'Laporan', 'route' => '/lab/laporan', 'icon' => 'payment'],
-['name' => 'Profil Saya', 'route' => '/lab/profile', 'icon' => 'profile'],
 ],
 'kasir' => [
 ['name' => 'Dashboard', 'route' => '/kasir/dashboard', 'icon' => 'dashboard'],
