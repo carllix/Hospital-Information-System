@@ -48,7 +48,7 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Antrian</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pasien</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keluhan</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jadwal Kunjungan</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -69,7 +69,14 @@
                             <div class="text-sm text-gray-700 max-w-xs">{{ $antrian->keluhan_utama ?? '-' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-600">{{ $antrian->created_at->format('H:i') }}</div>
+                            @if($antrian->jadwalDokter)
+                            <div class="text-sm text-gray-600">
+                                {{ \Carbon\Carbon::parse($antrian->jadwalDokter->waktu_mulai)->format('H:i') }} -
+                                {{ \Carbon\Carbon::parse($antrian->jadwalDokter->waktu_selesai)->format('H:i') }}
+                            </div>
+                            @else
+                            <div class="text-sm text-gray-500">-</div>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($antrian->status === 'menunggu')

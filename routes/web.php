@@ -160,7 +160,8 @@ Route::middleware('auth')->group(function () {
     // ========================================
     Route::prefix('kasir')->name('kasir.')->middleware(['auth', 'role:staf,kasir'])->group(function () {
         Route::get('/dashboard', [KasirController::class, 'dashboard'])->name('dashboard');
-        Route::post('/buat-tagihan/{pemeriksaanId}', [KasirController::class, 'buatTagihan'])->name('buat-tagihan');
+        Route::get('/buat-tagihan/{pemeriksaanId}', [KasirController::class, 'formTagihan'])->name('form-tagihan');
+        Route::post('/buat-tagihan/{pemeriksaanId}', [KasirController::class, 'buatTagihan'])->name('store-tagihan');
         Route::get('/detail/{tagihanId}', [KasirController::class, 'detail'])->name('detail');
         Route::post('/bayar/{tagihanId}', [KasirController::class, 'prosesPembayaran'])->name('proses-pembayaran');
         Route::get('/invoice/{tagihanId}', [KasirController::class, 'invoice'])->name('invoice');

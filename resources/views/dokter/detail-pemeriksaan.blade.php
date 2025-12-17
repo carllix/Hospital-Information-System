@@ -143,9 +143,8 @@
                     <li class="flex items-start text-sm">
                         <span class="w-1.5 h-1.5 bg-[#f56e9d] rounded-full mt-1.5 mr-2 flex-shrink-0"></span>
                         <div>
-                            {{-- PERBAIKAN: Ganti 'jenis_pemeriksaan' dengan 'jenis_test' sesuai fillable PermintaanLab --}}
-                            <p class="font-medium text-gray-800">{{ $lab->jenis_test ?? 'Cek Lab' }}</p>
-                            <p class="text-xs text-gray-500">{{ $lab->catatan_dokter ?? '-' }}</p>
+                            <p class="font-medium text-gray-800">{{ ucwords(str_replace('_', ' ', $lab->jenis_pemeriksaan ?? 'Cek Lab')) }}</p>
+                            <p class="text-xs text-gray-500">{{ $lab->catatan_permintaan ?? '-' }}</p>
                             <span class="inline-block px-2 py-0.5 text-[10px] rounded bg-gray-100 text-gray-600 mt-1">
                                 {{ ucfirst($lab->status ?? 'pending') }}
                             </span>

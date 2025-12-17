@@ -63,7 +63,7 @@ class DokterController extends Controller
         $tanggal = $request->input('tanggal', now()->format('Y-m-d'));
 
         // Antrian = semua pasien yang daftar ke dokter ini pada tanggal tertentu (menunggu + dipanggil)
-        $antrianPasien = Pendaftaran::with(['pasien'])
+        $antrianPasien = Pendaftaran::with(['pasien', 'jadwalDokter'])
             ->whereDate('tanggal_kunjungan', $tanggal)
             ->whereIn('status', ['menunggu', 'dipanggil'])
             ->whereHas('jadwalDokter', function($q) use ($dokter) {

@@ -82,7 +82,7 @@
                                 Keluhan
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Waktu
+                                Jadwal Kunjungan
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Status
@@ -118,7 +118,14 @@
                                 <div class="text-sm text-gray-700 max-w-xs">{{ $pendaftaran->keluhan_utama }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-600">{{ $pendaftaran->tanggal_daftar->format('H:i') }}</div>
+                                @if($pendaftaran->jadwalDokter)
+                                <div class="text-sm text-gray-600">
+                                    {{ \Carbon\Carbon::parse($pendaftaran->jadwalDokter->waktu_mulai)->format('H:i') }} -
+                                    {{ \Carbon\Carbon::parse($pendaftaran->jadwalDokter->waktu_selesai)->format('H:i') }}
+                                </div>
+                                @else
+                                <div class="text-sm text-gray-500">-</div>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="status-badge">
@@ -161,7 +168,7 @@
 </div>
 
 <div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div id="modalBackdrop" class="fixed inset-0 bg-black opacity-0 transition-opacity duration-200 lg:left-64" onclick="closeConfirmModal()"></div>
+    <div id="modalBackdrop" class="fixed inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="closeConfirmModal()"></div>
     <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="modalContent">
         <div class="p-6 border-b border-gray-100">
             <div class="flex items-start gap-4">

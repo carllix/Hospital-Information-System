@@ -104,12 +104,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <form action="{{ route('kasir.buat-tagihan', $pemeriksaan->pemeriksaan_id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="px-4 py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors">
-                                        Buat Tagihan
-                                    </button>
-                                </form>
+                                <a href="{{ route('kasir.form-tagihan', $pemeriksaan->pemeriksaan_id) }}" class="px-4 py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors inline-block">
+                                    Buat Tagihan
+                                </a>
                             </div>
                         </div>
                     @endforeach

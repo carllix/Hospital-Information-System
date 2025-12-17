@@ -70,11 +70,85 @@ class KasirController extends Controller
     }
 
     /**
-     * Buat Tagihan untuk pemeriksaan
-     * Generate detail_tagihan dari: konsultasi, tindakan, obat, lab
+     * Form Buat Tagihan - Kasir pilih layanan
      */
-    public function buatTagihan($pemeriksaanId)
+    public function formTagihan($pemeriksaanId)
     {
+        $pemeriksaan = Pemeriksaan::with([
+            'pendaftaran.pasien',
+            'pendaftaran.jadwalDokter.dokter',
+            'resep.detailResep.obat',
+            'permintaanLab.hasilLab'
+        ])->findOrFail($pemeriksaanId);
+
+        // Cek apakah sudah ada tagihan
+        if ($pemeriksaan->tagihan) {
+            return redirect()->route('kasir.detail', $pemeriksaan->tagihan->tagihan_id)
+                ->with('info', 'Tagihan sudah ada untuk pemeriksaan ini.');
+        }
+
+        // Ambil semua layanan yang tersedia
+        $layananList = Layanan::where('is_deleted', false)
+            ->orderBy('kategori')
+            ->orderBy('nama_layanan')
+            ->get();
+
+        // Siapkan item otomatis (obat & lab)
+        $itemObat = [];
+        $itemLab = [];
+        $totalObatLab = 0;
+
+        // Obat dari resep (jika sudah selesai)
+        if ($pemeriksaan->resep && $pemeriksaan->resep->status === 'selesai') {
+            foreach ($pemeriksaan->resep->detailResep as $detail) {
+                $subtotal = $detail->jumlah * $detail->obat->harga;
+                $itemObat[] = [
+                    'detail_resep_id' => $detail->detail_resep_id,
+                    'nama' => $detail->obat->nama_obat . ' (' . $detail->aturan_pakai . ')',
+                    'jumlah' => $detail->jumlah,
+                    'harga_satuan' => $detail->obat->harga,
+                    'subtotal' => $subtotal,
+                ];
+                $totalObatLab += $subtotal;
+            }
+        }
+
+        // Lab dari hasil lab (jika sudah selesai)
+        if ($pemeriksaan->permintaanLab) {
+            foreach ($pemeriksaan->permintaanLab as $permintaan) {
+                if ($permintaan->status === 'selesai' && $permintaan->hasilLab->isNotEmpty()) {
+                    foreach ($permintaan->hasilLab as $hasil) {
+                        $hargaLab = 50000; // Default, bisa diambil dari master harga
+                        $itemLab[] = [
+                            'hasil_lab_id' => $hasil->hasil_lab_id,
+                            'nama' => ucwords(str_replace('_', ' ', $permintaan->jenis_pemeriksaan)) . ' - ' . $hasil->parameter,
+                            'harga' => $hargaLab,
+                        ];
+                        $totalObatLab += $hargaLab;
+                    }
+                }
+            }
+        }
+
+        return view('kasir.form-tagihan', compact(
+            'pemeriksaan',
+            'layananList',
+            'itemObat',
+            'itemLab',
+            'totalObatLab'
+        ));
+    }
+
+    /**
+     * Store Tagihan dari form - dengan layanan yang dipilih
+     */
+    public function buatTagihan(Request $request, $pemeriksaanId)
+    {
+        $request->validate([
+            'layanan' => 'nullable|array',
+            'layanan.*' => 'exists:layanan,layanan_id',
+        ]);
+
         $pemeriksaan = Pemeriksaan::with([
             'pendaftaran.pasien',
             'pendaftaran.jadwalDokter.dokter',
@@ -94,43 +168,27 @@ class KasirController extends Controller
             $totalTagihan = 0;
             $detailItems = [];
 
-            // [A] KONSULTASI (selalu ada)
-            $layananKonsultasi = Layanan::where('kategori', 'konsultasi')
-                ->where('is_deleted', false)
-                ->first();
-
-            if ($layananKonsultasi) {
-                $detailItems[] = [
-                    'jenis_item' => 'konsultasi',
-                    'layanan_id' => $layananKonsultasi->layanan_id,
-                    'nama_item' => $layananKonsultasi->nama_layanan,
-                    'jumlah' => 1,
-                    'harga_satuan' => $layananKonsultasi->harga,
-                    'subtotal' => $layananKonsultasi->harga,
-                ];
-                $totalTagihan += $layananKonsultasi->harga;
-            }
-
-            // [B] TINDAKAN (jika ada tindakan_medis di pemeriksaan)
-            if ($pemeriksaan->tindakan_medis) {
-                $layananTindakan = Layanan::where('kategori', 'tindakan')
+            // [A] Layanan yang dipilih kasir
+            if ($request->has('layanan') && is_array($request->layanan)) {
+                $layananIds = $request->layanan;
+                $layananTerpilih = Layanan::whereIn('layanan_id', $layananIds)
                     ->where('is_deleted', false)
-                    ->first();
+                    ->get();
 
-                if ($layananTindakan) {
+                foreach ($layananTerpilih as $layanan) {
                     $detailItems[] = [
-                        'jenis_item' => 'tindakan',
-                        'layanan_id' => $layananTindakan->layanan_id,
-                        'nama_item' => $pemeriksaan->tindakan_medis,
+                        'jenis_item' => $layanan->kategori,
+                        'layanan_id' => $layanan->layanan_id,
+                        'nama_item' => $layanan->nama_layanan,
                         'jumlah' => 1,
-                        'harga_satuan' => $layananTindakan->harga,
-                        'subtotal' => $layananTindakan->harga,
+                        'harga_satuan' => $layanan->harga,
+                        'subtotal' => $layanan->harga,
                     ];
-                    $totalTagihan += $layananTindakan->harga;
+                    $totalTagihan += $layanan->harga;
                 }
             }
 
-            // [C] OBAT (dari resep jika ada dan sudah selesai)
+            // [B] OBAT (auto-include dari resep jika sudah selesai)
             if ($pemeriksaan->resep && $pemeriksaan->resep->status === 'selesai') {
                 foreach ($pemeriksaan->resep->detailResep as $detail) {
                     $subtotal = $detail->jumlah * $detail->obat->harga;
@@ -146,17 +204,16 @@ class KasirController extends Controller
                 }
             }
 
-            // [D] LAB (dari hasil lab jika ada)
+            // [C] LAB (auto-include dari hasil lab jika sudah selesai)
             if ($pemeriksaan->permintaanLab) {
                 foreach ($pemeriksaan->permintaanLab as $permintaan) {
                     if ($permintaan->status === 'selesai' && $permintaan->hasilLab->isNotEmpty()) {
                         foreach ($permintaan->hasilLab as $hasil) {
-                            // Harga lab bisa diambil dari master atau fixed price
-                            $hargaLab = 50000; // Default price, bisa dibuat tabel master harga lab
+                            $hargaLab = 50000; // Default price
                             $detailItems[] = [
                                 'jenis_item' => 'lab',
                                 'hasil_lab_id' => $hasil->hasil_lab_id,
-                                'nama_item' => $hasil->jenis_test . ' - ' . $hasil->parameter,
+                                'nama_item' => ucwords(str_replace('_', ' ', $permintaan->jenis_pemeriksaan)) . ' - ' . $hasil->parameter,
                                 'jumlah' => 1,
                                 'harga_satuan' => $hargaLab,
                                 'subtotal' => $hargaLab,
