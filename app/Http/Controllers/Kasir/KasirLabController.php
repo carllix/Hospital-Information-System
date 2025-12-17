@@ -5,29 +5,25 @@ namespace App\Http\Controllers\Kasir;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Tagihan;
+use App\Models\DetailTagihan;
 use App\Models\Pembayaran;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-// Ini KasirLab apa KasirApotek ya bang wkwkwk
-class KasirApotekController extends Controller
+class KasirLabController extends Controller
 {
-    // Helper: Safely parse and set date boundaries (internal use)
-    private function parseDateBoundaries($date) {
-        $carbonDate = ($date instanceof Carbon) ? $date : Carbon::parse($date);
-        return $carbonDate;
-    }
-
     // 1. Dashboard with statistics and pending payments
     public function dashboard(Request $request)
     {
         $startDate = $request->get('start_date', Carbon::today()->format('Y-m-d'));
         $endDate = $request->get('end_date', Carbon::today()->format('Y-m-d'));
         
-        // Pending pharmacy payments
-        $tagihanPending = Tagihan::where('jenis_tagihan', 'obat') 
-            ->where('status', 'belum_bayar') 
-            ->with(['pasien', 'pendaftaran']) 
+        // FIXED: Filter by jenis_item in detail_tagihan
+        $tagihanPending = Tagihan::where('status', 'belum_bayar')
+            ->whereHas('detailTagihan', function($q) {
+                $q->where('jenis_item', 'lab');
+            })
+            ->with(['pemeriksaan.pendaftaran.pasien', 'detailTagihan']) 
             ->latest()
             ->paginate(10);
 
@@ -37,7 +33,7 @@ class KasirApotekController extends Controller
         // Recent transactions
         $recentTransactions = $this->getRecentTransactions(5);
 
-        return view('kasir-apotek.dashboard', compact(
+        return view('kasir-lab.dashboard', compact(
             'tagihanPending', 
             'todayStats', 
             'recentTransactions',
@@ -46,28 +42,30 @@ class KasirApotekController extends Controller
         ));
     }
 
-    // 2. Show specific prescription bill
+    // 2. Show specific lab bill
     public function show(Tagihan $tagihan)
     {
         if ($tagihan->status === 'lunas') {
-            return redirect()->route('kasir-apotek.dashboard')->with('error', 'Tagihan sudah lunas.');
+            return redirect()->route('kasir-lab.dashboard')->with('error', 'Tagihan sudah lunas.');
         }
 
-        if ($tagihan->jenis_tagihan !== 'obat') {
-            return redirect()->route('kasir-apotek.dashboard')->with('error', 'Tagihan bukan untuk apotek.');
+        // FIXED: Check jenis_item in detail_tagihan
+        $hasLab = $tagihan->detailTagihan()->where('jenis_item', 'lab')->exists();
+        if (!$hasLab) {
+            return redirect()->route('kasir-lab.dashboard')->with('error', 'Tagihan bukan untuk laboratorium.');
         }
 
-        $tagihan->load(['pasien', 'pendaftaran', 'detailTagihan']);
+        $tagihan->load(['pemeriksaan.pendaftaran.pasien', 'detailTagihan']);
 
-        return view('kasir-apotek.pembayaran', compact('tagihan'));
+        return view('kasir-lab.pembayaran', compact('tagihan'));
     }
 
-    // 3. Process pharmacy payment
+    // 3. Process lab payment
     public function processPayment(Request $request, Tagihan $tagihan)
     {
         $request->validate([
             'jumlah_bayar' => 'required|numeric|min:1',
-            'metode_pembayaran' => 'required|string|in:Tunai,Debit,Transfer',
+            'metode_pembayaran' => 'required|string|in:tunai,debit,kredit,transfer,qris,asuransi',
             'catatan' => 'nullable|string|max:255'
         ]);
 
@@ -81,13 +79,17 @@ class KasirApotekController extends Controller
         try {
             DB::beginTransaction();
 
+            // Generate nomor kwitansi
+            $noKwitansi = 'LAB-' . now()->format('YmdHis') . '-' . $tagihan->tagihan_id;
+
             $pembayaran = Pembayaran::create([
                 'tagihan_id' => $tagihan->tagihan_id,
                 'jumlah_bayar' => $totalTagihan,
-                'metode_pembayaran' => $request->metode_pembayaran,
-                'catatan' => $request->catatan ?? 'Pembayaran apotek lunas',
+                'metode_pembayaran' => strtolower($request->metode_pembayaran),
+                'catatan' => $request->catatan ?? 'Pembayaran lab lunas',
                 'tanggal_bayar' => now(),
-                'kasir_id' => auth()->id(),
+                'kasir_id' => auth()->user()->staf->staf_id ?? auth()->id(),
+                'no_kwitansi' => $noKwitansi,
             ]);
 
             $tagihan->update(['status' => 'lunas']);
@@ -96,8 +98,8 @@ class KasirApotekController extends Controller
 
             $kembalian = max(0, $jumlahBayar - $totalTagihan);
 
-            return redirect()->route('kasir-apotek.invoice', $tagihan)
-                             ->with('success', 'Pembayaran apotek berhasil diproses!')
+            return redirect()->route('kasir-lab.invoice', $tagihan)
+                             ->with('success', 'Pembayaran lab berhasil diproses!')
                              ->with('kembalian', $kembalian);
 
         } catch (\Exception $e) {
@@ -106,17 +108,15 @@ class KasirApotekController extends Controller
         }
     }
 
-    // 4. Show pharmacy invoice
+    // 4. Show lab invoice
     public function invoice(Tagihan $tagihan)
     {
-        $tagihan->load(['pasien', 'detailTagihan', 'pembayaran' => function($query) {
-            $query->latest('tanggal_bayar')->limit(1);
-        }]);
+        $tagihan->load(['pemeriksaan.pendaftaran.pasien', 'detailTagihan', 'pembayaran']);
         
-        $pembayaranTerakhir = $tagihan->pembayaran->first();
+        $pembayaranTerakhir = $tagihan->pembayaran()->latest('tanggal_bayar')->first();
         $kembalian = session('kembalian', 0);
 
-        return view('kasir-apotek.invoice', compact('tagihan', 'pembayaranTerakhir', 'kembalian'));
+        return view('kasir-lab.invoice', compact('tagihan', 'pembayaranTerakhir', 'kembalian'));
     }
 
     // 5. Transaction history
@@ -129,31 +129,31 @@ class KasirApotekController extends Controller
         $start = Carbon::parse($startDate)->startOfDay();
         $end = Carbon::parse($endDate)->endOfDay();
 
-        $query = Tagihan::where('jenis_tagihan', 'obat')
-            ->where('status', 'lunas')
-            ->with(['pasien', 'pembayaran'])
-            ->whereBetween('created_at', [$start, $end]); // FIXED DATE
+        $query = Tagihan::where('status', 'lunas')
+            ->whereHas('detailTagihan', function($q) {
+                $q->where('jenis_item', 'lab');
+            })
+            ->with(['pemeriksaan.pendaftaran.pasien', 'pembayaran'])
+            ->whereBetween('created_at', [$start, $end]);
 
         if ($search) {
-            $query->whereHas('pasien', function($q) use ($search) {
-                // Asumsi nama pasien di kolom 'nama' dan nomor rekam medis di 'no_rm'
-                $q->where('nama', 'like', "%{$search}%")
-                  ->orWhere('no_rm', 'like', "%{$search}%"); 
+            $query->whereHas('pemeriksaan.pendaftaran.pasien', function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                  ->orWhere('no_rekam_medis', 'like', "%{$search}%");
             })->orWhere('tagihan_id', 'like', "%{$search}%");
         }
 
-        // FIX: Use orderBy instead of latest() before paginate
         $riwayat = $query->orderBy('created_at', 'desc')->paginate(15);
         
         $summary = $this->getPeriodSummary($startDate, $endDate);
 
-        return view('kasir-apotek.riwayat', compact('riwayat', 'startDate', 'endDate', 'search', 'summary'));
+        return view('kasir-lab.riwayat', compact('riwayat', 'startDate', 'endDate', 'search', 'summary'));
     }
 
     // 6. Financial reports
     public function laporan(Request $request)
     {
-        $period = $request->get('period', 'month'); // Default changed to month for a meaningful report
+        $period = $request->get('period', 'month');
         $customStart = $request->get('custom_start');
         $customEnd = $request->get('custom_end');
 
@@ -161,41 +161,45 @@ class KasirApotekController extends Controller
         
         $laporan = $this->generateFinancialReport($startDate, $endDate);
 
-        return view('kasir-apotek.laporan', compact('laporan', 'period', 'startDate', 'endDate'));
+        return view('kasir-lab.laporan', compact('laporan', 'period', 'startDate', 'endDate'));
     }
 
     // Helper Methods
     private function getDashboardStats($startDate, $endDate)
     {
-        $start = $this->parseDateBoundaries($startDate)->startOfDay();
-        $end = $this->parseDateBoundaries($endDate)->endOfDay();
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
         
         return [
-            'total_pendapatan' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->where('jenis_tagihan', 'obat');
-            })->whereBetween('tanggal_bayar', [$start, $end]) // FIXED DATE
+            'total_pendapatan' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->where('jenis_item', 'lab');
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->sum('jumlah_bayar'),
             
-            'jumlah_transaksi' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->where('jenis_tagihan', 'obat');
-            })->whereBetween('tanggal_bayar', [$start, $end]) // FIXED DATE
+            'jumlah_transaksi' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->where('jenis_item', 'lab');
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->count(),
             
-            'tagihan_pending' => Tagihan::where('jenis_tagihan', 'obat')
-                ->where('status', 'belum_bayar')->count(),
+            'tagihan_pending' => Tagihan::where('status', 'belum_bayar')
+                ->whereHas('detailTagihan', function($q) {
+                    $q->where('jenis_item', 'lab');
+                })->count(),
                 
-            'rata_rata_transaksi' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->where('jenis_tagihan', 'obat');
-            })->whereBetween('tanggal_bayar', [$start, $end]) // FIXED DATE
+            'rata_rata_transaksi' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->where('jenis_item', 'lab');
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->avg('jumlah_bayar') ?? 0,
         ];
     }
 
     private function getRecentTransactions($limit = 5)
     {
-        return Tagihan::where('jenis_tagihan', 'obat')
-            ->where('status', 'lunas')
-            ->with(['pasien', 'pembayaran'])
+        return Tagihan::where('status', 'lunas')
+            ->whereHas('detailTagihan', function($q) {
+                $q->where('jenis_item', 'lab');
+            })
+            ->with(['pemeriksaan.pendaftaran.pasien', 'pembayaran'])
             ->latest('created_at')
             ->limit($limit)
             ->get();
@@ -203,24 +207,24 @@ class KasirApotekController extends Controller
 
     private function getPeriodSummary($startDate, $endDate)
     {
-        $start = $this->parseDateBoundaries($startDate)->startOfDay();
-        $end = $this->parseDateBoundaries($endDate)->endOfDay();
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
 
         return [
-            'total_revenue' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->where('jenis_tagihan', 'obat');
-            })->whereBetween('tanggal_bayar', [$start, $end]) // FIXED DATE
+            'total_revenue' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->where('jenis_item', 'lab');
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->sum('jumlah_bayar'),
             
-            'transaction_count' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->where('jenis_tagihan', 'obat');
-            })->whereBetween('tanggal_bayar', [$start, $end]) // FIXED DATE
+            'transaction_count' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->where('jenis_item', 'lab');
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->count(),
             
-            'obat_count' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->where('jenis_tagihan', 'obat');
-            })->whereBetween('tanggal_bayar', [$start, $end]) // FIXED DATE
-            ->count(),
+            'lab_test_count' => DetailTagihan::whereHas('tagihan.pembayaran', function($q) use ($start, $end) {
+                $q->whereBetween('tanggal_bayar', [$start, $end]);
+            })->where('jenis_item', 'lab')
+            ->sum('jumlah'),
         ];
     }
 
@@ -248,10 +252,10 @@ class KasirApotekController extends Controller
         $start = $startDate->copy()->startOfDay();
         $end = $endDate->copy()->endOfDay();
         
-        $pembayaran = Pembayaran::whereHas('tagihan', function($q) {
-            $q->where('jenis_tagihan', 'obat');
-        })->with(['tagihan.pasien'])
-        ->whereBetween('tanggal_bayar', [$start, $end]) // FIXED DATE
+        $pembayaran = Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+            $q->where('jenis_item', 'lab');
+        })->with(['tagihan.pemeriksaan.pendaftaran.pasien'])
+        ->whereBetween('tanggal_bayar', [$start, $end])
         ->get();
 
         return [
