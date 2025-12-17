@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Jadwal Kunjungan')
+@section('title', 'Jadwal Kunjungan | Ganesha Hospital')
 @section('dashboard-title', 'Jadwal Kunjungan Saya')
 
 @section('content')
@@ -110,10 +110,10 @@
     </div>
 
     <!-- Info Note -->
-    <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+    <div class="bg-[#f56e9d] rounded-md p-4">
         <div class="flex">
             <div class="ml-3">
-                <p class="text-sm text-blue-700">
+                <p class="text-sm text-white">
                     <strong>Catatan:</strong> Harap datang 30 menit sebelum jadwal.
                 </p>
             </div>
