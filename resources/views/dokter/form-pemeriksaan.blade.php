@@ -76,7 +76,7 @@
                             Anamnesa <span class="text-red-500">*</span>
                         </label>
                         <textarea name="anamnesa" rows="4" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('anamnesa') border-red-500 @enderror"
                             placeholder="Keluhan dan riwayat penyakit pasien...">{{ old('anamnesa', $pemeriksaan->anamnesa ?? '') }}</textarea>
                         @error('anamnesa')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -87,8 +87,11 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Pemeriksaan Fisik</label>
                         <textarea name="pemeriksaan_fisik" rows="3"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('pemeriksaan_fisik') border-red-500 @enderror"
                             placeholder="Hasil pemeriksaan fisik...">{{ old('pemeriksaan_fisik', $pemeriksaan->pemeriksaan_fisik ?? '') }}</textarea>
+                        @error('pemeriksaan_fisik')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Vital Signs -->
@@ -96,26 +99,38 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Tekanan Darah</label>
                             <input type="text" name="tekanan_darah" value="{{ old('tekanan_darah', $pemeriksaan->tekanan_darah ?? '') }}"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('tekanan_darah') border-red-500 @enderror"
                                 placeholder="120/80">
+                            @error('tekanan_darah')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Suhu (°C)</label>
                             <input type="number" step="0.1" name="suhu_tubuh" value="{{ old('suhu_tubuh', $pemeriksaan->suhu_tubuh ?? '') }}"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('suhu_tubuh') border-red-500 @enderror"
                                 placeholder="36.5">
+                            @error('suhu_tubuh')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Berat (kg)</label>
                             <input type="number" step="0.1" name="berat_badan" value="{{ old('berat_badan', $pemeriksaan->berat_badan ?? '') }}"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('berat_badan') border-red-500 @enderror"
                                 placeholder="65.5">
+                            @error('berat_badan')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Tinggi (cm)</label>
                             <input type="number" step="0.1" name="tinggi_badan" value="{{ old('tinggi_badan', $pemeriksaan->tinggi_badan ?? '') }}"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('tinggi_badan') border-red-500 @enderror"
                                 placeholder="170">
+                            @error('tinggi_badan')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -125,7 +140,7 @@
                             Diagnosa <span class="text-red-500">*</span>
                         </label>
                         <textarea name="diagnosa" rows="3" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('diagnosa') border-red-500 @enderror"
                             placeholder="Diagnosa penyakit...">{{ old('diagnosa', $pemeriksaan->diagnosa ?? '') }}</textarea>
                         @error('diagnosa')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -136,24 +151,33 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Kode ICD-10</label>
                         <input type="text" name="icd10_code" value="{{ old('icd10_code', $pemeriksaan->icd10_code ?? '') }}"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('icd10_code') border-red-500 @enderror"
                             placeholder="J00 (contoh)">
+                        @error('icd10_code')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Tindakan Medis -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Tindakan Medis</label>
                         <textarea name="tindakan_medis" rows="3"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('tindakan_medis') border-red-500 @enderror"
                             placeholder="Tindakan yang dilakukan...">{{ old('tindakan_medis', $pemeriksaan->tindakan_medis ?? '') }}</textarea>
+                        @error('tindakan_medis')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Catatan Dokter -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Catatan Dokter</label>
                         <textarea name="catatan_dokter" rows="3"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent @error('catatan_dokter') border-red-500 @enderror"
                             placeholder="Catatan tambahan...">{{ old('catatan_dokter', $pemeriksaan->catatan_dokter ?? '') }}</textarea>
+                        @error('catatan_dokter')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Divider -->
@@ -205,6 +229,38 @@
                             </h4>
 
                             <div id="obat-container" class="space-y-3">
+                                @if(old('obat'))
+                                    @foreach(old('obat') as $index => $oldObat)
+                                    <div class="obat-item bg-white rounded-lg p-4 border border-gray-200">
+                                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Obat <span class="text-red-500">*</span></label>
+                                                <select name="obat[{{ $index }}][obat_id]" class="obat-select w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f56e9d] @error('obat.'.$index.'.obat_id') border-red-500 @enderror">
+                                                    <option value="">Pilih Obat</option>
+                                                    @foreach($obatList as $obat)
+                                                    <option value="{{ $obat->obat_id }}" {{ $oldObat['obat_id'] == $obat->obat_id ? 'selected' : '' }}>{{ $obat->nama_obat }} (Stok: {{ $obat->stok }})</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Jumlah <span class="text-red-500">*</span></label>
+                                                <input type="number" name="obat[{{ $index }}][jumlah]" min="1" value="{{ $oldObat['jumlah'] ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f56e9d] @error('obat.'.$index.'.jumlah') border-red-500 @enderror" placeholder="10">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Dosis <span class="text-red-500">*</span></label>
+                                                <input type="text" name="obat[{{ $index }}][dosis]" value="{{ $oldObat['dosis'] ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f56e9d] @error('obat.'.$index.'.dosis') border-red-500 @enderror" placeholder="500mg">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Aturan Pakai <span class="text-red-500">*</span></label>
+                                                <input type="text" name="obat[{{ $index }}][aturan_pakai]" value="{{ $oldObat['aturan_pakai'] ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#f56e9d] @error('obat.'.$index.'.aturan_pakai') border-red-500 @enderror" placeholder="3x1 sehari">
+                                            </div>
+                                        </div>
+                                        <button type="button" onclick="removeObat(this)" class="mt-2 text-red-500 hover:text-red-700 text-sm font-medium {{ count(old('obat')) > 1 ? '' : 'hidden' }}">
+                                            Hapus Obat
+                                        </button>
+                                    </div>
+                                    @endforeach
+                                @else
                                 <div class="obat-item bg-white rounded-lg p-4 border border-gray-200">
                                     <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                                         <div>
@@ -233,6 +289,7 @@
                                         Hapus Obat
                                     </button>
                                 </div>
+                                @endif
                             </div>
 
                             <button type="button" onclick="addObat()" class="px-4 py-2 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors text-sm font-medium">
@@ -252,7 +309,7 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Jenis Pemeriksaan <span class="text-red-500">*</span></label>
-                                <select name="jenis_pemeriksaan_lab" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white">
+                                <select name="jenis_pemeriksaan_lab" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white @error('jenis_pemeriksaan_lab') border-red-500 @enderror">
                                     <option value="">Pilih Jenis Pemeriksaan</option>
                                     @foreach($jenisTestLab as $jenis)
                                     <option value="{{ $jenis }}" {{ old('jenis_pemeriksaan_lab') == $jenis ? 'selected' : '' }}>
@@ -267,7 +324,10 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Catatan Permintaan</label>
-                                <textarea name="catatan_lab" rows="2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white" placeholder="Catatan untuk laboratorium...">{{ old('catatan_lab') }}</textarea>
+                                <textarea name="catatan_lab" rows="2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white @error('catatan_lab') border-red-500 @enderror" placeholder="Catatan untuk laboratorium...">{{ old('catatan_lab') }}</textarea>
+                                @error('catatan_lab')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -280,25 +340,31 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Tujuan Rujukan <span class="text-red-500">*</span></label>
-                                    <input type="text" name="tujuan_rujukan" value="{{ old('tujuan_rujukan') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white" placeholder="Spesialis Jantung">
+                                    <input type="text" name="tujuan_rujukan" value="{{ old('tujuan_rujukan') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white @error('tujuan_rujukan') border-red-500 @enderror" placeholder="Spesialis Jantung">
                                     @error('tujuan_rujukan')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Rumah Sakit Tujuan</label>
-                                    <input type="text" name="rs_tujuan" value="{{ old('rs_tujuan') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white" placeholder="RS Hasan Sadikin">
+                                    <input type="text" name="rs_tujuan" value="{{ old('rs_tujuan') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white @error('rs_tujuan') border-red-500 @enderror" placeholder="RS Hasan Sadikin">
+                                    @error('rs_tujuan')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Dokter Spesialis Tujuan</label>
-                                <input type="text" name="dokter_spesialis_tujuan" value="{{ old('dokter_spesialis_tujuan') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white" placeholder="dr. Nama Dokter, Sp.JP">
+                                <input type="text" name="dokter_spesialis_tujuan" value="{{ old('dokter_spesialis_tujuan') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white @error('dokter_spesialis_tujuan') border-red-500 @enderror" placeholder="dr. Nama Dokter, Sp.JP">
+                                @error('dokter_spesialis_tujuan')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Alasan Rujukan <span class="text-red-500">*</span></label>
-                                <textarea name="alasan_rujukan" rows="2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white" placeholder="Alasan merujuk pasien...">{{ old('alasan_rujukan') }}</textarea>
+                                <textarea name="alasan_rujukan" rows="2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white @error('alasan_rujukan') border-red-500 @enderror" placeholder="Alasan merujuk pasien...">{{ old('alasan_rujukan') }}</textarea>
                                 @error('alasan_rujukan')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -306,7 +372,10 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Diagnosa Sementara</label>
-                                <textarea name="diagnosa_sementara" rows="2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white" placeholder="Diagnosa sementara untuk rujukan...">{{ old('diagnosa_sementara') }}</textarea>
+                                <textarea name="diagnosa_sementara" rows="2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] bg-white @error('diagnosa_sementara') border-red-500 @enderror" placeholder="Diagnosa sementara untuk rujukan...">{{ old('diagnosa_sementara') }}</textarea>
+                                @error('diagnosa_sementara')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -352,7 +421,12 @@
 </div>
 
 <script>
+    // Initialize obatIndex based on existing items
+    @if(old('obat'))
+    let obatIndex = {{ count(old('obat')) }};
+    @else
     let obatIndex = 1;
+    @endif
 
     // Toggle form berdasarkan tindak lanjut yang dipilih
     document.querySelectorAll('input[name="tindak_lanjut"]').forEach(radio => {
@@ -378,6 +452,109 @@
         const checked = document.querySelector('input[name="tindak_lanjut"]:checked');
         if (checked) {
             checked.dispatchEvent(new Event('change'));
+        }
+    });
+
+    // Validasi form sebelum submit
+    document.getElementById('form-pemeriksaan').addEventListener('submit', function(e) {
+        const tindakLanjut = document.querySelector('input[name="tindak_lanjut"]:checked');
+
+        // Validasi field wajib utama
+        const anamnesa = document.querySelector('[name="anamnesa"]');
+        const diagnosa = document.querySelector('[name="diagnosa"]');
+
+        let errors = [];
+
+        if (!anamnesa.value.trim()) {
+            errors.push('Anamnesa wajib diisi');
+            anamnesa.classList.add('border-red-500');
+        } else {
+            anamnesa.classList.remove('border-red-500');
+        }
+
+        if (!diagnosa.value.trim()) {
+            errors.push('Diagnosa wajib diisi');
+            diagnosa.classList.add('border-red-500');
+        } else {
+            diagnosa.classList.remove('border-red-500');
+        }
+
+        // Validasi berdasarkan tindak lanjut
+        if (tindakLanjut && tindakLanjut.value === 'resep') {
+            const obatItems = document.querySelectorAll('.obat-item');
+            let hasValidObat = false;
+
+            obatItems.forEach(item => {
+                const obatId = item.querySelector('[name*="[obat_id]"]');
+                const jumlah = item.querySelector('[name*="[jumlah]"]');
+                const dosis = item.querySelector('[name*="[dosis]"]');
+                const aturan = item.querySelector('[name*="[aturan_pakai]"]');
+
+                if (obatId && obatId.value) {
+                    hasValidObat = true;
+
+                    if (!jumlah.value) {
+                        errors.push('Jumlah obat wajib diisi');
+                        jumlah.classList.add('border-red-500');
+                    } else {
+                        jumlah.classList.remove('border-red-500');
+                    }
+
+                    if (!dosis.value.trim()) {
+                        errors.push('Dosis obat wajib diisi');
+                        dosis.classList.add('border-red-500');
+                    } else {
+                        dosis.classList.remove('border-red-500');
+                    }
+
+                    if (!aturan.value.trim()) {
+                        errors.push('Aturan pakai wajib diisi');
+                        aturan.classList.add('border-red-500');
+                    } else {
+                        aturan.classList.remove('border-red-500');
+                    }
+                }
+            });
+
+            if (!hasValidObat) {
+                errors.push('Minimal pilih 1 obat untuk resep');
+            }
+        } else if (tindakLanjut && tindakLanjut.value === 'lab') {
+            const jenisLab = document.querySelector('[name="jenis_pemeriksaan_lab"]');
+            if (!jenisLab.value) {
+                errors.push('Jenis pemeriksaan lab wajib dipilih');
+                jenisLab.classList.add('border-red-500');
+            } else {
+                jenisLab.classList.remove('border-red-500');
+            }
+        } else if (tindakLanjut && tindakLanjut.value === 'rujukan') {
+            const tujuanRujukan = document.querySelector('[name="tujuan_rujukan"]');
+            const alasanRujukan = document.querySelector('[name="alasan_rujukan"]');
+
+            if (!tujuanRujukan.value.trim()) {
+                errors.push('Tujuan rujukan wajib diisi');
+                tujuanRujukan.classList.add('border-red-500');
+            } else {
+                tujuanRujukan.classList.remove('border-red-500');
+            }
+
+            if (!alasanRujukan.value.trim()) {
+                errors.push('Alasan rujukan wajib diisi');
+                alasanRujukan.classList.add('border-red-500');
+            } else {
+                alasanRujukan.classList.remove('border-red-500');
+            }
+        }
+
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert('Mohon lengkapi semua field yang wajib diisi:\n\n' + errors.join('\n'));
+            // Scroll ke field pertama yang error
+            const firstError = document.querySelector('.border-red-500');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
         }
     });
 
@@ -440,6 +617,18 @@
             }
         });
     }
+
+    // Clear error styling saat user mulai mengetik
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('input, textarea, select').forEach(field => {
+            field.addEventListener('input', function() {
+                this.classList.remove('border-red-500');
+            });
+            field.addEventListener('change', function() {
+                this.classList.remove('border-red-500');
+            });
+        });
+    });
 </script>
 
 @if(session('error'))
