@@ -11,24 +11,21 @@ use Carbon\Carbon;
 
 class KasirKlinikController extends Controller
 {
-    // 1. Dashboard with statistics and pending payments
     public function dashboard(Request $request)
     {
-        // Get date range for filtering (default: today)
         $startDate = $request->get('start_date', Carbon::today()->format('Y-m-d'));
         $endDate = $request->get('end_date', Carbon::today()->format('Y-m-d'));
         
-        // Pending payments (belum bayar)
-        $tagihanPending = Tagihan::whereIn('jenis_tagihan', ['konsultasi', 'tindakan']) 
-            ->where('status', 'belum_bayar') 
-            ->with(['pasien', 'pendaftaran']) 
+        $tagihanPending = Tagihan::where('status', 'belum_bayar')
+            ->whereHas('detailTagihan', function($q) {
+                $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+            })
+            ->with(['pemeriksaan.pendaftaran.pasien', 'detailTagihan']) 
             ->latest()
             ->paginate(10);
 
-        // Today's statistics
         $todayStats = $this->getDashboardStats($startDate, $endDate);
         
-        // Recent transactions
         $recentTransactions = $this->getRecentTransactions(5);
 
         return view('kasir-klinik.dashboard', compact(
@@ -43,17 +40,20 @@ class KasirKlinikController extends Controller
     // 2. Show specific bill details and payment form
     public function show(Tagihan $tagihan)
     {
-        // Ensure bill is not paid yet
         if ($tagihan->status === 'lunas') {
             return redirect()->route('kasir-klinik.dashboard')->with('error', 'Tagihan sudah lunas.');
         }
 
-        // Ensure it's a clinic bill
-        if (!in_array($tagihan->jenis_tagihan, ['konsultasi', 'tindakan'])) {
+        // FIXED: Check jenis_item in detail_tagihan
+        $hasKlinik = $tagihan->detailTagihan()
+            ->whereIn('jenis_item', ['konsultasi', 'tindakan'])
+            ->exists();
+            
+        if (!$hasKlinik) {
             return redirect()->route('kasir-klinik.dashboard')->with('error', 'Tagihan bukan untuk klinik.');
         }
 
-        $tagihan->load(['pasien', 'pendaftaran', 'detailTagihan']);
+        $tagihan->load(['pemeriksaan.pendaftaran.pasien', 'detailTagihan']);
 
         return view('kasir-klinik.pembayaran', compact('tagihan'));
     }
@@ -63,14 +63,13 @@ class KasirKlinikController extends Controller
     {
         $request->validate([
             'jumlah_bayar' => 'required|numeric|min:1',
-            'metode_pembayaran' => 'required|string|in:Tunai,Debit,Transfer',
+            'metode_pembayaran' => 'required|string|in:tunai,debit,kredit,transfer,qris,asuransi',
             'catatan' => 'nullable|string|max:255'
         ]);
 
         $jumlahBayar = $request->jumlah_bayar;
         $totalTagihan = $tagihan->total_tagihan;
 
-        // Must be paid in full
         if ($jumlahBayar < $totalTagihan) {
              return back()->with('error', 'Pembayaran harus lunas. Jumlah yang dibayar kurang dari total tagihan.');
         }
@@ -78,22 +77,23 @@ class KasirKlinikController extends Controller
         try {
             DB::beginTransaction();
 
-            // Record payment
+            // Generate nomor kwitansi
+            $noKwitansi = 'KLN-' . now()->format('YmdHis') . '-' . $tagihan->tagihan_id;
+
             $pembayaran = Pembayaran::create([
                 'tagihan_id' => $tagihan->tagihan_id,
                 'jumlah_bayar' => $totalTagihan,
-                'metode_pembayaran' => $request->metode_pembayaran,
+                'metode_pembayaran' => strtolower($request->metode_pembayaran),
                 'catatan' => $request->catatan ?? 'Pembayaran klinik lunas',
                 'tanggal_bayar' => now(),
-                'kasir_id' => auth()->id(), // Track which cashier processed
+                'kasir_id' => auth()->user()->staf->staf_id ?? auth()->id(),
+                'no_kwitansi' => $noKwitansi,
             ]);
 
-            // Update bill status
             $tagihan->update(['status' => 'lunas']);
 
             DB::commit();
 
-            // Calculate change
             $kembalian = max(0, $jumlahBayar - $totalTagihan);
 
             return redirect()->route('kasir-klinik.invoice', $tagihan)
@@ -109,11 +109,9 @@ class KasirKlinikController extends Controller
     // 4. Show invoice/receipt
     public function invoice(Tagihan $tagihan)
     {
-        $tagihan->load(['pasien', 'detailTagihan', 'pembayaran' => function($query) {
-            $query->latest('tanggal_bayar')->limit(1);
-        }]);
+        $tagihan->load(['pemeriksaan.pendaftaran.pasien', 'detailTagihan', 'pembayaran']);
         
-        $pembayaranTerakhir = $tagihan->pembayaran->first();
+        $pembayaranTerakhir = $tagihan->pembayaran()->latest('tanggal_bayar')->first();
         $kembalian = session('kembalian', 0);
 
         return view('kasir-klinik.invoice', compact('tagihan', 'pembayaranTerakhir', 'kembalian'));
@@ -126,30 +124,27 @@ class KasirKlinikController extends Controller
         $endDate = $request->get('end_date', Carbon::today()->format('Y-m-d'));
         $search = $request->get('search');
 
-        // Parse dates once and set boundaries for the query
         $start = Carbon::parse($startDate)->startOfDay();
         $end = Carbon::parse($endDate)->endOfDay();
         
-        $query = Tagihan::whereIn('jenis_tagihan', ['konsultasi', 'tindakan'])
-            ->where('status', 'lunas')
-            ->with(['pasien', 'pembayaran']);
-
-        // Apply the date filter
-        $query->whereBetween('created_at', [$start, $end]);
+        $query = Tagihan::where('status', 'lunas')
+            ->whereHas('detailTagihan', function($q) {
+                $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+            })
+            ->with(['pemeriksaan.pendaftaran.pasien', 'pembayaran'])
+            ->whereBetween('created_at', [$start, $end]);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->whereHas('pasien', function($pasienQuery) use ($search) {
+                $q->whereHas('pemeriksaan.pendaftaran.pasien', function($pasienQuery) use ($search) {
                     $pasienQuery->where('nama_lengkap', 'like', "%{$search}%") 
                                 ->orWhere('no_rekam_medis', 'like', "%{$search}%"); 
                 })->orWhere('tagihan_id', 'like', "%{$search}%");
             });
         }
 
-        // Use orderBy instead of the Eloquent Collection method latest()
         $riwayat = $query->orderBy('created_at', 'desc')->paginate(15);
         
-        // Summary stats for the period
         $summary = $this->getPeriodSummary($startDate, $endDate);
 
         return view('kasir-klinik.riwayat', compact('riwayat', 'startDate', 'endDate', 'search', 'summary'));
@@ -164,7 +159,6 @@ class KasirKlinikController extends Controller
 
         [$startDate, $endDate] = $this->getDateRange($period, $customStart, $customEnd);
         
-        // Detailed financial data
         $laporan = $this->generateFinancialReport($startDate, $endDate);
 
         return view('kasir-klinik.laporan', compact('laporan', 'period', 'startDate', 'endDate'));
@@ -173,32 +167,39 @@ class KasirKlinikController extends Controller
     // Helper Methods
     private function getDashboardStats($startDate, $endDate)
     {
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+        
         return [
-            'total_pendapatan' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->whereIn('jenis_tagihan', ['konsultasi', 'tindakan']);
-            })->whereBetween('tanggal_bayar', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            'total_pendapatan' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->sum('jumlah_bayar'),
             
-            'jumlah_transaksi' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->whereIn('jenis_tagihan', ['konsultasi', 'tindakan']);
-            })->whereBetween('tanggal_bayar', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            'jumlah_transaksi' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->count(),
             
-            'tagihan_pending' => Tagihan::whereIn('jenis_tagihan', ['konsultasi', 'tindakan'])
-                ->where('status', 'belum_bayar')->count(),
+            'tagihan_pending' => Tagihan::where('status', 'belum_bayar')
+                ->whereHas('detailTagihan', function($q) {
+                    $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+                })->count(),
                 
-            'rata_rata_transaksi' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->whereIn('jenis_tagihan', ['konsultasi', 'tindakan']);
-            })->whereBetween('tanggal_bayar', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            'rata_rata_transaksi' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->avg('jumlah_bayar') ?? 0,
         ];
     }
 
     private function getRecentTransactions($limit = 5)
     {
-        return Tagihan::whereIn('jenis_tagihan', ['konsultasi', 'tindakan'])
-            ->where('status', 'lunas')
-            ->with(['pasien', 'pembayaran'])
+        return Tagihan::where('status', 'lunas')
+            ->whereHas('detailTagihan', function($q) {
+                $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+            })
+            ->with(['pemeriksaan.pendaftaran.pasien', 'pembayaran'])
             ->latest('created_at')
             ->limit($limit)
             ->get();
@@ -206,25 +207,28 @@ class KasirKlinikController extends Controller
 
     private function getPeriodSummary($startDate, $endDate)
     {
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+        
         return [
-            'total_revenue' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->whereIn('jenis_tagihan', ['konsultasi', 'tindakan']);
-            })->whereBetween('tanggal_bayar', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            'total_revenue' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->sum('jumlah_bayar'),
             
-            'transaction_count' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->whereIn('jenis_tagihan', ['konsultasi', 'tindakan']);
-            })->whereBetween('tanggal_bayar', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            'transaction_count' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->count(),
             
-            'konsultasi_count' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->where('jenis_tagihan', 'konsultasi');
-            })->whereBetween('tanggal_bayar', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            'konsultasi_count' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->where('jenis_item', 'konsultasi');
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->count(),
             
-            'tindakan_count' => Pembayaran::whereHas('tagihan', function($q) {
-                $q->where('jenis_tagihan', 'tindakan');
-            })->whereBetween('tanggal_bayar', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            'tindakan_count' => Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+                $q->where('jenis_item', 'tindakan');
+            })->whereBetween('tanggal_bayar', [$start, $end])
             ->count(),
         ];
     }
@@ -250,10 +254,13 @@ class KasirKlinikController extends Controller
 
     private function generateFinancialReport($startDate, $endDate)
     {
-        $pembayaran = Pembayaran::whereHas('tagihan', function($q) {
-            $q->whereIn('jenis_tagihan', ['konsultasi', 'tindakan']);
-        })->with(['tagihan.pasien'])
-        ->whereBetween('tanggal_bayar', [$startDate->startOfDay(), $endDate->endOfDay()])
+        $start = $startDate->copy()->startOfDay();
+        $end = $endDate->copy()->endOfDay();
+        
+        $pembayaran = Pembayaran::whereHas('tagihan.detailTagihan', function($q) {
+            $q->whereIn('jenis_item', ['konsultasi', 'tindakan']);
+        })->with(['tagihan.pemeriksaan.pendaftaran.pasien', 'tagihan.detailTagihan'])
+        ->whereBetween('tanggal_bayar', [$start, $end])
         ->get();
 
         return [
@@ -265,10 +272,12 @@ class KasirKlinikController extends Controller
                     'total' => $group->sum('jumlah_bayar')
                 ];
             }),
-            'by_service_type' => $pembayaran->groupBy('tagihan.jenis_tagihan')->map(function($group) {
+            'by_service_type' => $pembayaran->flatMap(function($p) {
+                return $p->tagihan->detailTagihan;
+            })->groupBy('jenis_item')->map(function($group) {
                 return [
                     'count' => $group->count(),
-                    'total' => $group->sum('jumlah_bayar')
+                    'total' => $group->sum('subtotal')
                 ];
             }),
             'daily_breakdown' => $pembayaran->groupBy(function($item) {

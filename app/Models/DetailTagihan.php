@@ -13,7 +13,9 @@ class DetailTagihan extends Model
 
     protected $fillable = [
         'tagihan_id',
-        'item_id',
+        'layanan_id',       
+        'detail_resep_id',  
+        'hasil_lab_id',      
         'jenis_item',
         'nama_item',
         'jumlah',
@@ -32,5 +34,20 @@ class DetailTagihan extends Model
     public function tagihan(): BelongsTo
     {
         return $this->belongsTo(Tagihan::class, 'tagihan_id', 'tagihan_id');
+    }
+
+    public function layanan(): BelongsTo
+    {
+        return $this->belongsTo(Layanan::class, 'layanan_id', 'layanan_id');
+    }
+
+    public function detailResep(): BelongsTo
+    {
+        return $this->belongsTo(DetailResep::class, 'detail_resep_id', 'detail_resep_id');
+    }
+
+    public function hasilLab(): BelongsTo
+    {
+        return $this->belongsTo(HasilLab::class, 'hasil_lab_id', 'hasil_lab_id');
     }
 }
