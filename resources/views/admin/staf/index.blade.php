@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Data Staf | Admin Ganesha Hospital')
-@section('dashboard-title', 'Data Staf')
+@section('title', 'Manajemen Staf | Admin Ganesha Hospital')
+@section('dashboard-title', 'Manajemen Staf')
 
 @section('content')
 <x-toast type="success" :message="session('success')" />
@@ -11,7 +11,7 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-xl font-bold text-gray-800">Data Staf</h2>
+                <h2 class="text-xl font-bold text-gray-800">Manajemen Staf</h2>
                 <p class="text-sm text-gray-600 mt-1">Kelola data staf rumah sakit</p>
             </div>
             <div class="flex items-center gap-4">

@@ -7,15 +7,21 @@
 <x-toast type="error" :message="session('error')" />
 
 <div class="mx-auto">
+    <div class="mb-6">
+        <a href="{{ route('admin.dokter.index') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span class="font-medium">Kembali ke Daftar Dokter</span>
+        </a>
+    </div>
+
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-xl font-bold text-gray-800">Tambah Dokter Baru</h2>
                 <p class="text-sm text-gray-600 mt-1">Lengkapi form di bawah untuk menambahkan dokter</p>
             </div>
-            <a href="{{ route('admin.dokter.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
-                Kembali
-            </a>
         </div>
 
         <form action="{{ route('admin.dokter.store') }}" method="POST" class="space-y-6">
