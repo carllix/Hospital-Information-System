@@ -81,8 +81,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('/panggil-pasien/{id}', [DokterController::class, 'panggilPasien'])->name('panggil-pasien');
 
         // Pemeriksaan
-        Route::get('/pemeriksaan/{id}', [DokterController::class, 'formPemeriksaan'])->name('form-pemeriksaan');
-        Route::post('/pemeriksaan', [DokterController::class, 'storePemeriksaan'])->name('store-pemeriksaan');
+        Route::get('/antrian/pemeriksaan/{id}', [DokterController::class, 'formPemeriksaan'])->name('form-pemeriksaan');
+        Route::post('/antrian/pemeriksaan', [DokterController::class, 'storePemeriksaan'])->name('store-pemeriksaan');
 
         // Resep
         Route::get('/resep/{pemeriksaanId}', [DokterController::class, 'formResep'])->name('form-resep');
@@ -98,15 +98,15 @@ Route::middleware('auth')->group(function () {
 
         // Riwayat & Detail
         Route::get('/riwayat', [DokterController::class, 'riwayat'])->name('riwayat');
-        Route::get('/pemeriksaan/detail/{id}', [DokterController::class, 'detailPemeriksaan'])->name('detail-pemeriksaan');
+        Route::get('/riwayat/detail/{id}', [DokterController::class, 'detailPemeriksaan'])->name('detail-pemeriksaan');
 
         // Profile
         Route::get('/profile', [DokterController::class, 'profile'])->name('profile');
         Route::get('/profile/edit', [DokterController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profile', [DokterController::class, 'updateProfile'])->name('profile.update');
 
-        Route::get('/monitoring/{pasienId}', [DokterController::class, 'monitoringPasien'])->name('monitoring-pasien');
-        Route::get('/monitoring/{pasienId}/data', [DokterController::class, 'getPasienWearableData'])->name('monitoring.data');
+        Route::get('/riwayat/monitoring/{pasienId}', [DokterController::class, 'monitoringPasien'])->name('monitoring-pasien');
+        Route::get('/riwayat/monitoring/{pasienId}/data', [DokterController::class, 'getPasienWearableData'])->name('monitoring.data');
     });
 
     // Farmasi Routes
