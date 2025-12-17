@@ -5,68 +5,67 @@ $bagian = $role === 'staf' ? $user->staf?->bagian : null;
 
 $stafMenus = [
 'pendaftaran' => [
-    ['name' => 'Dashboard', 'route' => '/pendaftaran/dashboard', 'icon' => 'dashboard'],
-    ['name' => 'Pendaftaran Pasien Baru', 'route' => '/pendaftaran/pasien-baru', 'icon' => 'profile'],
-    ['name' => 'Pendaftaran Kunjungan', 'route' => '/pendaftaran/kunjungan', 'icon' => 'medical'],
-    ['name' => 'Data Pasien', 'route' => '/pendaftaran/data-pasien', 'icon' => 'profile'],
-    ['name' => 'Daftar Antrian', 'route' => '/pendaftaran/antrian', 'icon' => 'dashboard'],
-    ['name' => 'Jadwal Dokter', 'route' => '/pendaftaran/jadwal-dokter', 'icon' => 'profile'],
-    ['name' => 'Riwayat Pendaftaran', 'route' => '/pendaftaran/riwayat', 'icon' => 'medical'],
-    ['name' => 'Profil Saya', 'route' => '/pendaftaran/profile', 'icon' => 'profile'],
+['name' => 'Dashboard', 'route' => '/pendaftaran/dashboard', 'icon' => 'dashboard'],
+['name' => 'Pendaftaran Pasien Baru', 'route' => '/pendaftaran/pasien-baru', 'icon' => 'profile'],
+['name' => 'Pendaftaran Kunjungan', 'route' => '/pendaftaran/kunjungan', 'icon' => 'medical'],
+['name' => 'Data Pasien', 'route' => '/pendaftaran/data-pasien', 'icon' => 'profile'],
+['name' => 'Daftar Antrian', 'route' => '/pendaftaran/antrian', 'icon' => 'dashboard'],
+['name' => 'Jadwal Dokter', 'route' => '/pendaftaran/jadwal-dokter', 'icon' => 'profile'],
+['name' => 'Riwayat Pendaftaran', 'route' => '/pendaftaran/riwayat', 'icon' => 'medical'],
+['name' => 'Profil Saya', 'route' => '/pendaftaran/profile', 'icon' => 'profile'],
 ],
 'farmasi' => [
-    ['name' => 'Dashboard', 'route' => '/farmasi/dashboard', 'icon' => 'dashboard'],
-    ['name' => 'Daftar Resep', 'route' => '/farmasi/resep', 'icon' => 'medical'],
-    ['name' => 'Stok Obat', 'route' => '/farmasi/stok-obat', 'icon' => 'health'],
-    ['name' => 'Laporan', 'route' => '/farmasi/laporan', 'icon' => 'payment'],
-    ['name' => 'Profil Saya', 'route' => '/farmasi/profile', 'icon' => 'profile'],
+['name' => 'Dashboard', 'route' => '/farmasi/dashboard', 'icon' => 'dashboard'],
+['name' => 'Daftar Resep', 'route' => '/farmasi/resep', 'icon' => 'medical'],
+['name' => 'Stok Obat', 'route' => '/farmasi/stok-obat', 'icon' => 'health'],
+['name' => 'Laporan', 'route' => '/farmasi/laporan', 'icon' => 'payment'],
 ],
 'laboratorium' => [
-    ['name' => 'Dashboard', 'route' => '/lab/dashboard', 'icon' => 'dashboard'],
-    ['name' => 'Daftar Permintaan', 'route' => '/lab/permintaan', 'icon' => 'medical'],
-    ['name' => 'Riwayat Pemeriksaan', 'route' => '/lab/riwayat', 'icon' => 'health'],
-    ['name' => 'Laporan', 'route' => '/lab/laporan', 'icon' => 'payment'],
-    ['name' => 'Profil Saya', 'route' => '/lab/profile', 'icon' => 'profile'],
+['name' => 'Dashboard', 'route' => '/lab/dashboard', 'icon' => 'dashboard'],
+['name' => 'Daftar Permintaan', 'route' => '/lab/permintaan', 'icon' => 'medical'],
+['name' => 'Riwayat Pemeriksaan', 'route' => '/lab/riwayat', 'icon' => 'health'],
+['name' => 'Laporan', 'route' => '/lab/laporan', 'icon' => 'payment'],
+['name' => 'Profil Saya', 'route' => '/lab/profile', 'icon' => 'profile'],
 ],
 'kasir' => [
-    ['name' => 'Dashboard', 'route' => '/kasir/dashboard', 'icon' => 'dashboard'],
-    ['name' => 'Riwayat Transaksi', 'route' => '/kasir/riwayat', 'icon' => 'medical'],
-    ['name' => 'Laporan Keuangan', 'route' => '/kasir/laporan', 'icon' => 'payment'],
+['name' => 'Dashboard', 'route' => '/kasir/dashboard', 'icon' => 'dashboard'],
+['name' => 'Riwayat Transaksi', 'route' => '/kasir/riwayat', 'icon' => 'medical'],
+['name' => 'Laporan Keuangan', 'route' => '/kasir/laporan', 'icon' => 'payment'],
 ],
 ];
 
 $roleMenus = [
 'pasien' => [
-    ['name' => 'Dashboard', 'route' => '/pasien/dashboard', 'icon' => 'dashboard'],
-    ['name' => 'Pendaftaran Kunjungan', 'route' => '/pasien/pendaftaran-kunjungan', 'icon' => 'medical'],
-    ['name' => 'Jadwal Kunjungan', 'route' => '/pasien/jadwal-kunjungan', 'icon' => 'medical'],
-    ['name' => 'Rekam Medis', 'route' => '/pasien/rekam-medis', 'icon' => 'medical'],
-    ['name' => 'Pembayaran', 'route' => '/pasien/pembayaran', 'icon' => 'payment'],
-    ['name' => 'Health Monitoring', 'route' => '/pasien/health-monitoring', 'icon' => 'health'],
-    ['name' => 'Jadwal Dokter', 'route' => '/pasien/jadwal-dokter', 'icon' => 'medical'],
-    ['name' => 'Profil', 'route' => '/pasien/profile', 'icon' => 'profile'],
+['name' => 'Dashboard', 'route' => '/pasien/dashboard', 'icon' => 'dashboard'],
+['name' => 'Pendaftaran Kunjungan', 'route' => '/pasien/pendaftaran-kunjungan', 'icon' => 'medical'],
+['name' => 'Jadwal Kunjungan', 'route' => '/pasien/jadwal-kunjungan', 'icon' => 'medical'],
+['name' => 'Rekam Medis', 'route' => '/pasien/rekam-medis', 'icon' => 'medical'],
+['name' => 'Pembayaran', 'route' => '/pasien/pembayaran', 'icon' => 'payment'],
+['name' => 'Health Monitoring', 'route' => '/pasien/health-monitoring', 'icon' => 'health'],
+['name' => 'Jadwal Dokter', 'route' => '/pasien/jadwal-dokter', 'icon' => 'medical'],
+['name' => 'Profil', 'route' => '/pasien/profile', 'icon' => 'profile'],
 ],
 'dokter' => [
-    ['name' => 'Dashboard', 'route' => '/dokter/dashboard', 'icon' => 'dashboard'],
-    ['name' => 'Antrian Pasien', 'route' => '/dokter/antrian', 'icon' => 'medical'],
-    ['name' => 'Riwayat Pemeriksaan', 'route' => '/dokter/riwayat', 'icon' => 'medical'],
-    ['name' => 'Profil Saya', 'route' => '/dokter/profile', 'icon' => 'profile'],
+['name' => 'Dashboard', 'route' => '/dokter/dashboard', 'icon' => 'dashboard'],
+['name' => 'Antrian Pasien', 'route' => '/dokter/antrian', 'icon' => 'medical'],
+['name' => 'Riwayat Pemeriksaan', 'route' => '/dokter/riwayat', 'icon' => 'medical'],
+['name' => 'Profil Saya', 'route' => '/dokter/profile', 'icon' => 'profile'],
 ],
 'admin' => [
-    ['name' => 'Dashboard', 'route' => '/admin/dashboard', 'icon' => 'dashboard'],
-    ['name' => 'Dokter', 'route' => '/admin/dokter', 'icon' => 'medical'],
-    ['name' => 'Staf', 'route' => '/admin/staf', 'icon' => 'profile'],
-    ['name' => 'Jadwal Dokter', 'route' => '/admin/jadwal-dokter', 'icon' => 'medical'],
-    ['name' => 'Obat', 'route' => '/admin/obat', 'icon' => 'health'],
-    ['name' => 'Layanan', 'route' => '/admin/layanan', 'icon' => 'medical'],
-    ['name' => 'Pengguna', 'route' => '/admin/users', 'icon' => 'profile'],
-    ],
+['name' => 'Dashboard', 'route' => '/admin/dashboard', 'icon' => 'dashboard'],
+['name' => 'Dokter', 'route' => '/admin/dokter', 'icon' => 'medical'],
+['name' => 'Staf', 'route' => '/admin/staf', 'icon' => 'profile'],
+['name' => 'Jadwal Dokter', 'route' => '/admin/jadwal-dokter', 'icon' => 'medical'],
+['name' => 'Obat', 'route' => '/admin/obat', 'icon' => 'health'],
+['name' => 'Layanan', 'route' => '/admin/layanan', 'icon' => 'medical'],
+['name' => 'Pengguna', 'route' => '/admin/users', 'icon' => 'profile'],
+],
 ];
 
 if ($role === 'staf' && $bagian) {
-    $menus = $stafMenus[$bagian] ?? [];
+$menus = $stafMenus[$bagian] ?? [];
 } else {
-    $menus = $roleMenus[$role] ?? [];
+$menus = $roleMenus[$role] ?? [];
 }
 
 $currentRoute = request()->path();
