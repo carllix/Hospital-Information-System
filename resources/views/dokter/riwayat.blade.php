@@ -1,144 +1,278 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Riwayat Pemeriksaan')
+@section('title', 'Riwayat Pemeriksaan | Ganesha Hospital')
 
 @section('content')
 <div class="space-y-6">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">Riwayat Pemeriksaan</h1>
-            <p class="text-gray-500 mt-1">Daftar pasien yang telah selesai diperiksa</p>
-        </div>
-        
-        <div class="relative w-full md:w-72">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
+    <!-- Filter Section -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Filter Pencarian</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Search -->
+            <div>
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
+                    Cari Pasien
+                </label>
+                <input
+                    type="text"
+                    name="search"
+                    id="search"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                    placeholder="Nama / No. RM"
+                >
             </div>
-            <input type="text" 
-                   class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 sm:text-sm transition duration-150 ease-in-out shadow-sm" 
-                   placeholder="Cari nama pasien atau No. RM...">
+
+            <!-- Tanggal Dari -->
+            <div>
+                <label for="tanggal_dari" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tanggal Dari
+                </label>
+                <input
+                    type="date"
+                    name="tanggal_dari"
+                    id="tanggal_dari"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                >
+            </div>
+
+            <!-- Tanggal Sampai -->
+            <div>
+                <label for="tanggal_sampai" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tanggal Sampai
+                </label>
+                <input
+                    type="date"
+                    name="tanggal_sampai"
+                    id="tanggal_sampai"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
+                >
+            </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        @if($riwayatPemeriksaan->isEmpty())
-            <div class="flex flex-col items-center justify-center py-20 text-center">
-                <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                    <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-900">Belum ada riwayat</h3>
-                <p class="text-gray-500 mt-1 max-w-sm">Anda belum melakukan pemeriksaan apapun. Riwayat pemeriksaan akan muncul di sini setelah Anda menangani pasien.</p>
+    <!-- Table Section -->
+    <div id="tableContainer" class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- Status Tabs -->
+        <div class="px-6 pt-6 pb-4">
+            <div class="flex gap-8 border-b border-gray-200">
+                <button
+                    type="button"
+                    data-status=""
+                    class="status-tab pb-3 font-medium transition-colors text-[#f56e9d] border-b-2 border-[#f56e9d] hover:cursor-pointer"
+                >
+                    Semua
+                </button>
+                <button
+                    type="button"
+                    data-status="dalam_pemeriksaan"
+                    class="status-tab pb-3 font-medium transition-colors text-gray-500 hover:text-[#f56e9d] hover:cursor-pointer border-b-2 border-transparent"
+                >
+                    Dalam Pemeriksaan
+                </button>
+                <button
+                    type="button"
+                    data-status="selesai"
+                    class="status-tab pb-3 font-medium transition-colors text-gray-500 hover:text-[#f56e9d] border-b-2 border-transparent hover:cursor-pointer"
+                >
+                    Selesai
+                </button>
             </div>
-        @else
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50/50 border-b border-gray-100">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Waktu Periksa</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Pasien</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Diagnosa</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status Akhir</th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 bg-white">
-                        @foreach($riwayatPemeriksaan as $pemeriksaan)
-                            <tr class="hover:bg-pink-50/30 transition-colors duration-200">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center text-sm">
-                                        <div class="p-2 bg-gray-50 rounded-lg mr-3 text-gray-500">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-gray-900">
-                                                {{ \Carbon\Carbon::parse($pemeriksaan->tanggal_pemeriksaan)->isoFormat('D MMM YYYY') }}
-                                            </p>
-                                            <p class="text-gray-500 text-xs mt-0.5">
-                                                Pukul {{ \Carbon\Carbon::parse($pemeriksaan->tanggal_pemeriksaan)->format('H:i') }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex flex-col">
-                                        {{-- PERBAIKAN DI SINI: Menggunakan $pemeriksaan->pendaftaran->pasien --}}
-                                        <span class="text-sm font-semibold text-gray-900">
-                                            {{ $pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}
-                                        </span>
-                                        <div class="flex items-center gap-2 mt-1">
-                                            <span class="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                                                {{ $pemeriksaan->pendaftaran->pasien->no_rm ?? '-' }}
-                                            </span>
-                                            <span class="text-xs text-gray-400">
-                                                {{ $pemeriksaan->pendaftaran->pasien ? \Carbon\Carbon::parse($pemeriksaan->pendaftaran->pasien->tanggal_lahir)->age . ' Thn' : '-' }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="max-w-xs">
-                                        <p class="text-sm text-gray-800 truncate" title="{{ $pemeriksaan->diagnosa }}">
-                                            {{ Str::limit($pemeriksaan->diagnosa, 40) }}
-                                        </p>
-                                        @if($pemeriksaan->icd10_code)
-                                            <span class="inline-flex items-center mt-1 px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
-                                                ICD-10: {{ $pemeriksaan->icd10_code }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($pemeriksaan->status === 'selesai_penanganan' || $pemeriksaan->status === 'selesai')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
-                                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
-                                            Selesai
-                                        </span>
-                                    @elseif($pemeriksaan->status === 'perlu_resep')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
-                                            Resep Obat
-                                        </span>
-                                    @elseif($pemeriksaan->status === 'perlu_lab')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
-                                            <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1.5"></span>
-                                            Cek Lab
-                                        </span>
-                                    @elseif($pemeriksaan->status === 'dirujuk')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
-                                            <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mr-1.5"></span>
-                                            Rujukan
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
-                                            {{ ucwords(str_replace('_', ' ', $pemeriksaan->status)) }}
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    <a href="{{ route('dokter.detail-pemeriksaan', $pemeriksaan->pemeriksaan_id) }}" 
-                                       class="inline-flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition-all duration-200"
-                                       title="Lihat Detail">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        </div>
 
-            @if($riwayatPemeriksaan->hasPages())
-                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
-                    {{ $riwayatPemeriksaan->links() }}
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800">Riwayat Pemeriksaan</h2>
+        </div>
+
+        <div id="tableContent">
+        @if($riwayatPemeriksaan->isEmpty())
+        <div class="p-8 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+            </svg>
+            <p class="mt-4 text-gray-600">Tidak ada data pemeriksaan</p>
+        </div>
+        @else
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu Periksa</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pasien</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diagnosa</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ICD-10</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach($riwayatPemeriksaan as $pemeriksaan)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ \Carbon\Carbon::parse($pemeriksaan->tanggal_pemeriksaan)->format('d/m/Y H:i') }}
+                        </td>
+                        <td class="px-6 py-4 text-sm">
+                            <div class="font-medium text-gray-900">{{ $pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}</div>
+                            <div class="text-gray-500">{{ $pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? '-' }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-900">
+                            <div class="max-w-xs truncate" title="{{ $pemeriksaan->diagnosa }}">
+                                {{ $pemeriksaan->diagnosa }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ $pemeriksaan->icd10_code ?? '-' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if($pemeriksaan->status === 'selesai')
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                Selesai
+                            </span>
+                            @elseif($pemeriksaan->status === 'dalam_pemeriksaan')
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Dalam Pemeriksaan
+                            </span>
+                            @else
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                {{ ucwords(str_replace('_', ' ', $pemeriksaan->status ?? '-')) }}
+                            </span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="{{ route('dokter.detail-pemeriksaan', $pemeriksaan->pemeriksaan_id) }}"
+                                   class="inline-flex items-center px-3 py-1.5 bg-[#f56e9d] text-white text-xs font-medium rounded hover:bg-[#d14a7a] transition-colors">
+                                    Detail
+                                </a>
+                                <a href="{{ route('dokter.monitoring-pasien', $pemeriksaan->pendaftaran->pasien->pasien_id) }}"
+                                   class="inline-flex items-center px-3 py-1.5 bg-green-500 text-white text-xs font-medium rounded hover:bg-emerald-600 transition-colors">
+                                    Monitoring
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div id="paginationContainer" class="px-6 py-4 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-700">
+                    Menampilkan
+                    <span class="font-medium">{{ $riwayatPemeriksaan->firstItem() ?? 0 }}</span>
+                    sampai
+                    <span class="font-medium">{{ $riwayatPemeriksaan->lastItem() ?? 0 }}</span>
+                    dari
+                    <span class="font-medium">{{ $riwayatPemeriksaan->total() }}</span>
+                    data
+                </p>
+                @if($riwayatPemeriksaan->hasPages())
+                <div>
+                    {{ $riwayatPemeriksaan->withQueryString()->links() }}
                 </div>
-            @endif
+                @endif
+            </div>
+        </div>
         @endif
+        </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search');
+    const tanggalDari = document.getElementById('tanggal_dari');
+    const tanggalSampai = document.getElementById('tanggal_sampai');
+    const statusTabs = document.querySelectorAll('.status-tab');
+
+    let debounceTimer = null;
+    let currentStatus = '';
+
+    function debounce(func, delay) {
+        return function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(func, delay);
+        };
+    }
+
+    function fetchData(page = 1) {
+        const params = new URLSearchParams({
+            search: searchInput.value,
+            tanggal_dari: tanggalDari.value,
+            tanggal_sampai: tanggalSampai.value,
+            status: currentStatus,
+            page: page
+        });
+
+        const url = '{{ route("dokter.riwayat") }}?' + params.toString();
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(xhr.responseText, 'text/html');
+
+                const newContent = doc.getElementById('tableContent');
+                const newPagination = doc.getElementById('paginationContainer');
+
+                if (newContent) {
+                    document.getElementById('tableContent').innerHTML = newContent.innerHTML;
+                }
+
+                if (newPagination) {
+                    document.getElementById('paginationContainer').innerHTML = newPagination.innerHTML;
+                    attachPaginationListeners();
+                }
+            }
+        };
+
+        xhr.send();
+    }
+
+    function attachPaginationListeners() {
+        const paginationLinks = document.querySelectorAll('#paginationContainer a');
+        paginationLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = new URL(this.href);
+                const page = url.searchParams.get('page') || 1;
+                fetchData(page);
+            });
+        });
+    }
+
+    function setActiveTab(status) {
+        statusTabs.forEach(tab => {
+            if (tab.dataset.status === status) {
+                tab.classList.remove('text-gray-500', 'border-transparent');
+                tab.classList.add('text-[#f56e9d]', 'border-[#f56e9d]');
+            } else {
+                tab.classList.remove('text-[#f56e9d]', 'border-[#f56e9d]');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            }
+        });
+    }
+
+    const debouncedFetch = debounce(() => fetchData(1), 500);
+
+    searchInput.addEventListener('input', debouncedFetch);
+    tanggalDari.addEventListener('change', debouncedFetch);
+    tanggalSampai.addEventListener('change', debouncedFetch);
+
+    statusTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            currentStatus = this.dataset.status;
+            setActiveTab(currentStatus);
+            fetchData(1);
+        });
+    });
+
+    attachPaginationListeners();
+});
+</script>
 @endsection

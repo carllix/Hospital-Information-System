@@ -317,14 +317,34 @@ class PendaftaranController extends Controller
             ], 400);
         }
 
-        $pendaftaran->update([
-            'status' => $request->status
-        ]);
+        try {
+            DB::beginTransaction();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Status berhasil diubah menjadi ' . $request->status
-        ]);
+            // Update status pendaftaran
+            $pendaftaran->update([
+                'status' => $request->status
+            ]);
+
+            // Buat record pemeriksaan dengan status 'dalam_pemeriksaan'
+            \App\Models\Pemeriksaan::create([
+                'pendaftaran_id' => $pendaftaran->pendaftaran_id,
+                'tanggal_pemeriksaan' => now(),
+                'status' => 'dalam_pemeriksaan',
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status berhasil diubah menjadi ' . $request->status
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengubah status: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function jadwalDokter(Request $request): View

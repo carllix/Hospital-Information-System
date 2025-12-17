@@ -79,90 +79,51 @@
         </div>
     </div>
 
-    {{-- Table Section --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 class="text-lg font-bold text-gray-900">Antrian Hari Ini</h2>
-        </div>
-        
-        @if($antrianPasien->isEmpty())
-            <div class="flex flex-col items-center justify-center py-12 text-center">
-                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    {{-- Quick Actions / Menu Utama --}}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Menu Utama</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+            {{-- Antrian Pasien --}}
+            <a href="{{ route('dokter.antrian') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-pink-400 hover:bg-pink-50/50 transition-all group">
+                <div class="p-3 bg-pink-600 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
                 </div>
-                <h3 class="text-gray-900 font-medium">Tidak ada antrian</h3>
-                <p class="text-gray-500 text-sm mt-1">Semua pasien sudah ditangani.</p>
-            </div>
-        @else
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-gray-50 border-b border-gray-200">
-                            <th class="text-left py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider w-16">No</th>
-                            <th class="text-left py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Pasien</th>
-                            <th class="text-left py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider w-1/3">Keluhan</th>
-                            <th class="text-left py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="text-right py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($antrianPasien as $antrian)
-                            <tr class="hover:bg-gray-50/80 transition-colors duration-150">
-                                
-                                {{-- No Antrian Simple --}}
-                                <td class="py-4 px-6 align-middle">
-                                    <span class="text-gray-500 font-mono text-sm font-medium">
-                                        {{ $antrian->nomor_antrian }}
-                                    </span>
-                                </td>
+                <div class="ml-4">
+                    <p class="font-semibold text-gray-900">Antrian Pasien</p>
+                    <p class="text-sm text-gray-600">Lihat & kelola antrian</p>
+                </div>
+            </a>
 
-                                {{-- Data Pasien dengan Avatar --}}
-                                <td class="py-4 px-6 align-middle">
-                                    <div class="flex items-center gap-3">
-                                        <div class="h-9 w-9 rounded bg-gray-100 flex items-center justify-center text-gray-600 font-bold text-xs shrink-0">
-                                            {{ substr($antrian->pasien->nama_lengkap, 0, 1) }}
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-gray-900 text-sm">{{ $antrian->pasien->nama_lengkap }}</p>
-                                            <p class="text-xs text-gray-500 mt-0.5">{{ $antrian->pasien->no_rm }}</p>
-                                        </div>
-                                    </div>
-                                </td>
+            {{-- Riwayat Pemeriksaan --}}
+            <a href="{{ route('dokter.riwayat') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-pink-400 hover:bg-pink-50/50 transition-all group">
+                <div class="p-3 bg-pink-600 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="font-semibold text-gray-900">Riwayat Pemeriksaan</p>
+                    <p class="text-sm text-gray-600">Lihat riwayat pemeriksaan</p>
+                </div>
+            </a>
 
-                                {{-- Keluhan --}}
-                                <td class="py-4 px-6 align-middle">
-                                    <p class="text-sm text-gray-600 line-clamp-1">
-                                        {{ $antrian->keluhan ?? '-' }}
-                                    </p>
-                                </td>
+            {{-- Profile Dokter --}}
+            <a href="{{ route('dokter.profile') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-pink-400 hover:bg-pink-50/50 transition-all group">
+                <div class="p-3 bg-pink-600 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="font-semibold text-gray-900">Profile Dokter</p>
+                    <p class="text-sm text-gray-600">Lihat & edit profile</p>
+                </div>
+            </a>
 
-                                {{-- Status --}}
-                                <td class="py-4 px-6 align-middle">
-                                    @if($antrian->status === 'menunggu')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
-                                            Menunggu
-                                        </span>
-                                    @elseif($antrian->status === 'dipanggil')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                                            Dipanggil Staf
-                                        </span>
-                                    @endif
-                                </td>
-
-                                {{-- Aksi (Tanpa tombol Panggil) --}}
-                                <td class="py-4 px-6 align-middle text-right">
-                                    <a href="{{ route('dokter.form-pemeriksaan', $antrian->pendaftaran_id) }}" 
-                                       class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-pink-600 rounded-lg hover:bg-pink-700 transition-colors shadow-sm">
-                                        <span>Periksa</span>
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
+        </div>
     </div>
 </div>
 

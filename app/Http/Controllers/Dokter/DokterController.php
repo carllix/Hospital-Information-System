@@ -26,30 +26,51 @@ class DokterController extends Controller
     public function dashboard(): View
     {
         $dokter = Auth::user()->dokter;
-        $antrianHariIni = Pendaftaran::whereDate('tanggal_daftar', today())
-            ->whereIn('status', ['menunggu', 'dipanggil'])->whereDoesntHave('pemeriksaan')->count();
-        $pasienDitanganiHariIni = Pemeriksaan::whereDate('tanggal_pemeriksaan', today())
-            ->whereHas('pendaftaran.jadwalDokter', function($q) use ($dokter) {
+
+        // Antrian hari ini = semua pasien yang belum selesai (menunggu + dipanggil)
+        $antrianHariIni = Pendaftaran::whereDate('tanggal_kunjungan', today())
+            ->whereIn('status', ['menunggu', 'dipanggil'])
+            ->whereHas('jadwalDokter', function($q) use ($dokter) {
                 $q->where('dokter_id', $dokter->dokter_id);
-            })->count();
-        $totalPasienBulanIni = Pemeriksaan::whereMonth('tanggal_pemeriksaan', now()->month)
-            ->whereYear('tanggal_pemeriksaan', now()->year)
-            ->whereHas('pendaftaran.jadwalDokter', function($q) use ($dokter) {
+            })
+            ->count();
+
+        // Pasien ditangani hari ini = yang sudah selesai hari ini
+        $pasienDitanganiHariIni = Pendaftaran::whereDate('tanggal_kunjungan', today())
+            ->where('status', 'selesai')
+            ->whereHas('jadwalDokter', function($q) use ($dokter) {
                 $q->where('dokter_id', $dokter->dokter_id);
-            })->count();
-        $antrianPasien = Pendaftaran::with(['pasien'])
-            ->whereDate('tanggal_daftar', today())->whereIn('status', ['menunggu', 'dipanggil'])
-            ->whereDoesntHave('pemeriksaan')->orderBy('nomor_antrian')->get();
-            
-        return view('dokter.dashboard', compact('dokter', 'antrianHariIni', 'pasienDitanganiHariIni', 'totalPasienBulanIni', 'antrianPasien'));
+            })
+            ->count();
+
+        // Total pasien bulan ini = yang sudah selesai bulan ini
+        $totalPasienBulanIni = Pendaftaran::whereMonth('tanggal_kunjungan', now()->month)
+            ->whereYear('tanggal_kunjungan', now()->year)
+            ->where('status', 'selesai')
+            ->whereHas('jadwalDokter', function($q) use ($dokter) {
+                $q->where('dokter_id', $dokter->dokter_id);
+            })
+            ->count();
+
+        return view('dokter.dashboard', compact('dokter', 'antrianHariIni', 'pasienDitanganiHariIni', 'totalPasienBulanIni'));
     }
 
-    public function antrian(): View
+    public function antrian(Request $request): View
     {
         $dokter = Auth::user()->dokter;
+
+        // Get tanggal from request, default to today
+        $tanggal = $request->input('tanggal', now()->format('Y-m-d'));
+
+        // Antrian = semua pasien yang daftar ke dokter ini pada tanggal tertentu (menunggu + dipanggil)
         $antrianPasien = Pendaftaran::with(['pasien'])
-            ->whereDate('tanggal_daftar', today())->whereIn('status', ['menunggu', 'dipanggil'])
-            ->whereDoesntHave('pemeriksaan')->orderBy('nomor_antrian')->get();
+            ->whereDate('tanggal_kunjungan', $tanggal)
+            ->whereIn('status', ['menunggu', 'dipanggil'])
+            ->whereHas('jadwalDokter', function($q) use ($dokter) {
+                $q->where('dokter_id', $dokter->dokter_id);
+            })
+            ->orderBy('nomor_antrian')->get();
+
         return view('dokter.antrian', compact('antrianPasien'));
     }
 
@@ -59,26 +80,39 @@ class DokterController extends Controller
     public function formPemeriksaan($id): View
     {
         $pendaftaran = Pendaftaran::with(['pasien'])->findOrFail($id);
-        
-        $pemeriksaan = Pemeriksaan::where('pendaftaran_id', $id)->first();
-        
-        // UBAH INI - tambahkan nested eager loading
-        $riwayatPemeriksaan = Pemeriksaan::with(['pendaftaran.jadwalDokter.dokter']) 
+
+        // Ambil atau buat pemeriksaan record jika belum ada
+        $pemeriksaan = Pemeriksaan::firstOrCreate(
+            ['pendaftaran_id' => $id],
+            [
+                'tanggal_pemeriksaan' => now(),
+                'status' => 'dalam_pemeriksaan',
+            ]
+        );
+
+        // Riwayat pemeriksaan pasien ini (3 terakhir)
+        $riwayatPemeriksaan = Pemeriksaan::with(['pendaftaran.jadwalDokter.dokter'])
             ->whereHas('pendaftaran', function($query) use ($pendaftaran) {
                 $query->where('pasien_id', $pendaftaran->pasien_id);
             })
+            ->where('pemeriksaan_id', '!=', $pemeriksaan->pemeriksaan_id) // Exclude pemeriksaan saat ini
+            ->where('status', 'selesai') // Hanya yang sudah selesai
             ->orderBy('tanggal_pemeriksaan', 'desc')
             ->take(3)
             ->get();
-            
-        return view('dokter.form-pemeriksaan', compact('pendaftaran', 'pemeriksaan', 'riwayatPemeriksaan'));
+
+        // Data untuk tindak lanjut (inline form)
+        $obatList = Obat::where('is_deleted', false)->where('stok', '>', 0)->orderBy('nama_obat')->get();
+        $jenisTestLab = ['darah_lengkap', 'urine', 'gula_darah', 'kolesterol', 'radiologi', 'lainnya'];
+
+        return view('dokter.form-pemeriksaan', compact('pendaftaran', 'pemeriksaan', 'riwayatPemeriksaan', 'obatList', 'jenisTestLab'));
     }
     /**
-     * Simpan Pemeriksaan
+     * Simpan Pemeriksaan + Tindak Lanjut (Resep/Lab/Rujukan) sekaligus dalam 1 form
      */
     public function storePemeriksaan(Request $request): RedirectResponse
     {
-        $request->validate([
+        $rules = [
             'pendaftaran_id' => 'required|exists:pendaftaran,pendaftaran_id',
             'anamnesa' => 'required|string',
             'pemeriksaan_fisik' => 'nullable|string',
@@ -90,48 +124,115 @@ class DokterController extends Controller
             'icd10_code' => 'nullable|string|max:10',
             'tindakan_medis' => 'nullable|string',
             'catatan_dokter' => 'nullable|string',
-            'status_pasien' => 'required|in:selesai_penanganan,dirujuk,perlu_resep,perlu_lab',
-        ]);
+            'tindak_lanjut' => 'required|in:selesai,resep,lab,rujukan',
+        ];
+
+        // Validasi tambahan jika resep dipilih
+        if ($request->tindak_lanjut === 'resep') {
+            $rules['obat'] = 'required|array|min:1';
+            $rules['obat.*.obat_id'] = 'required|exists:obat,obat_id';
+            $rules['obat.*.jumlah'] = 'required|integer|min:1';
+            $rules['obat.*.dosis'] = 'required|string';
+            $rules['obat.*.aturan_pakai'] = 'required|string';
+        }
+
+        // Validasi tambahan jika lab dipilih
+        if ($request->tindak_lanjut === 'lab') {
+            $rules['jenis_pemeriksaan_lab'] = 'required|in:darah_lengkap,urine,gula_darah,kolesterol,radiologi,lainnya';
+            $rules['catatan_lab'] = 'nullable|string';
+        }
+
+        // Validasi tambahan jika rujukan dipilih
+        if ($request->tindak_lanjut === 'rujukan') {
+            $rules['tujuan_rujukan'] = 'required|string|max:255';
+            $rules['rs_tujuan'] = 'nullable|string|max:255';
+            $rules['dokter_spesialis_tujuan'] = 'nullable|string|max:100';
+            $rules['alasan_rujukan'] = 'required|string';
+            $rules['diagnosa_sementara'] = 'nullable|string';
+        }
+
+        $request->validate($rules);
 
         try {
             DB::beginTransaction();
             $pendaftaran = Pendaftaran::findOrFail($request->pendaftaran_id);
-            $dokter = Auth::user()->dokter;
-            
-            $pemeriksaan = Pemeriksaan::updateOrCreate(
-                ['pendaftaran_id' => $request->pendaftaran_id],
-                [
-                    'dokter_id' => $dokter->dokter_id,
-                    'tanggal_pemeriksaan' => now(),
-                    'anamnesa' => $request->anamnesa,
-                    'pemeriksaan_fisik' => $request->pemeriksaan_fisik,
-                    'tekanan_darah' => $request->tekanan_darah,
-                    'suhu_tubuh' => $request->suhu_tubuh,
-                    'berat_badan' => $request->berat_badan,
-                    'tinggi_badan' => $request->tinggi_badan,
-                    'diagnosa' => $request->diagnosa,
-                    'icd10_code' => $request->icd10_code,
-                    'tindakan_medis' => $request->tindakan_medis,
-                    'catatan_dokter' => $request->catatan_dokter,
-                    'status_pasien' => $request->status_pasien,
-                ]
-            );
-            
-            $pendaftaran->update(['status' => 'selesai']);
-            DB::commit();
-            
-            if ($request->status_pasien === 'perlu_resep') {
-                return redirect()->route('dokter.form-resep', $pemeriksaan->pemeriksaan_id)
-                    ->with('success', 'Pemeriksaan disimpan. Buat resep.');
-            } elseif ($request->status_pasien === 'perlu_lab') {
-                return redirect()->route('dokter.form-lab', $pemeriksaan->pemeriksaan_id)
-                    ->with('success', 'Pemeriksaan disimpan. Buat permintaan lab.');
-            } elseif ($request->status_pasien === 'dirujuk') {
-                return redirect()->route('dokter.form-rujukan', $pemeriksaan->pemeriksaan_id)
-                    ->with('success', 'Pemeriksaan disimpan. Buat rujukan.');
+
+            // Cari pemeriksaan yang sudah dibuat
+            $pemeriksaan = Pemeriksaan::where('pendaftaran_id', $request->pendaftaran_id)->firstOrFail();
+
+            // Update pemeriksaan dengan data dari form dokter
+            $pemeriksaan->update([
+                'tanggal_pemeriksaan' => now(),
+                'anamnesa' => $request->anamnesa,
+                'pemeriksaan_fisik' => $request->pemeriksaan_fisik,
+                'tekanan_darah' => $request->tekanan_darah,
+                'suhu_tubuh' => $request->suhu_tubuh,
+                'berat_badan' => $request->berat_badan,
+                'tinggi_badan' => $request->tinggi_badan,
+                'diagnosa' => $request->diagnosa,
+                'icd10_code' => $request->icd10_code,
+                'tindakan_medis' => $request->tindakan_medis,
+                'catatan_dokter' => $request->catatan_dokter,
+                'status' => 'selesai',
+            ]);
+
+            $tindakLanjut = $request->tindak_lanjut;
+            $message = 'Pemeriksaan berhasil disimpan!';
+
+            // [A] Simpan Resep jika dipilih
+            if ($tindakLanjut === 'resep' && $request->has('obat')) {
+                $resep = Resep::create([
+                    'pemeriksaan_id' => $pemeriksaan->pemeriksaan_id,
+                    'tanggal_resep' => now(),
+                    'status' => 'menunggu',
+                ]);
+
+                foreach ($request->obat as $obatData) {
+                    if (!empty($obatData['obat_id'])) {
+                        DetailResep::create([
+                            'resep_id' => $resep->resep_id,
+                            'obat_id' => $obatData['obat_id'],
+                            'jumlah' => $obatData['jumlah'],
+                            'dosis' => $obatData['dosis'],
+                            'aturan_pakai' => $obatData['aturan_pakai'],
+                        ]);
+                    }
+                }
+                $message .= ' Resep obat telah dibuat.';
             }
-            
-            return redirect()->route('dokter.antrian')->with('success', 'Pemeriksaan berhasil disimpan!');
+
+            // [B] Simpan Permintaan Lab jika dipilih
+            if ($tindakLanjut === 'lab' && $request->filled('jenis_pemeriksaan_lab')) {
+                PermintaanLab::create([
+                    'pemeriksaan_id' => $pemeriksaan->pemeriksaan_id,
+                    'tanggal_permintaan' => now(),
+                    'jenis_pemeriksaan' => $request->jenis_pemeriksaan_lab,
+                    'catatan_permintaan' => $request->catatan_lab,
+                    'status' => 'menunggu',
+                ]);
+                $message .= ' Permintaan lab telah dibuat.';
+            }
+
+            // [C] Simpan Rujukan jika dipilih
+            if ($tindakLanjut === 'rujukan' && $request->filled('tujuan_rujukan')) {
+                Rujukan::create([
+                    'pemeriksaan_id' => $pemeriksaan->pemeriksaan_id,
+                    'tujuan_rujukan' => $request->tujuan_rujukan,
+                    'rs_tujuan' => $request->rs_tujuan,
+                    'dokter_spesialis_tujuan' => $request->dokter_spesialis_tujuan,
+                    'alasan_rujukan' => $request->alasan_rujukan,
+                    'diagnosa_sementara' => $request->diagnosa_sementara ?? $request->diagnosa,
+                    'tanggal_rujukan' => now(),
+                ]);
+                $message .= ' Rujukan telah dibuat.';
+            }
+
+            // Update status pendaftaran
+            $pendaftaran->update(['status' => 'selesai']);
+
+            DB::commit();
+
+            return redirect()->route('dokter.antrian')->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal: ' . $e->getMessage())->withInput();
@@ -143,14 +244,13 @@ class DokterController extends Controller
      */
     public function formResep($pemeriksaanId): View
     {
-        // PERBAIKAN: Hapus 'pasien' dan 'dokter' dari with() jika tidak ada di model
-        // Gunakan 'pendaftaran.pasien' untuk mengambil data pasien
-        $pemeriksaan = Pemeriksaan::with(['pendaftaran.pasien', 'resep.detailResep.obat'])->findOrFail($pemeriksaanId);
-        
-        if ($pemeriksaan->dokter_id !== Auth::user()->dokter->dokter_id) {
+        $pemeriksaan = Pemeriksaan::with(['pendaftaran.pasien', 'pendaftaran.jadwalDokter.dokter', 'resep.detailResep.obat'])->findOrFail($pemeriksaanId);
+
+        // Authorization check menggunakan relationship chain
+        if ($pemeriksaan->pendaftaran->jadwalDokter->dokter->dokter_id !== Auth::user()->dokter->dokter_id) {
             abort(403, 'Akses ditolak.');
         }
-        
+
         $obatList = Obat::where('stok', '>', 0)->orderBy('nama_obat')->get();
         return view('dokter.form-resep', compact('pemeriksaan', 'obatList'));
     }
@@ -207,11 +307,13 @@ class DokterController extends Controller
      */
     public function formLab($pemeriksaanId): View
     {
-        // PERBAIKAN: Hapus 'pasien' dan 'dokter' dari with(), ganti 'pendaftaran.pasien'
-        $pemeriksaan = Pemeriksaan::with(['pendaftaran.pasien', 'permintaanLab'])->findOrFail($pemeriksaanId);
-        
-        if ($pemeriksaan->dokter_id !== Auth::user()->dokter->dokter_id) abort(403);
-        
+        $pemeriksaan = Pemeriksaan::with(['pendaftaran.pasien', 'pendaftaran.jadwalDokter.dokter', 'permintaanLab'])->findOrFail($pemeriksaanId);
+
+        // Authorization check menggunakan relationship chain
+        if ($pemeriksaan->pendaftaran->jadwalDokter->dokter->dokter_id !== Auth::user()->dokter->dokter_id) {
+            abort(403, 'Akses ditolak.');
+        }
+
         $jenisTestLab = ['Darah Lengkap', 'Urine Lengkap', 'Gula Darah', 'Kolesterol', 'Asam Urat', 'Fungsi Hati', 'Fungsi Ginjal', 'X-Ray', 'CT Scan', 'MRI', 'USG'];
         return view('dokter.form-lab', compact('pemeriksaan', 'jenisTestLab'));
     }
@@ -260,11 +362,13 @@ class DokterController extends Controller
      */
     public function formRujukan($pemeriksaanId): View
     {
-        // PERBAIKAN: Hapus 'pasien' dan 'dokter' dari with()
-        $pemeriksaan = Pemeriksaan::with(['pendaftaran.pasien', 'rujukan'])->findOrFail($pemeriksaanId);
-        
-        if ($pemeriksaan->dokter_id !== Auth::user()->dokter->dokter_id) abort(403);
-        
+        $pemeriksaan = Pemeriksaan::with(['pendaftaran.pasien', 'pendaftaran.jadwalDokter.dokter', 'rujukan'])->findOrFail($pemeriksaanId);
+
+        // Authorization check menggunakan relationship chain
+        if ($pemeriksaan->pendaftaran->jadwalDokter->dokter->dokter_id !== Auth::user()->dokter->dokter_id) {
+            abort(403, 'Akses ditolak.');
+        }
+
         return view('dokter.form-rujukan', compact('pemeriksaan'));
     }
 
@@ -310,15 +414,41 @@ class DokterController extends Controller
         }
     }
 
-    public function riwayat()
+    public function riwayat(Request $request)
     {
         $dokter = auth()->user()->dokter;
-        $riwayatPemeriksaan = Pemeriksaan::with(['pendaftaran.pasien', 'pendaftaran'])
-            ->whereHas('pendaftaran.jadwalDokter', function($query) use ($dokter) {
-                $query->where('dokter_id', $dokter->dokter_id);
-            })
-            ->orderBy('tanggal_pemeriksaan', 'desc')
-            ->paginate(20);
+
+        $query = Pemeriksaan::with(['pendaftaran.pasien', 'pendaftaran.jadwalDokter'])
+            ->whereHas('pendaftaran.jadwalDokter', function($q) use ($dokter) {
+                $q->where('dokter_id', $dokter->dokter_id);
+            });
+
+        // Filter by search (nama pasien or no rekam medis)
+        if ($request->filled('search')) {
+            $search = strtolower($request->search);
+            $query->whereHas('pendaftaran.pasien', function($q) use ($search) {
+                $q->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$search}%"]);
+            });
+        }
+
+        // Filter by date range
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('tanggal_pemeriksaan', '>=', $request->tanggal_dari);
+        }
+
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal_pemeriksaan', '<=', $request->tanggal_sampai);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $riwayatPemeriksaan = $query->orderBy('tanggal_pemeriksaan', 'desc')
+            ->paginate(10);
+
         return view('dokter.riwayat', compact('riwayatPemeriksaan'));
     }
 
@@ -346,7 +476,20 @@ class DokterController extends Controller
     // ... (Profile & Monitoring tidak perlu ubahan signifikan kecuali jika memakai with('dokter') ) ...
 
     public function profile(): View {
-        $dokter = Auth::user()->dokter;
+        $dokter = Auth::user()->dokter()->with(['jadwalDokter' => function($query) {
+            $query->where('is_deleted', false)
+                  ->orderByRaw("CASE
+                      WHEN hari_praktik = 'Senin' THEN 1
+                      WHEN hari_praktik = 'Selasa' THEN 2
+                      WHEN hari_praktik = 'Rabu' THEN 3
+                      WHEN hari_praktik = 'Kamis' THEN 4
+                      WHEN hari_praktik = 'Jumat' THEN 5
+                      WHEN hari_praktik = 'Sabtu' THEN 6
+                      WHEN hari_praktik = 'Minggu' THEN 7
+                      ELSE 8
+                  END")
+                  ->orderBy('waktu_mulai');
+        }])->first();
         return view('dokter.profile-dokter', compact('dokter'));
     }
 
@@ -356,27 +499,46 @@ class DokterController extends Controller
     }
 
     public function updateProfile(Request $request): RedirectResponse {
-        $request->validate([
+        $dokter = Auth::user()->dokter;
+
+        $validated = $request->validate([
+            'nama_lengkap' => 'required|string|max:100',
+            'tempat_lahir' => 'required|string|max:100',
+            'tanggal_lahir' => 'required|date',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'no_telepon' => 'required|string|max:15',
+            'spesialisasi' => 'required|string|max:100',
+            'no_str' => 'required|string|max:17',
             'alamat' => 'required|string',
-            'provinsi' => 'nullable|string|max:100',
-            'kota_kabupaten' => 'nullable|string|max:100',
-            'kecamatan' => 'nullable|string|max:100',
-            'jadwal_praktik' => 'nullable|array',
+            'provinsi' => 'required|string|max:100',
+            'kota_kabupaten' => 'required|string|max:100',
+            'kecamatan' => 'required|string|max:100',
+            'current_password' => 'nullable|required_with:new_password|string',
+            'new_password' => 'nullable|min:8|confirmed',
         ]);
-        try {
-            $dokter = Auth::user()->dokter;
-            $dokter->update([
-                'no_telepon' => $request->no_telepon,
-                'alamat' => $request->alamat,
-                'provinsi' => $request->provinsi,
-                'kota_kabupaten' => $request->kota_kabupaten,
-                'kecamatan' => $request->kecamatan,
-                'jadwal_praktik' => $request->jadwal_praktik,
+
+        // Validate and update password if provided
+        if ($request->filled('current_password')) {
+            if (!\Illuminate\Support\Facades\Hash::check($request->current_password, Auth::user()->password)) {
+                return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai.'])->withInput();
+            }
+
+            Auth::user()->update([
+                'password' => $request->new_password
             ]);
-            return redirect()->route('dokter.profile')->with('success', 'Profil berhasil diperbarui!');
+        }
+
+        try {
+            $dokter->update($validated);
+
+            $message = 'Profil berhasil diperbarui.';
+            if ($request->filled('new_password')) {
+                $message = 'Profil dan password berhasil diperbarui.';
+            }
+
+            return redirect()->route('dokter.profile')->with('success', $message);
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal memperbarui profil: ' . $e->getMessage())->withInput();
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui profil.'])->withInput();
         }
     }
 

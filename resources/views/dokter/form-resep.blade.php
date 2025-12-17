@@ -13,7 +13,7 @@
         </a>
         <div>
             <h1 class="text-3xl font-bold text-gray-900">Form Resep Obat</h1>
-            <p class="text-gray-600 mt-1">Pasien: <span class="font-semibold">{{ $pemeriksaan->pasien->nama_lengkap }}</span></p>
+            <p class="text-gray-600 mt-1">Pasien: <span class="font-semibold">{{ $pemeriksaan->pendaftaran->pasien->nama_lengkap }}</span></p>
         </div>
     </div>
 
