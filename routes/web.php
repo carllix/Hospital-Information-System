@@ -27,8 +27,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'register']);
 });
 
+Route::post('/pasien/store-session-results', [PasienController::class, 'storeSessionResults']);
+
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+
+    Route::post('/update-wearable-data', [PasienController::class, 'updateFromDevice'])->name('wearable-data.update');
 
     // Pasien Routes
     Route::prefix('pasien')->name('pasien.')->middleware(['auth', 'role:pasien'])->group(function () {
@@ -54,6 +58,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [PasienController::class, 'profile'])->name('profile');
         Route::get('/profile/edit', [PasienController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profile', [PasienController::class, 'updateProfile'])->name('profile.update');
+
+        Route::post('/monitoring/start', [PasienController::class, 'startRealtimeMonitoring'])->name('monitoring.start');
+        Route::post('/monitoring/stop', [PasienController::class, 'stopRealtimeMonitoring'])->name('monitoring.stop');
+        Route::get('/monitoring/progress', [PasienController::class, 'getSessionProgress'])->name('monitoring.progress'); // NEW
+        Route::get('/monitoring/result', [PasienController::class, 'getLatestSessionResult'])->name('monitoring.result');
+        Route::get('/monitoring/status', [PasienController::class, 'getMonitoringStatus'])->name('monitoring.status');
+        Route::get('/monitoring/stream', [PasienController::class, 'getRealtimeDataStream'])->name('monitoring.stream');
+        Route::get('/monitoring/summary', [PasienController::class, 'getMonitoringSessionSummary'])->name('monitoring.summary');
+        Route::get('/monitoring/debug', [PasienController::class, 'debugMonitoring'])->name('monitoring.debug');
     });
 
     // Pendaftaran Routes
