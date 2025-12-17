@@ -331,7 +331,7 @@
                 </div>
                 <div class="p-6 space-y-4">
                     @foreach($riwayatPemeriksaan as $riwayat)
-                    <div class="border-l-4 border-[#f56e9d] pl-4 py-2">
+                    <div class="border-2 border-[#f56e9d] rounded-lg p-4">
                         <div class="mb-2">
                             <p class="font-semibold text-gray-900">{{ \Carbon\Carbon::parse($riwayat->tanggal_pemeriksaan)->isoFormat('D MMMM YYYY') }}</p>
                             <p class="text-sm text-gray-600">oleh {{ $riwayat->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? 'Dokter' }}</p>
