@@ -148,13 +148,13 @@
                                         #{{ $resep->resep_id }}
                                     </div>
                                     <div>
-                                        <div class="text-sm font-bold text-gray-900">{{ $resep->pasien->nama_lengkap }}</div>
-                                        <div class="text-xs text-gray-500 font-mono">{{ $resep->pasien->no_rekam_medis }}</div>
+                                        <div class="text-sm font-bold text-gray-900">{{ $resep->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}</div>
+                                        <div class="text-xs text-gray-500 font-mono">{{ $resep->pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? '-' }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600">
-                                {{ $resep->dokter->nama_lengkap }}
+                                {{ $resep->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? '-' }}
                             </td>
                             <td class="px-6 py-4">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">

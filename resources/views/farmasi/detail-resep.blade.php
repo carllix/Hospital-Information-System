@@ -24,13 +24,13 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-600">Pasien</label>
-                        <p class="mt-1 text-sm text-gray-900 font-medium">{{ $resep->pasien->nama_lengkap }}</p>
-                        <p class="text-xs text-gray-500">{{ $resep->pasien->no_rekam_medis }}</p>
+                        <p class="mt-1 text-sm text-gray-900 font-medium">{{ $resep->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}</p>
+                        <p class="text-xs text-gray-500">{{ $resep->pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-600">Dokter Peresep</label>
-                        <p class="mt-1 text-sm text-gray-900 font-medium">{{ $resep->dokter->nama_lengkap }}</p>
-                        <p class="text-xs text-gray-500">{{ $resep->dokter->spesialisasi }}</p>
+                        <p class="mt-1 text-sm text-gray-900 font-medium">{{ $resep->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? '-' }}</p>
+                        <p class="text-xs text-gray-500">{{ $resep->pemeriksaan->pendaftaran->jadwalDokter->dokter->spesialisasi ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-600">Tanggal Resep</label>
@@ -122,7 +122,7 @@
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-900">{{ $resep->apoteker->nama_lengkap }}</p>
-                        <p class="text-xs text-gray-500">{{ $resep->apoteker->nip }}</p>
+                        <p class="text-xs text-gray-500">{{ $resep->apoteker->nip_rs }}</p>
                     </div>
                 </div>
             </div>
