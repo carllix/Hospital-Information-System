@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Pendaftaran Kunjungan')
+@section('title', 'Pendaftaran Kunjungan | Pendaftaran Ganesha Hospital')
 @section('dashboard-title', 'Pendaftaran Kunjungan')
 
 @section('content')
