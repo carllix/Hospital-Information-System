@@ -222,6 +222,7 @@ class PasienController extends Controller
                                 'satuan' => $hasil->satuan ?? '',
                                 'nilai_normal' => $hasil->nilai_normal ?? '-',
                                 'tanggal_hasil' => $hasil->tanggal_hasil->translatedFormat('j F Y'),
+                                'file_hasil_url' => $hasil->file_hasil_url,
                             ];
                         })
                     ];
