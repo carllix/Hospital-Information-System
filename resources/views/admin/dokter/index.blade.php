@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Data Dokter')
-@section('dashboard-title', 'Data Dokter')
+@section('title', 'Manajemen Dokter | Admin Ganesha Hospital')
+@section('dashboard-title', 'Manajemen Dokter')
 
 @section('content')
 <x-toast type="success" :message="session('success')" />
@@ -11,7 +11,7 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-xl font-bold text-gray-800">Data Dokter</h2>
+                <h2 class="text-xl font-bold text-gray-800">Manajemen Dokter</h2>
                 <p class="text-sm text-gray-600 mt-1">Kelola data dokter rumah sakit</p>
             </div>
             <div class="flex items-center gap-4">
@@ -186,8 +186,8 @@
 </div>
 
 <!-- Modal Konfirmasi Delete -->
-<div id="deleteModal" class="ml-68 hidden fixed inset-0 z-50 flex items-center justify-center p-4 lg:ml-64">
-    <div id="deleteModalBackdrop" class="absolute inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="closeDeleteModal()"></div>
+<div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="deleteModalBackdrop" class="fixed inset-0 bg-black opacity-0 transition-opacity duration-200 lg:left-64" onclick="closeDeleteModal()"></div>
     <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="deleteModalContent">
         <div class="p-6 border-b border-gray-100">
             <div class="flex items-start gap-4">

@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Data Pengguna')
-@section('dashboard-title', 'Data Pengguna')
+@section('title', 'Manajemen Pengguna | Admin Ganesha Hospital')
+@section('dashboard-title', 'Manajemen Pengguna')
 
 @section('content')
 <x-toast type="success" :message="session('success')" />
@@ -11,7 +11,7 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h2 class="text-xl font-bold text-gray-800">Data Pengguna</h2>
+                <h2 class="text-xl font-bold text-gray-800">Manajemen Pengguna</h2>
                 <p class="text-sm text-gray-600 mt-1">Kelola data pengguna sistem</p>
             </div>
             <div class="text-right">
@@ -132,9 +132,9 @@
 </div>
 
 <!-- Modal Reset Password -->
-<div id="resetPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 lg:ml-64">
-    <div id="modalBackdrop" class="absolute inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="hideResetPasswordModal()"></div>
-    <div class="ml-68 bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="modalContent">
+<div id="resetPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="modalBackdrop" class="fixed inset-0 bg-black opacity-0 transition-opacity duration-200 lg:left-64" onclick="hideResetPasswordModal()"></div>
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="modalContent">
         <div class="p-6 border-b border-gray-100">
             <div class="flex items-start gap-4">
                 <div class="flex-1">

@@ -5,9 +5,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Dokter\DokterController;
 use App\Http\Controllers\Farmasi\FarmasiController;
-use App\Http\Controllers\Kasir\KasirApotekController;
-use App\Http\Controllers\Kasir\KasirKlinikController;
-use App\Http\Controllers\Kasir\KasirLabController;
+use App\Http\Controllers\Kasir\KasirController;
 use App\Http\Controllers\Lab\LabController;
 use App\Http\Controllers\Pasien\PasienController;
 use App\Http\Controllers\Pendaftaran\PendaftaranController;
@@ -27,8 +25,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'register']);
 });
 
+Route::post('/pasien/store-session-results', [PasienController::class, 'storeSessionResults']);
+
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+
+    Route::post('/update-wearable-data', [PasienController::class, 'updateFromDevice'])->name('wearable-data.update');
 
     // Pasien Routes
     Route::prefix('pasien')->name('pasien.')->middleware(['auth', 'role:pasien'])->group(function () {
@@ -54,6 +56,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [PasienController::class, 'profile'])->name('profile');
         Route::get('/profile/edit', [PasienController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profile', [PasienController::class, 'updateProfile'])->name('profile.update');
+
+        Route::post('/monitoring/start', [PasienController::class, 'startRealtimeMonitoring'])->name('monitoring.start');
+        Route::post('/monitoring/stop', [PasienController::class, 'stopRealtimeMonitoring'])->name('monitoring.stop');
+        Route::get('/monitoring/progress', [PasienController::class, 'getSessionProgress'])->name('monitoring.progress'); // NEW
+        Route::get('/monitoring/result', [PasienController::class, 'getLatestSessionResult'])->name('monitoring.result');
+        Route::get('/monitoring/status', [PasienController::class, 'getMonitoringStatus'])->name('monitoring.status');
+        Route::get('/monitoring/stream', [PasienController::class, 'getRealtimeDataStream'])->name('monitoring.stream');
+        Route::get('/monitoring/summary', [PasienController::class, 'getMonitoringSessionSummary'])->name('monitoring.summary');
+        Route::get('/monitoring/debug', [PasienController::class, 'debugMonitoring'])->name('monitoring.debug');
     });
 
     // Pendaftaran Routes
@@ -83,8 +94,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('/panggil-pasien/{id}', [DokterController::class, 'panggilPasien'])->name('panggil-pasien');
 
         // Pemeriksaan
-        Route::get('/pemeriksaan/{id}', [DokterController::class, 'formPemeriksaan'])->name('form-pemeriksaan');
-        Route::post('/pemeriksaan', [DokterController::class, 'storePemeriksaan'])->name('store-pemeriksaan');
+        Route::get('/antrian/pemeriksaan/{id}', [DokterController::class, 'formPemeriksaan'])->name('form-pemeriksaan');
+        Route::post('/antrian/pemeriksaan', [DokterController::class, 'storePemeriksaan'])->name('store-pemeriksaan');
 
         // Resep
         Route::get('/resep/{pemeriksaanId}', [DokterController::class, 'formResep'])->name('form-resep');
@@ -100,15 +111,15 @@ Route::middleware('auth')->group(function () {
 
         // Riwayat & Detail
         Route::get('/riwayat', [DokterController::class, 'riwayat'])->name('riwayat');
-        Route::get('/pemeriksaan/detail/{id}', [DokterController::class, 'detailPemeriksaan'])->name('detail-pemeriksaan');
+        Route::get('/riwayat/detail/{id}', [DokterController::class, 'detailPemeriksaan'])->name('detail-pemeriksaan');
 
         // Profile
         Route::get('/profile', [DokterController::class, 'profile'])->name('profile');
         Route::get('/profile/edit', [DokterController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profile', [DokterController::class, 'updateProfile'])->name('profile.update');
 
-        Route::get('/monitoring/{pasienId}', [DokterController::class, 'monitoringPasien'])->name('monitoring-pasien');
-        Route::get('/monitoring/{pasienId}/data', [DokterController::class, 'getPasienWearableData'])->name('monitoring.data');
+        Route::get('/riwayat/monitoring/{pasienId}', [DokterController::class, 'monitoringPasien'])->name('monitoring-pasien');
+        Route::get('/riwayat/monitoring/{pasienId}/data', [DokterController::class, 'getPasienWearableData'])->name('monitoring.data');
     });
 
     // Farmasi Routes
@@ -129,9 +140,6 @@ Route::middleware('auth')->group(function () {
         Route::put('/obat/{id}', [FarmasiController::class, 'updateObat'])->name('update-obat');
         Route::patch('/obat/{id}/stok', [FarmasiController::class, 'updateStok'])->name('update-stok');
         Route::delete('/obat/{id}', [FarmasiController::class, 'deleteObat'])->name('delete-obat');
-
-        // Laporan
-        Route::get('/laporan', [FarmasiController::class, 'laporanResep'])->name('laporan-resep');
     });
 
     // Lab Routes
@@ -158,37 +166,17 @@ Route::middleware('auth')->group(function () {
     });
 
     // ========================================
-    // KASIR ROUTES - FIXED & SEPARATED
+    // KASIR ROUTES - UNIFIED
     // ========================================
-
-    // Kasir Klinik Routes (Konsultasi & Tindakan)
-    Route::prefix('kasir-klinik')->name('kasir-klinik.')->middleware(['auth', 'role:staf,kasir'])->group(function () {
-        Route::get('/dashboard', [KasirKlinikController::class, 'dashboard'])->name('dashboard');
-        Route::get('/riwayat', [KasirKlinikController::class, 'riwayat'])->name('riwayat');
-        Route::get('/laporan', [KasirKlinikController::class, 'laporan'])->name('laporan');
-        Route::get('/{tagihan}', [KasirKlinikController::class, 'show'])->name('show');
-        Route::post('/{tagihan}/bayar', [KasirKlinikController::class, 'processPayment'])->name('processPayment');
-        Route::get('/{tagihan}/invoice', [KasirKlinikController::class, 'invoice'])->name('invoice');
-    });
-
-    // Kasir Apotek Routes (Obat/Resep)
-    Route::prefix('kasir-apotek')->name('kasir-apotek.')->middleware(['auth', 'role:staf,kasir'])->group(function () {
-        Route::get('/dashboard', [KasirApotekController::class, 'dashboard'])->name('dashboard');
-        Route::get('/riwayat', [KasirApotekController::class, 'riwayat'])->name('riwayat');
-        Route::get('/laporan', [KasirApotekController::class, 'laporan'])->name('laporan');
-        Route::get('/{tagihan}', [KasirApotekController::class, 'show'])->name('show');
-        Route::post('/{tagihan}/bayar', [KasirApotekController::class, 'processPayment'])->name('processPayment');
-        Route::get('/{tagihan}/invoice', [KasirApotekController::class, 'invoice'])->name('invoice');
-    });
-
-    // Kasir Lab Routes (Laboratorium)
-    Route::prefix('kasir-lab')->name('kasir-lab.')->middleware(['auth', 'role:staf,kasir'])->group(function () {
-        Route::get('/dashboard', [KasirLabController::class, 'dashboard'])->name('dashboard');
-        Route::get('/riwayat', [KasirLabController::class, 'riwayat'])->name('riwayat');
-        Route::get('/laporan', [KasirLabController::class, 'laporan'])->name('laporan');
-        Route::get('/{tagihan}', [KasirLabController::class, 'show'])->name('show');
-        Route::post('/{tagihan}/bayar', [KasirLabController::class, 'processPayment'])->name('processPayment');
-        Route::get('/{tagihan}/invoice', [KasirLabController::class, 'invoice'])->name('invoice');
+    Route::prefix('kasir')->name('kasir.')->middleware(['auth', 'role:staf,kasir'])->group(function () {
+        Route::get('/dashboard', [KasirController::class, 'dashboard'])->name('dashboard');
+        Route::get('/buat-tagihan/{pemeriksaanId}', [KasirController::class, 'formTagihan'])->name('form-tagihan');
+        Route::post('/buat-tagihan/{pemeriksaanId}', [KasirController::class, 'buatTagihan'])->name('store-tagihan');
+        Route::get('/detail/{tagihanId}', [KasirController::class, 'detail'])->name('detail');
+        Route::post('/bayar/{tagihanId}', [KasirController::class, 'prosesPembayaran'])->name('proses-pembayaran');
+        Route::get('/invoice/{tagihanId}', [KasirController::class, 'invoice'])->name('invoice');
+        Route::get('/riwayat', [KasirController::class, 'riwayat'])->name('riwayat');
+        Route::get('/laporan', [KasirController::class, 'laporan'])->name('laporan');
     });
 
     // Admin Routes

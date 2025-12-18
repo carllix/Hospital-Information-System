@@ -33,12 +33,15 @@ class FarmasiController extends Controller
             ->count();
         
         // Obat yang stok menipis (< 10)
-        $obatStokMenipis = Obat::where('stok', '<', 10)
+        $obatStokMenipis = Obat::where('is_deleted', false)
+            ->where('stok', '<', 10)
             ->where('stok', '>', 0)
             ->count();
-            
+
         // Obat yang habis
-        $obatHabis = Obat::where('stok', '=', 0)->count();
+        $obatHabis = Obat::where('is_deleted', false)
+            ->where('stok', '=', 0)
+            ->count();
         
         // PERBAIKAN: Menggunakan relasi panjang pemeriksaan.pendaftaran...
         $resepMenungguList = Resep::with([
@@ -68,22 +71,44 @@ class FarmasiController extends Controller
     public function daftarResep(Request $request): View
     {
         $status = $request->get('status', 'semua');
-        
+        $search = $request->get('search');
+        $tanggal = $request->get('tanggal');
+
         // PERBAIKAN: Menggunakan relasi panjang
         $query = Resep::with([
-                'pemeriksaan.pendaftaran.pasien', 
-                'pemeriksaan.pendaftaran.jadwalDokter.dokter', 
-                'apoteker', 
+                'pemeriksaan.pendaftaran.pasien',
+                'pemeriksaan.pendaftaran.jadwalDokter.dokter',
+                'apoteker',
                 'detailResep.obat'
             ])
             ->orderBy('tanggal_resep', 'desc');
-        
+
+        // Filter by status
         if ($status !== 'semua') {
             $query->where('status', $status);
         }
-        
-        $resepList = $query->paginate(15);
-        
+
+        // Filter by search (nama pasien, no rekam medis, nama dokter)
+        if ($search) {
+            $searchLower = strtolower($search);
+            $query->where(function($q) use ($searchLower) {
+                $q->whereHas('pemeriksaan.pendaftaran.pasien', function($subQ) use ($searchLower) {
+                    $subQ->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$searchLower}%"])
+                         ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$searchLower}%"]);
+                })
+                ->orWhereHas('pemeriksaan.pendaftaran.jadwalDokter.dokter', function($subQ) use ($searchLower) {
+                    $subQ->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$searchLower}%"]);
+                });
+            });
+        }
+
+        // Filter by tanggal
+        if ($tanggal) {
+            $query->whereDate('tanggal_resep', $tanggal);
+        }
+
+        $resepList = $query->paginate(10);
+
         return view('farmasi.daftar-resep', compact('resepList', 'status'));
     }
 
@@ -197,22 +222,37 @@ class FarmasiController extends Controller
     {
         $search = $request->get('search');
         $kategori = $request->get('kategori');
-        
-        $query = Obat::query();
-        
+        $statusStok = $request->get('status_stok');
+
+        $query = Obat::where('is_deleted', false);
+
+        // Filter by search (case insensitive)
         if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('nama_obat', 'like', "%{$search}%")
-                  ->orWhere('kode_obat', 'like', "%{$search}%");
+            $searchLower = strtolower($search);
+            $query->where(function($q) use ($searchLower) {
+                $q->whereRaw('LOWER(nama_obat) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('LOWER(kode_obat) LIKE ?', ["%{$searchLower}%"]);
             });
         }
-        
+
+        // Filter by kategori
         if ($kategori) {
             $query->where('kategori', $kategori);
         }
-        
-        $obatList = $query->orderBy('nama_obat')->paginate(20);
-        
+
+        // Filter by status stok
+        if ($statusStok) {
+            if ($statusStok === 'habis') {
+                $query->where('stok', '=', 0);
+            } elseif ($statusStok === 'menipis') {
+                $query->where('stok', '>', 0)->where('stok', '<', 10);
+            } elseif ($statusStok === 'aman') {
+                $query->where('stok', '>=', 10);
+            }
+        }
+
+        $obatList = $query->orderBy('nama_obat')->paginate(10);
+
         return view('farmasi.stok-obat', compact('obatList', 'search', 'kategori'));
     }
 
@@ -240,11 +280,11 @@ class FarmasiController extends Controller
         ]);
 
         try {
-            Obat::create($request->all());
-            
+            Obat::create(array_merge($request->all(), ['is_deleted' => false]));
+
             return redirect()->route('farmasi.stok-obat')
                 ->with('success', 'Obat berhasil ditambahkan!');
-                
+
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menambahkan obat: ' . $e->getMessage())->withInput();
         }
@@ -256,6 +296,11 @@ class FarmasiController extends Controller
     public function editObat($id): View
     {
         $obat = Obat::findOrFail($id);
+
+        if ($obat->is_deleted) {
+            abort(404);
+        }
+
         return view('farmasi.edit-obat', compact('obat'));
     }
 
@@ -276,11 +321,16 @@ class FarmasiController extends Controller
 
         try {
             $obat = Obat::findOrFail($id);
+
+            if ($obat->is_deleted) {
+                abort(404);
+            }
+
             $obat->update($request->all());
-            
+
             return redirect()->route('farmasi.stok-obat')
                 ->with('success', 'Obat berhasil diperbarui!');
-                
+
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal memperbarui obat: ' . $e->getMessage())->withInput();
         }
@@ -298,7 +348,11 @@ class FarmasiController extends Controller
 
         try {
             $obat = Obat::findOrFail($id);
-            
+
+            if ($obat->is_deleted) {
+                abort(404);
+            }
+
             if ($request->tipe === 'tambah') {
                 $obat->increment('stok', $request->jumlah);
                 $message = 'Stok berhasil ditambahkan!';
@@ -309,9 +363,9 @@ class FarmasiController extends Controller
                 $obat->decrement('stok', $request->jumlah);
                 $message = 'Stok berhasil dikurangi!';
             }
-            
+
             return back()->with('success', $message);
-                
+
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal memperbarui stok: ' . $e->getMessage());
         }
@@ -324,49 +378,16 @@ class FarmasiController extends Controller
     {
         try {
             $obat = Obat::findOrFail($id);
-            
-            // Cek apakah obat masih digunakan dalam resep
-            if ($obat->detailResep()->count() > 0) {
-                return back()->with('error', 'Obat tidak dapat dihapus karena masih ada dalam resep!');
-            }
-            
-            $obat->delete();
-            
+
+            // Soft delete: set is_deleted to true
+            $obat->update(['is_deleted' => true]);
+
             return redirect()->route('farmasi.stok-obat')
                 ->with('success', 'Obat berhasil dihapus!');
-                
+
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghapus obat: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Laporan Resep
-     */
-    public function laporanResep(Request $request): View
-    {
-        $bulan = $request->get('bulan', now()->month);
-        $tahun = $request->get('tahun', now()->year);
-        
-        // PERBAIKAN: Menggunakan relasi panjang
-        $resepList = Resep::with([
-                'pemeriksaan.pendaftaran.pasien', 
-                'pemeriksaan.pendaftaran.jadwalDokter.dokter', 
-                'apoteker'
-            ])
-            ->whereMonth('tanggal_resep', $bulan)
-            ->whereYear('tanggal_resep', $tahun)
-            ->orderBy('tanggal_resep', 'desc')
-            ->get();
-        
-        $statistik = [
-            'total' => $resepList->count(),
-            'selesai' => $resepList->where('status', 'selesai')->count(),
-            'diproses' => $resepList->where('status', 'diproses')->count(),
-            'menunggu' => $resepList->where('status', 'menunggu')->count(),
-        ];
-        
-        return view('farmasi.laporan-resep', compact('resepList', 'statistik', 'bulan', 'tahun'));
     }
 
     /**

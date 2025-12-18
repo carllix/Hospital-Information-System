@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Dashboard Pendaftaran')
+@section('title', 'Dashboard | Pendaftaran Ganesha Hospital')
 @section('dashboard-title', 'Dashboard Staf Pendaftaran')
 
 @section('content')
@@ -12,12 +12,6 @@
                 <h2 class="text-2xl font-bold text-gray-800">Selamat Datang, {{ auth()->user()->staf->nama_lengkap }}!</h2>
                 <p class="mt-2 text-gray-600">Kelola pendaftaran pasien dan antrian kunjungan</p>
             </div>
-            <div class="hidden md:block">
-                <svg class="w-24 h-24 text-gray-200" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
-                </svg>
-            </div>
         </div>
     </div>
 
@@ -25,65 +19,37 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Pendaftaran Hari Ini -->
         <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Pendaftaran Hari Ini</p>
-                    <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $pendaftaranHariIni }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ now()->translatedFormat('d F Y') }}</p>
-                </div>
-                <div class="p-3 bg-white rounded-lg">
-                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                    </svg>
-                </div>
+            <div>
+                <p class="text-sm font-medium text-gray-600">Pendaftaran Hari Ini</p>
+                <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $pendaftaranHariIni }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ now()->translatedFormat('d F Y') }}</p>
             </div>
         </div>
 
         <!-- Total Pasien -->
         <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Total Pasien</p>
-                    <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $totalPasien }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Pasien terdaftar</p>
-                </div>
-                <div class="p-3 bg-white rounded-lg">
-                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                </div>
+            <div>
+                <p class="text-sm font-medium text-gray-600">Total Pasien</p>
+                <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $totalPasien }}</p>
+                <p class="text-xs text-gray-500 mt-1">Pasien terdaftar</p>
             </div>
         </div>
 
         <!-- Antrian Menunggu -->
         <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Antrian Menunggu</p>
-                    <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $antrianMenunggu }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Hari ini</p>
-                </div>
-                <div class="p-3 bg-white rounded-lg">
-                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
+            <div>
+                <p class="text-sm font-medium text-gray-600">Antrian Menunggu</p>
+                <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $antrianMenunggu }}</p>
+                <p class="text-xs text-gray-500 mt-1">Hari ini</p>
             </div>
         </div>
 
         <!-- Pendaftaran Bulan Ini -->
         <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Pendaftaran Saya</p>
-                    <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $pendaftaranBulanIni }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Bulan ini</p>
-                </div>
-                <div class="p-3 bg-white rounded-lg">
-                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
+            <div>
+                <p class="text-sm font-medium text-gray-600">Pendaftaran Saya</p>
+                <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $pendaftaranBulanIni }}</p>
+                <p class="text-xs text-gray-500 mt-1">Bulan ini</p>
             </div>
         </div>
     </div>

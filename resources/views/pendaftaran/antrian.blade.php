@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Antrian Pasien')
+@section('title', 'Antrian Pasien | Pendaftaran Ganesha Hospital')
 @section('dashboard-title', 'Antrian Pasien')
 
 @section('content')
@@ -32,8 +32,7 @@
                     name="tanggal"
                     id="tanggal"
                     value="{{ $tanggal }}"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
-                >
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
             </div>
 
             <!-- Filter Dokter -->
@@ -44,8 +43,7 @@
                 <select
                     name="dokter_id"
                     id="dokter_id"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent"
-                >
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f56e9d] focus:border-transparent">
                     <option value="">Semua Dokter</option>
                     @foreach($dokters as $dokter)
                     <option value="{{ $dokter->dokter_id }}">
@@ -84,7 +82,7 @@
                                 Keluhan
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Waktu
+                                Jadwal Kunjungan
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Status
@@ -120,7 +118,14 @@
                                 <div class="text-sm text-gray-700 max-w-xs">{{ $pendaftaran->keluhan_utama }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-600">{{ $pendaftaran->tanggal_daftar->format('H:i') }}</div>
+                                @if($pendaftaran->jadwalDokter)
+                                <div class="text-sm text-gray-600">
+                                    {{ \Carbon\Carbon::parse($pendaftaran->jadwalDokter->waktu_mulai)->format('H:i') }} -
+                                    {{ \Carbon\Carbon::parse($pendaftaran->jadwalDokter->waktu_selesai)->format('H:i') }}
+                                </div>
+                                @else
+                                <div class="text-sm text-gray-500">-</div>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="status-badge">
@@ -140,16 +145,14 @@
                                 <button
                                     type="button"
                                     onclick="panggilPasien({{ $pendaftaran->pendaftaran_id }})"
-                                    class="panggil-btn px-3 py-2 text-xs bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium"
-                                >
+                                    class="panggil-btn px-3 py-2 text-xs bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium">
                                     Panggil
                                 </button>
                                 @else
                                 <button
                                     type="button"
                                     disabled
-                                    class="px-3 py-2 text-xs bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed font-medium"
-                                >
+                                    class="px-3 py-2 text-xs bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed font-medium">
                                     Sudah Dipanggil
                                 </button>
                                 @endif
@@ -164,15 +167,15 @@
     </div>
 </div>
 
-<div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 lg:ml-64">
-    <div id="modalBackdrop" class="absolute inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="closeConfirmModal()"></div>
+<div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="modalBackdrop" class="fixed inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="closeConfirmModal()"></div>
     <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="modalContent">
         <div class="p-6 border-b border-gray-100">
             <div class="flex items-start gap-4">
                 <div class="flex-1">
                     <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Panggil Pasien</h3>
                     <p class="mt-1 text-sm text-gray-600">
-                        Yakin ingin memanggil pasien ini? Pasien akan dipindahkan ke status "Dipanggil".
+                        Yakin ingin memanggil pasien ini? Pasien akan dipindahkan ke status "<strong>Dipanggil</strong>".
                     </p>
                 </div>
             </div>
@@ -181,15 +184,13 @@
             <button
                 type="button"
                 onclick="closeConfirmModal()"
-                class="px-3 py-2 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-            >
+                class="px-3 py-2 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
                 Batal
             </button>
             <button
                 type="button"
                 onclick="confirmPanggilPasien()"
-                class="px-3 py-2 text-xs bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium shadow-sm"
-            >
+                class="px-3 py-2 text-xs bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium shadow-sm">
                 Ya, Panggil
             </button>
         </div>
@@ -197,170 +198,172 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tanggalInput = document.getElementById('tanggal');
-    const dokterId = document.getElementById('dokter_id');
-    const tanggalDisplay = document.getElementById('tanggalDisplay');
-    let debounceTimer = null;
+    document.addEventListener('DOMContentLoaded', function() {
+        const tanggalInput = document.getElementById('tanggal');
+        const dokterId = document.getElementById('dokter_id');
+        const tanggalDisplay = document.getElementById('tanggalDisplay');
+        let debounceTimer = null;
 
-    function debounce(func, delay) {
-        return function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(func, delay);
-        };
+        function debounce(func, delay) {
+            return function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(func, delay);
+            };
+        }
+
+        function formatTanggal(dateString) {
+            const date = new Date(dateString);
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+            const dayName = days[date.getDay()];
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+
+            return `${dayName}, ${day} ${month} ${year}`;
+        }
+
+        function fetchData() {
+            const params = new URLSearchParams({
+                tanggal: tanggalInput.value,
+                dokter_id: dokterId.value
+            });
+
+            const url = '{{ route("pendaftaran.antrian") }}?' + params.toString();
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(xhr.responseText, 'text/html');
+
+                    const newContent = doc.getElementById('antrianContent');
+                    const newTotal = doc.getElementById('totalAntrian');
+
+                    if (newContent) {
+                        document.getElementById('antrianContent').innerHTML = newContent.innerHTML;
+                    }
+
+                    if (newTotal) {
+                        document.getElementById('totalAntrian').textContent = newTotal.textContent;
+                    }
+
+                    // Update tanggal display
+                    if (tanggalInput.value) {
+                        tanggalDisplay.textContent = formatTanggal(tanggalInput.value);
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+
+        const debouncedFetch = debounce(() => fetchData(), 500);
+        tanggalInput.addEventListener('change', debouncedFetch);
+        dokterId.addEventListener('change', debouncedFetch);
+
+        // Auto-refresh every 30 seconds
+        setInterval(fetchData, 30000);
+    });
+
+    let selectedPendaftaranId = null;
+
+    function panggilPasien(id) {
+        selectedPendaftaranId = id;
+        openConfirmModal();
     }
 
-    function formatTanggal(dateString) {
-        const date = new Date(dateString);
-        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    function openConfirmModal() {
+        const modal = document.getElementById('confirmModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalBackdrop = document.getElementById('modalBackdrop');
 
-        const dayName = days[date.getDay()];
-        const day = date.getDate();
-        const month = months[date.getMonth()];
-        const year = date.getFullYear();
+        modal.classList.remove('hidden');
 
-        return `${dayName}, ${day} ${month} ${year}`;
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-20');
+        }, 10);
     }
 
-    function fetchData() {
-        const params = new URLSearchParams({
-            tanggal: tanggalInput.value,
-            dokter_id: dokterId.value
-        });
+    function closeConfirmModal() {
+        const modal = document.getElementById('confirmModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalBackdrop = document.getElementById('modalBackdrop');
 
-        const url = '{{ route("pendaftaran.antrian") }}?' + params.toString();
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        modalBackdrop.classList.remove('opacity-20');
+        modalBackdrop.classList.add('opacity-0');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            selectedPendaftaranId = null;
+        }, 200);
+    }
+
+    function confirmPanggilPasien() {
+        if (!selectedPendaftaranId) {
+            return;
+        }
+
+        closeConfirmModal();
 
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.open('PATCH', `/pendaftaran/${selectedPendaftaranId}/status`, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
 
         xhr.onload = function() {
             if (xhr.status === 200) {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(xhr.responseText, 'text/html');
+                const response = JSON.parse(xhr.responseText);
+                showToast('success', response.message);
 
-                const newContent = doc.getElementById('antrianContent');
-                const newTotal = doc.getElementById('totalAntrian');
+                const row = document.querySelector(`[data-id="${selectedPendaftaranId}"]`);
+                if (row) {
+                    const statusBadge = row.querySelector('.status-badge');
+                    statusBadge.innerHTML = '<span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Dipanggil</span>';
 
-                if (newContent) {
-                    document.getElementById('antrianContent').innerHTML = newContent.innerHTML;
+                    const button = row.querySelector('.panggil-btn');
+                    button.outerHTML = '<button type="button" disabled class="px-3 py-2 text-xs bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed font-medium">Sudah Dipanggil</button>';
                 }
-
-                if (newTotal) {
-                    document.getElementById('totalAntrian').textContent = newTotal.textContent;
-                }
-
-                // Update tanggal display
-                if (tanggalInput.value) {
-                    tanggalDisplay.textContent = formatTanggal(tanggalInput.value);
-                }
+            } else {
+                const response = JSON.parse(xhr.responseText);
+                showToast('error', response.message || 'Terjadi kesalahan');
             }
         };
 
-        xhr.send();
+        xhr.send(JSON.stringify({
+            status: 'dipanggil'
+        }));
     }
 
-    const debouncedFetch = debounce(() => fetchData(), 500);
-    tanggalInput.addEventListener('change', debouncedFetch);
-    dokterId.addEventListener('change', debouncedFetch);
+    function showToast(type, message) {
+        const colors = {
+            success: 'bg-green-500',
+            error: 'bg-red-500'
+        };
 
-    // Auto-refresh every 30 seconds
-    setInterval(fetchData, 30000);
-});
+        const icons = {
+            success: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>',
+            error: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>'
+        };
 
-let selectedPendaftaranId = null;
-
-function panggilPasien(id) {
-    selectedPendaftaranId = id;
-    openConfirmModal();
-}
-
-function openConfirmModal() {
-    const modal = document.getElementById('confirmModal');
-    const modalContent = document.getElementById('modalContent');
-    const modalBackdrop = document.getElementById('modalBackdrop');
-
-    modal.classList.remove('hidden');
-
-    setTimeout(() => {
-        modalContent.classList.remove('scale-95', 'opacity-0');
-        modalContent.classList.add('scale-100', 'opacity-100');
-        modalBackdrop.classList.remove('opacity-0');
-        modalBackdrop.classList.add('opacity-20');
-    }, 10);
-}
-
-function closeConfirmModal() {
-    const modal = document.getElementById('confirmModal');
-    const modalContent = document.getElementById('modalContent');
-    const modalBackdrop = document.getElementById('modalBackdrop');
-
-    modalContent.classList.remove('scale-100', 'opacity-100');
-    modalContent.classList.add('scale-95', 'opacity-0');
-    modalBackdrop.classList.remove('opacity-20');
-    modalBackdrop.classList.add('opacity-0');
-
-    setTimeout(() => {
-        modal.classList.add('hidden');
-        selectedPendaftaranId = null;
-    }, 200);
-}
-
-function confirmPanggilPasien() {
-    if (!selectedPendaftaranId) {
-        return;
-    }
-
-    closeConfirmModal();
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('PATCH', `/pendaftaran/${selectedPendaftaranId}/status`, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
-
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            showToast('success', response.message);
-
-            const row = document.querySelector(`[data-id="${selectedPendaftaranId}"]`);
-            if (row) {
-                const statusBadge = row.querySelector('.status-badge');
-                statusBadge.innerHTML = '<span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Dipanggil</span>';
-
-                const button = row.querySelector('.panggil-btn');
-                button.outerHTML = '<button type="button" disabled class="px-3 py-2 text-xs bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed font-medium">Sudah Dipanggil</button>';
-            }
-        } else {
-            const response = JSON.parse(xhr.responseText);
-            showToast('error', response.message || 'Terjadi kesalahan');
+        const existingToast = document.getElementById('dynamicToast');
+        if (existingToast) {
+            existingToast.remove();
         }
-    };
 
-    xhr.send(JSON.stringify({ status: 'dipanggil' }));
-}
-
-function showToast(type, message) {
-    const colors = {
-        success: 'bg-green-500',
-        error: 'bg-red-500'
-    };
-
-    const icons = {
-        success: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>',
-        error: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>'
-    };
-
-    const existingToast = document.getElementById('dynamicToast');
-    if (existingToast) {
-        existingToast.remove();
-    }
-
-    const toast = document.createElement('div');
-    toast.id = 'dynamicToast';
-    toast.className = `fixed top-4 right-4 z-50 flex items-center gap-3 ${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out opacity-0 translate-y-[-20px]`;
-    toast.innerHTML = `
+        const toast = document.createElement('div');
+        toast.id = 'dynamicToast';
+        toast.className = `fixed top-4 right-4 z-50 flex items-center gap-3 ${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out opacity-0 translate-y-[-20px]`;
+        toast.innerHTML = `
         <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             ${icons[type]}
         </svg>
@@ -372,16 +375,16 @@ function showToast(type, message) {
         </button>
     `;
 
-    document.body.appendChild(toast);
+        document.body.appendChild(toast);
 
-    setTimeout(() => {
-        toast.classList.remove('opacity-0', 'translate-y-[-20px]');
-    }, 100);
+        setTimeout(() => {
+            toast.classList.remove('opacity-0', 'translate-y-[-20px]');
+        }, 100);
 
-    setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-[-20px]');
-        setTimeout(() => toast.remove(), 300);
-    }, 5000);
-}
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-y-[-20px]');
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    }
 </script>
 @endsection

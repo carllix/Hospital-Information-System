@@ -27,6 +27,7 @@ class Obat extends Model
         'stok' => 'integer',
         'stok_minimum' => 'integer',
         'harga' => 'decimal:2',
+        'is_deleted' => 'boolean',
     ];
 
     public function detailResep(): HasMany

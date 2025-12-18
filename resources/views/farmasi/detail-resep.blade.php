@@ -9,7 +9,7 @@
     <div>
         <a href="{{ route('farmasi.daftar-resep') }}" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
             <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
             Kembali ke Daftar Resep
         </a>
@@ -24,13 +24,13 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-600">Pasien</label>
-                        <p class="mt-1 text-sm text-gray-900 font-medium">{{ $resep->pasien->nama_lengkap }}</p>
-                        <p class="text-xs text-gray-500">{{ $resep->pasien->no_rekam_medis }}</p>
+                        <p class="mt-1 text-sm text-gray-900 font-medium">{{ $resep->pemeriksaan->pendaftaran->pasien->nama_lengkap ?? '-' }}</p>
+                        <p class="text-xs text-gray-500">{{ $resep->pemeriksaan->pendaftaran->pasien->no_rekam_medis ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-600">Dokter Peresep</label>
-                        <p class="mt-1 text-sm text-gray-900 font-medium">{{ $resep->dokter->nama_lengkap }}</p>
-                        <p class="text-xs text-gray-500">{{ $resep->dokter->spesialisasi }}</p>
+                        <p class="mt-1 text-sm text-gray-900 font-medium">{{ $resep->pemeriksaan->pendaftaran->jadwalDokter->dokter->nama_lengkap ?? '-' }}</p>
+                        <p class="text-xs text-gray-500">{{ $resep->pemeriksaan->pendaftaran->jadwalDokter->dokter->spesialisasi ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-600">Tanggal Resep</label>
@@ -40,17 +40,17 @@
                         <label class="block text-sm font-medium text-gray-600">Status</label>
                         <p class="mt-1">
                             @if($resep->status == 'menunggu')
-                                <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                    Menunggu
-                                </span>
+                            <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                Menunggu
+                            </span>
                             @elseif($resep->status == 'diproses')
-                                <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                    Diproses
-                                </span>
+                            <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Diproses
+                            </span>
                             @else
-                                <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                    Selesai
-                                </span>
+                            <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                Selesai
+                            </span>
                             @endif
                         </p>
                     </div>
@@ -87,17 +87,17 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($detail->obat->stok >= $detail->jumlah)
-                                        <span class="text-sm font-medium text-green-600">
-                                            {{ $detail->obat->stok }} {{ $detail->obat->satuan }}
-                                        </span>
+                                    <span class="text-sm font-medium text-green-600">
+                                        {{ $detail->obat->stok }} {{ $detail->obat->satuan }}
+                                    </span>
                                     @elseif($detail->obat->stok > 0)
-                                        <span class="text-sm font-medium text-orange-600">
-                                            {{ $detail->obat->stok }} {{ $detail->obat->satuan }} (Kurang)
-                                        </span>
+                                    <span class="text-sm font-medium text-orange-600">
+                                        {{ $detail->obat->stok }} {{ $detail->obat->satuan }} (Kurang)
+                                    </span>
                                     @else
-                                        <span class="text-sm font-medium text-red-600">
-                                            Stok Habis
-                                        </span>
+                                    <span class="text-sm font-medium text-red-600">
+                                        Stok Habis
+                                    </span>
                                     @endif
                                 </td>
                             </tr>
@@ -115,14 +115,14 @@
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Diproses Oleh</h3>
                 <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
-                        <span class="text-pink-600 font-bold text-lg">
+                    <div class="w-12 h-12 bg-[#f56e9d]/10 rounded-full flex items-center justify-center">
+                        <span class="text-[#f56e9d] font-bold text-lg">
                             {{ substr($resep->apoteker->nama_lengkap, 0, 1) }}
                         </span>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-900">{{ $resep->apoteker->nama_lengkap }}</p>
-                        <p class="text-xs text-gray-500">{{ $resep->apoteker->nip }}</p>
+                        <p class="text-xs text-gray-500">{{ $resep->apoteker->nip_rs }}</p>
                     </div>
                 </div>
             </div>
@@ -131,29 +131,23 @@
             <!-- Action Buttons -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Aksi</h3>
-                
+
                 @if($resep->status == 'menunggu')
-                    <form method="POST" action="{{ route('farmasi.proses-resep', $resep->resep_id) }}" onsubmit="return confirm('Yakin ingin memproses resep ini?')">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                            </svg>
-                            Proses Resep
-                        </button>
-                    </form>
+                <form method="POST" action="{{ route('farmasi.proses-resep', $resep->resep_id) }}" onsubmit="return confirm('Yakin ingin memproses resep ini?')">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="w-full px-4 py-3 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition font-medium">
+                        Proses Resep
+                    </button>
+                </form>
                 @elseif($resep->status == 'diproses' && $resep->apoteker_id == Auth::user()->staf->staf_id)
-                    <form method="POST" action="{{ route('farmasi.selesaikan-resep', $resep->resep_id) }}" onsubmit="return confirm('Yakin ingin menyelesaikan resep ini? Stok obat akan dikurangi.')">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Selesaikan Resep
-                        </button>
-                    </form>
+                <form method="POST" action="{{ route('farmasi.selesaikan-resep', $resep->resep_id) }}" onsubmit="return confirm('Yakin ingin menyelesaikan resep ini? Stok obat akan dikurangi.')">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="w-full px-4 py-3 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition font-medium">
+                        Selesaikan Resep
+                    </button>
+                </form>
                 @endif
 
                 <a href="{{ route('farmasi.daftar-resep') }}" class="mt-3 block w-full px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-center">
@@ -163,9 +157,9 @@
 
             <!-- Info Pemeriksaan -->
             @if($resep->pemeriksaan)
-            <div class="bg-blue-50 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-blue-900 mb-2">Diagnosa</h4>
-                <p class="text-sm text-blue-800">{{ $resep->pemeriksaan->diagnosa }}</p>
+            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <h4 class="text-sm font-semibold text-gray-900 mb-2">Diagnosa</h4>
+                <p class="text-sm text-gray-700">{{ $resep->pemeriksaan->diagnosa }}</p>
             </div>
             @endif
         </div>

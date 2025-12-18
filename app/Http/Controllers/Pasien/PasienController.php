@@ -533,4 +533,439 @@ class PasienController extends Controller
             return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui profil.'])->withInput();
         }
     }
+
+    // Tambahkan method ini di dalam class PasienController
+    public function updateFromDevice(Request $request)
+    {
+        $request->validate([
+            'heart_rate' => 'required|integer',
+            'oxygen_saturation' => 'required|integer',
+        ]);
+
+        $pasien = auth()->user()->pasien;
+
+        $data = WearableData::create([
+            'pasien_id' => $pasien->pasien_id,
+            'device_id' => $pasien->wearable_device_id ?? 'MAX30102_LOCAL',
+            'timestamp' => now(),
+            'heart_rate' => $request->heart_rate,
+            'oxygen_saturation' => $request->oxygen_saturation,
+        ]);
+
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
+    /**
+     * Start real-time monitoring session (10 detik saja)
+     */
+    public function startRealtimeMonitoring(Request $request)
+    {
+        $pasien = auth()->user()->pasien;
+        
+        // Create monitoring status file di root project (sama level dengan bridge.js)
+        $statusFile = base_path('monitoring_status.json');
+        $status = [
+            'active' => true,
+            'pasien_id' => $pasien->pasien_id,
+            'started_at' => now()->toISOString(),
+            'session_id' => uniqid('monitor_', true),
+            'duration_seconds' => 10 // 10 detik saja
+        ];
+        
+        try {
+            file_put_contents($statusFile, json_encode($status, JSON_PRETTY_PRINT));
+            
+            \Log::info('Real-time monitoring started', [
+                'pasien_id' => $pasien->pasien_id,
+                'file_path' => $statusFile,
+                'status' => $status
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Real-time monitoring started for 10 seconds',
+                'pasien_id' => $pasien->pasien_id,
+                'session_id' => $status['session_id'],
+                'duration' => 10,
+                'file_created' => file_exists($statusFile) ? 'YES' : 'NO'
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to start monitoring', ['error' => $e->getMessage()]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to start monitoring: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Stop real-time monitoring session
+     */
+    public function stopRealtimeMonitoring(Request $request)
+    {
+        $statusFiles = [
+            base_path('monitoring_status.json'),
+            public_path('monitoring_status.json'),
+            storage_path('monitoring_status.json')
+        ];
+        
+        $filesDeleted = [];
+        foreach ($statusFiles as $statusFile) {
+            if (file_exists($statusFile)) {
+                try {
+                    unlink($statusFile);
+                    $filesDeleted[] = $statusFile;
+                    \Log::info('Monitoring file deleted', ['file' => $statusFile]);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to delete monitoring file', ['file' => $statusFile, 'error' => $e->getMessage()]);
+                }
+            }
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Real-time monitoring stopped',
+            'files_deleted' => $filesDeleted
+        ]);
+    }
+
+    /**
+     * Store real-time data from bridge.js (dengan debug logging)
+     */
+    public function storeRealtimeData(Request $request)
+    {
+        \Log::info('Received real-time data', $request->all());
+        
+        $request->validate([
+            'heart_rate' => 'required|integer|min:30|max:250',
+            'oxygen_saturation' => 'required|integer|min:70|max:100',
+            'pasien_id' => 'required|exists:pasien,pasien_id',
+            'device_id' => 'nullable|string'
+        ]);
+
+        try {
+            $data = WearableData::create([
+                'pasien_id' => $request->pasien_id,
+                'device_id' => $request->device_id ?? 'MAX30102_REALTIME',
+                'timestamp' => now(),
+                'heart_rate' => $request->heart_rate,
+                'oxygen_saturation' => $request->oxygen_saturation,
+            ]);
+
+            \Log::info('Real-time data stored successfully', [
+                'data_id' => $data->id,
+                'pasien_id' => $request->pasien_id,
+                'heart_rate' => $request->heart_rate,
+                'oxygen_saturation' => $request->oxygen_saturation
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $data->id,
+                    'heart_rate' => $data->heart_rate,
+                    'oxygen_saturation' => $data->oxygen_saturation,
+                    'timestamp' => $data->timestamp->toISOString(),
+                    'timestamp_display' => $data->timestamp->translatedFormat('H:i:s')
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to store real-time data', [
+                'error' => $e->getMessage(),
+                'request' => $request->all()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to store data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get real-time monitoring status dengan debug info
+     */
+    public function getMonitoringStatus()
+    {
+        $pasien = auth()->user()->pasien;
+        $statusFiles = [
+            base_path('monitoring_status.json'),
+            public_path('monitoring_status.json'),
+            storage_path('monitoring_status.json')
+        ];
+        
+        $fileStatus = [];
+        foreach ($statusFiles as $file) {
+            $fileStatus[] = [
+                'path' => $file,
+                'exists' => file_exists($file),
+                'readable' => file_exists($file) ? is_readable($file) : false
+            ];
+        }
+        
+        foreach ($statusFiles as $statusFile) {
+            if (file_exists($statusFile)) {
+                try {
+                    $status = json_decode(file_get_contents($statusFile), true);
+                    
+                    // Check if monitoring is for current user
+                    if ($status && $status['pasien_id'] == $pasien->pasien_id) {
+                        $duration = now()->diffInSeconds($status['started_at']);
+                        return response()->json([
+                            'success' => true,
+                            'active' => $duration < 15, // Active maksimal 15 detik (buffer)
+                            'started_at' => $status['started_at'],
+                            'duration' => $duration,
+                            'file_used' => $statusFile,
+                            'file_status' => $fileStatus
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Error reading monitoring status', ['file' => $statusFile, 'error' => $e->getMessage()]);
+                }
+            }
+        }
+        
+        return response()->json([
+            'success' => true,
+            'active' => false,
+            'file_status' => $fileStatus
+        ]);
+    }
+
+    /**
+     * Debug method - check bridge connection dan file status
+     */
+    public function debugMonitoring()
+    {
+        $pasien = auth()->user()->pasien;
+        
+        $statusFiles = [
+            base_path('monitoring_status.json'),
+            public_path('monitoring_status.json'),
+            storage_path('monitoring_status.json')
+        ];
+        
+        $debug = [
+            'pasien_id' => $pasien->pasien_id,
+            'current_time' => now()->toISOString(),
+            'base_path' => base_path(),
+            'public_path' => public_path(),
+            'storage_path' => storage_path(),
+            'files' => []
+        ];
+        
+        foreach ($statusFiles as $file) {
+            $fileInfo = [
+                'path' => $file,
+                'exists' => file_exists($file),
+                'readable' => file_exists($file) ? is_readable($file) : false,
+                'content' => null
+            ];
+            
+            if (file_exists($file)) {
+                try {
+                    $fileInfo['content'] = json_decode(file_get_contents($file), true);
+                } catch (\Exception $e) {
+                    $fileInfo['error'] = $e->getMessage();
+                }
+            }
+            
+            $debug['files'][] = $fileInfo;
+        }
+        
+        // Recent real-time data
+        $debug['recent_data'] = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->where('device_id', 'LIKE', '%REALTIME%')
+            ->orderBy('timestamp', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function($data) {
+                return [
+                    'heart_rate' => $data->heart_rate,
+                    'oxygen_saturation' => $data->oxygen_saturation,
+                    'timestamp' => $data->timestamp->toISOString(),
+                    'device_id' => $data->device_id
+                ];
+            });
+        
+        return response()->json($debug);
+    }
+
+    /**
+     * Store hasil akhir dari monitoring session (BUKAN individual data points)
+     */
+    public function storeSessionResults(Request $request)
+    {
+        \Log::info('Received session results', $request->all());
+        
+        $request->validate([
+            'heart_rate' => 'required|integer|min:30|max:250',
+            'oxygen_saturation' => 'required|integer|min:70|max:100',
+            'pasien_id' => 'required|exists:pasien,pasien_id',
+            'device_id' => 'nullable|string',
+            'session_info' => 'required|array',
+            'session_info.duration_seconds' => 'required|integer',
+            'session_info.data_points' => 'required|integer',
+            'session_info.hr_min' => 'required|integer',
+            'session_info.hr_max' => 'required|integer',
+            'session_info.hr_variability' => 'required|numeric',
+            'session_info.spo2_min' => 'required|integer',
+            'session_info.spo2_max' => 'required|integer',
+            'session_info.spo2_variability' => 'required|numeric',
+            'session_info.confidence' => 'required|string|in:High,Medium,Low'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Simpan hasil akhir session
+            $data = WearableData::create([
+                'pasien_id' => $request->pasien_id,
+                'device_id' => $request->device_id ?? 'MAX30102_SESSION',
+                'timestamp' => now(),
+                'heart_rate' => $request->heart_rate,
+                'oxygen_saturation' => $request->oxygen_saturation,
+                // Store session metadata as JSON
+                'session_metadata' => json_encode([
+                    'type' => 'real_time_session',
+                    'duration_seconds' => $request->session_info['duration_seconds'],
+                    'data_points_processed' => $request->session_info['data_points'],
+                    'heart_rate_range' => [
+                        'min' => $request->session_info['hr_min'],
+                        'max' => $request->session_info['hr_max'],
+                        'avg' => $request->heart_rate,
+                        'variability' => $request->session_info['hr_variability']
+                    ],
+                    'spo2_range' => [
+                        'min' => $request->session_info['spo2_min'],
+                        'max' => $request->session_info['spo2_max'],
+                        'avg' => $request->oxygen_saturation,
+                        'variability' => $request->session_info['spo2_variability']
+                    ],
+                    'confidence_level' => $request->session_info['confidence'],
+                    'processed_at' => now()->toISOString()
+                ])
+            ]);
+
+            DB::commit();
+
+            \Log::info('Session results stored successfully', [
+                'data_id' => $data->id,
+                'pasien_id' => $request->pasien_id,
+                'duration' => $request->session_info['duration_seconds'],
+                'data_points' => $request->session_info['data_points'],
+                'final_hr' => $request->heart_rate,
+                'final_spo2' => $request->oxygen_saturation,
+                'confidence' => $request->session_info['confidence']
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Session results stored successfully',
+                'data' => [
+                    'id' => $data->id,
+                    'heart_rate' => $data->heart_rate,
+                    'oxygen_saturation' => $data->oxygen_saturation,
+                    'timestamp' => $data->timestamp->toISOString(),
+                    'timestamp_display' => $data->timestamp->translatedFormat('H:i:s'),
+                    'session_info' => $request->session_info
+                ]
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Failed to store session results', [
+                'error' => $e->getMessage(),
+                'request' => $request->all()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to store session results: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get real-time session progress (untuk UI feedback)
+     */
+    public function getSessionProgress()
+    {
+        $pasien = auth()->user()->pasien;
+        $statusFiles = [
+            base_path('monitoring_status.json'),
+            public_path('monitoring_status.json'),
+            storage_path('monitoring_status.json')
+        ];
+        
+        foreach ($statusFiles as $statusFile) {
+            if (file_exists($statusFile)) {
+                try {
+                    $status = json_decode(file_get_contents($statusFile), true);
+                    
+                    if ($status && $status['pasien_id'] == $pasien->pasien_id) {
+                        $startedAt = new \Carbon\Carbon($status['started_at']);
+                        $elapsed = now()->diffInSeconds($startedAt);
+                        $remaining = max(0, 10 - $elapsed);
+                        
+                        return response()->json([
+                            'success' => true,
+                            'active' => $remaining > 0,
+                            'elapsed_seconds' => $elapsed,
+                            'remaining_seconds' => $remaining,
+                            'progress_percentage' => min(100, ($elapsed / 10) * 100),
+                            'status' => $remaining > 0 ? 'collecting' : 'processing'
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Error reading session progress', [
+                        'file' => $statusFile, 
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+        }
+        
+        return response()->json([
+            'success' => true,
+            'active' => false,
+            'status' => 'idle'
+        ]);
+    }
+
+    /**
+     * Get latest session result dengan metadata
+     */
+    public function getLatestSessionResult()
+    {
+        $pasien = auth()->user()->pasien;
+
+        $latestSession = WearableData::where('pasien_id', $pasien->pasien_id)
+            ->where('device_id', 'LIKE', '%SESSION%')
+            ->whereNotNull('session_metadata')
+            ->orderBy('timestamp', 'desc')
+            ->first();
+
+        if (!$latestSession) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No session data available'
+            ]);
+        }
+
+        $sessionMeta = json_decode($latestSession->session_metadata, true);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'heart_rate' => $latestSession->heart_rate,
+                'oxygen_saturation' => $latestSession->oxygen_saturation,
+                'timestamp' => $latestSession->timestamp->format('Y-m-d H:i:s'),
+                'timestamp_display' => $latestSession->timestamp->translatedFormat('j F Y H:i'),
+                'session_info' => $sessionMeta
+            ]
+        ]);
+    }
 }
