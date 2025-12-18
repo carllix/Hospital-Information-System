@@ -111,8 +111,8 @@ class KasirApotekController extends Controller
     public function invoice(Tagihan $tagihan)
     {
         $tagihan->load(['pemeriksaan.pendaftaran.pasien', 'detailTagihan', 'pembayaran']);
-        
-        $pembayaranTerakhir = $tagihan->pembayaran()->latest('tanggal_bayar')->first();
+
+        $pembayaranTerakhir = $tagihan->pembayaran;
         $kembalian = session('kembalian', 0);
 
         return view('kasir-apotek.invoice', compact('tagihan', 'pembayaranTerakhir', 'kembalian'));

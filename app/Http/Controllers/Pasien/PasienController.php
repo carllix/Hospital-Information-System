@@ -39,7 +39,7 @@ class PasienController extends Controller
         $totalBelumBayar = Tagihan::whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
             $q->where('pasien_id', $pasien->pasien_id);
         })
-            ->whereIn('status', ['belum_bayar', 'sebagian'])
+            ->where('status', 'belum_bayar')
             ->sum('total_tagihan');
 
         return view('pasien.dashboard', compact(
