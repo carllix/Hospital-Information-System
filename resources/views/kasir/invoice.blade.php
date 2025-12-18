@@ -21,7 +21,7 @@
     </div>
 
     <!-- Invoice -->
-    <div class="bg-white rounded-xl shadow-sm p-8" id="invoice">
+    <div class="bg-white rounded-lg shadow-md p-8" id="invoice">
         <!-- Header -->
         <div class="border-b border-gray-200 pb-6 mb-6">
             <div class="flex justify-between items-start">
@@ -136,7 +136,7 @@
         #invoice, #invoice * { visibility: visible; }
         #invoice { position: absolute; left: 0; top: 0; width: 100%; }
         .no-print { display: none !important; }
-        .shadow-sm { box-shadow: none !important; }
+        .shadow-md { box-shadow: none !important; }
     }
 </style>
 

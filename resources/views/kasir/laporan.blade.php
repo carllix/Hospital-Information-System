@@ -11,7 +11,7 @@
             <p class="text-gray-600">Rekapitulasi pendapatan periode {{ \Carbon\Carbon::create()->month($bulan)->translatedFormat('F') }} {{ $tahun }}</p>
         </div>
 
-        <div class="flex items-center gap-2 bg-white p-2 rounded-xl shadow-sm">
+        <div class="flex items-center gap-2 bg-white p-2 rounded-lg shadow-md">
             <form method="GET" action="{{ route('kasir.laporan') }}" class="flex items-center gap-2">
                 <select name="bulan" class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500">
                     @foreach(range(1, 12) as $m)
@@ -39,7 +39,7 @@
 
     <!-- Statistik Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Total Pendapatan</p>
@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Jumlah Transaksi</p>
@@ -67,7 +67,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Rata-rata Transaksi</p>
@@ -83,7 +83,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Periode</p>
@@ -101,8 +101,8 @@
     <!-- By Metode & By Jenis Item -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- By Metode Pembayaran -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-bold text-gray-800">Berdasarkan Metode Pembayaran</h3>
             </div>
             <div class="p-6 space-y-4">
@@ -121,8 +121,8 @@
         </div>
 
         <!-- By Jenis Item -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-bold text-gray-800">Berdasarkan Jenis Layanan</h3>
             </div>
             <div class="p-6 space-y-4">
@@ -152,8 +152,8 @@
     </div>
 
     <!-- Detail Transaksi -->
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
             <h3 class="text-lg font-bold text-gray-800">Detail Transaksi</h3>
         </div>
         @if($pembayaranList->count() > 0)

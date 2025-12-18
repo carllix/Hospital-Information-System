@@ -21,7 +21,7 @@
         <!-- Info Pasien & Pemeriksaan -->
         <div class="lg:col-span-1 space-y-6">
             <!-- Data Pasien -->
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden sticky top-6">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden sticky top-6">
                 <div class="px-6 py-4 border-b border-gray-100 bg-pink-50">
                     <h3 class="text-lg font-bold text-gray-800">Informasi Pasien</h3>
                 </div>
@@ -56,7 +56,7 @@
                 @csrf
 
                 <!-- Pilih Layanan -->
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100">
                         <h3 class="text-lg font-bold text-gray-800">Pilih Layanan</h3>
                         <p class="text-sm text-gray-600 mt-1">Centang layanan yang diberikan kepada pasien</p>
@@ -88,7 +88,7 @@
 
                 <!-- Item Otomatis (Obat & Lab) -->
                 @if(count($itemObat) > 0 || count($itemLab) > 0)
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 bg-blue-50">
                         <h3 class="text-lg font-bold text-gray-800">Item Otomatis Termasuk</h3>
                         <p class="text-sm text-gray-600 mt-1">Item berikut otomatis ditambahkan ke tagihan</p>
@@ -125,7 +125,7 @@
                 @endif
 
                 <!-- Total Tagihan -->
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-gray-200">
                             <span class="text-lg font-semibold text-gray-700">Total Layanan:</span>
