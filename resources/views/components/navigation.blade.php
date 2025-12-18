@@ -88,6 +88,13 @@ $currentRoute = request()->path();
         )) {
         $isActive = true;
         }
+
+        if ($menu['route'] === '/kasir/dashboard' && (
+        str_contains($currentRoute, 'kasir/buat-tagihan') ||
+        str_contains($currentRoute, 'kasir/detail')
+        )) {
+        $isActive = true;
+        }
         @endphp
         <a href="{{ $menu['route'] }}"
             class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-white hover:bg-[#d4537b] {{ $isActive ? 'bg-[#d4537b] shadow-lg font-semibold' : '' }}">
