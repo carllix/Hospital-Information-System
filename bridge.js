@@ -258,35 +258,53 @@ function calculateVitals(dataBuffer) {
 
 function calculateBPMSimple(irValues) {
     try {
-        const smoothed = movingAverage(irValues, 3);
+        // Smoothing yang lebih kuat untuk menghilangkan noise frekuensi tinggi
+        const smoothed = movingAverage(irValues, 5); 
+        
+        // Deteksi Dinamis (Adaptive Threshold)
         const maxVal = Math.max(...smoothed);
         const minVal = Math.min(...smoothed);
-        const threshold = minVal + (maxVal - minVal) * 0.6;
+        const amplitude = maxVal - minVal;
+        
+        // Jika variasi sinyal terlalu kecil, anggap tidak ada detak valid
+        if (amplitude < 300) return lastValidBPM; 
+
+        const threshold = minVal + (amplitude * 0.55); // Threshold di tengah sinyal
         
         const peaks = [];
-        for (let i = 1; i < smoothed.length - 1; i++) {
+        const minDistance = 6; // Jeda antar detak (Refractory Period)
+
+        for (let i = 2; i < smoothed.length - 2; i++) {
             if (smoothed[i] > smoothed[i - 1] && 
                 smoothed[i] > smoothed[i + 1] && 
                 smoothed[i] > threshold) {
-                peaks.push(i);
+                
+                // Pastikan jarak antar puncak tidak terlalu rapat (mencegah BPM > 200)
+                if (peaks.length === 0 || (i - peaks[peaks.length - 1]) > minDistance) {
+                    peaks.push(i);
+                }
             }
         }
         
-        if (peaks.length < 2) {
-            return lastValidBPM;
-        }
+        if (peaks.length < 2) return lastValidBPM;
         
+        // Menghitung interval antar puncak (dalam jumlah sampel)
         const intervals = [];
         for (let i = 1; i < peaks.length; i++) {
-            intervals.push(peaks[i] - peaks[i-1]);
+            intervals.push(peaks[i] - peaks[i - 1]);
         }
         
-        const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-        const bpm = Math.round((60 * 100) / avgInterval);
+        // Menggunakan Median (bukan rata-rata)
+        intervals.sort((a, b) => a - b);
+        const medianInterval = intervals[Math.floor(intervals.length / 2)];
         
-        if (bpm >= 40 && bpm <= 200) {
-            lastValidBPM = bpm;
-            return bpm;
+        // Rumus: (60 detik * 100 Hz sampel rate) / interval sampel
+        const bpm = Math.round((60 * 100) / medianInterval);
+        
+        // Batasan hasil yang wajar (60 - 100 BPM)
+        if (bpm >= 50 && bpm <= 110) {
+            lastValidBPM = Math.round((lastValidBPM * 0.7) + (bpm * 0.3));
+            return lastValidBPM;
         } else {
             return lastValidBPM;
         }
