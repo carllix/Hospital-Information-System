@@ -116,10 +116,10 @@ class DokterController extends Controller
             'pendaftaran_id' => 'required|exists:pendaftaran,pendaftaran_id',
             'anamnesa' => 'required|string',
             'pemeriksaan_fisik' => 'nullable|string',
-            'tekanan_darah' => 'nullable|string|max:20',
-            'suhu_tubuh' => 'nullable|numeric|min:30|max:45',
-            'berat_badan' => 'nullable|numeric|min:1|max:300',
-            'tinggi_badan' => 'nullable|numeric|min:50|max:250',
+            'tekanan_darah' => 'nullable|string|max:500',
+            'suhu_tubuh' => 'nullable|numeric|min:30|max:500',
+            'berat_badan' => 'nullable|numeric|min:1|max:500',
+            'tinggi_badan' => 'nullable|numeric|min:1|max:550',
             'diagnosa' => 'required|string',
             'icd10_code' => 'nullable|string|max:10',
             'tindakan_medis' => 'nullable|string',
@@ -457,12 +457,8 @@ class DokterController extends Controller
      */
     public function detailPemeriksaan($id): View
     {
-        // PERBAIKAN: Hapus 'dokter' dan 'pasien' dari with()
-        // Pastikan relasi lain (resep, permintaanLab, rujukan) ada di Model, jika tidak ada hapus juga.
         $pemeriksaan = Pemeriksaan::with([
             'pendaftaran.pasien',
-            // 'dokter', <-- INI DIHAPUS
-            // 'pendaftaran', <-- Sudah diload lewat pendaftaran.pasien
             'resep.detailResep.obat',
             'permintaanLab.hasilLab',
             'rujukan'
@@ -473,7 +469,6 @@ class DokterController extends Controller
         return view('dokter.detail-pemeriksaan', compact('pemeriksaan'));
     }
 
-    // ... (Profile & Monitoring tidak perlu ubahan signifikan kecuali jika memakai with('dokter') ) ...
 
     public function profile(): View {
         $dokter = Auth::user()->dokter()->with(['jadwalDokter' => function($query) {
