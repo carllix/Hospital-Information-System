@@ -178,7 +178,7 @@
                                 <p class="font-medium text-gray-800">{{ $transaction->pasien->nama ?? 'N/A' }}</p>
                                 <p class="text-sm text-gray-500">
                                     <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                    {{ $transaction->pembayaran->first()->tanggal_bayar ?? $transaction->updated_at->format('d/m/Y H:i') }}
+                                    {{ $transaction->pembayaran->tanggal_bayar ?? $transaction->updated_at->format('d/m/Y H:i') }}
                                 </p>
                             </div>
                             <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">

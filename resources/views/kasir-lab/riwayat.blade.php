@@ -78,7 +78,7 @@
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-purple-600">#{{ $tagihan->tagihan_id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ \Carbon\Carbon::parse($tagihan->pembayaran->first()->tanggal_bayar ?? $tagihan->updated_at)->format('d/m/Y H:i') }}
+                                {{ \Carbon\Carbon::parse($tagihan->pembayaran->tanggal_bayar ?? $tagihan->updated_at)->format('d/m/Y H:i') }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-900">
                                 <div class="font-medium">{{ $tagihan->pasien->nama_lengkap ?? 'N/A' }}</div>
@@ -93,7 +93,7 @@
                                 Rp {{ number_format($tagihan->total_tagihan, 0, ',', '.') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                {{ $tagihan->pembayaran->first()->metode_pembayaran ?? '-' }}
+                                {{ $tagihan->pembayaran->metode_pembayaran ?? '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 <a href="{{ route('kasir-lab.invoice', $tagihan->tagihan_id) }}" 

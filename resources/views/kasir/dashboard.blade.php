@@ -195,7 +195,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full uppercase">
-                                        {{ $trans->pembayaran->first()->metode_pembayaran ?? '-' }}
+                                        {{ $trans->pembayaran->metode_pembayaran ?? '-' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500">

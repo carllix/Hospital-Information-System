@@ -91,21 +91,19 @@
             </div>
 
             <!-- Riwayat Pembayaran -->
-            @if($tagihan->pembayaran->count() > 0)
+            @if($tagihan->pembayaran)
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-800">Riwayat Pembayaran</h3>
+                    <h3 class="text-lg font-bold text-gray-800">Informasi Pembayaran</h3>
                 </div>
-                <div class="p-6 space-y-3">
-                    @foreach($tagihan->pembayaran as $bayar)
+                <div class="p-6">
                     <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg">
                         <div>
-                            <p class="font-semibold text-green-800">{{ $bayar->no_kwitansi }}</p>
-                            <p class="text-sm text-green-600">{{ $bayar->tanggal_bayar->format('d/m/Y H:i') }} - {{ ucfirst($bayar->metode_pembayaran) }}</p>
+                            <p class="font-semibold text-green-800">{{ $tagihan->pembayaran->no_kwitansi }}</p>
+                            <p class="text-sm text-green-600">{{ $tagihan->pembayaran->tanggal_bayar->format('d/m/Y H:i') }} - {{ ucfirst($tagihan->pembayaran->metode_pembayaran) }}</p>
                         </div>
-                        <p class="font-bold text-green-700">Rp {{ number_format($bayar->jumlah_bayar, 0, ',', '.') }}</p>
+                        <p class="font-bold text-green-700">Rp {{ number_format($tagihan->pembayaran->jumlah_bayar, 0, ',', '.') }}</p>
                     </div>
-                    @endforeach
                 </div>
             </div>
             @endif
