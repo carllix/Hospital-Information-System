@@ -75,6 +75,20 @@ class LabController extends Controller
         return view('lab.daftar-permintaan', compact('permintaanList', 'status'));
     }
 
+    public function daftarHasil(Request $request): View
+    {
+        $petugasLab = Auth::user()->staf;
+        
+        $query = PermintaanLab::with(['pasien', 'dokter', 'pemeriksaan'])
+            ->where('status', 'diproses')
+            ->where('petugas_lab_id', $petugasLab->staf_id)
+            ->orderBy('tanggal_permintaan', 'asc');
+        
+        $hasilList = $query->paginate(15);
+        
+        return view('lab.daftar-hasil', compact('hasilList'));
+    }
+
     /**
      * Detail Permintaan Lab
      */

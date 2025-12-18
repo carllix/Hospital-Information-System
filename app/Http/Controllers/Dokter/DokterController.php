@@ -117,7 +117,7 @@ class DokterController extends Controller
             'anamnesa' => 'required|string',
             'pemeriksaan_fisik' => 'nullable|string',
             'tekanan_darah' => 'nullable|string|max:500',
-            'suhu_tubuh' => 'nullable|numeric|min:30|max:500',
+            'suhu_tubuh' => 'nullable|numeric|min:0|max:500',
             'berat_badan' => 'nullable|numeric|min:1|max:500',
             'tinggi_badan' => 'nullable|numeric|min:1|max:550',
             'diagnosa' => 'required|string',

@@ -152,6 +152,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/permintaan/{id}/ambil', [LabController::class, 'ambilPermintaan'])->name('ambil-permintaan');
 
         // Input Hasil Lab
+        Route::get('/hasil', [LabController::class, 'daftarHasil'])->name('hasil-lab');
         Route::get('/hasil/{id}', [LabController::class, 'formHasil'])->name('form-hasil');
         Route::post('/hasil', [LabController::class, 'storeHasil'])->name('store-hasil');
 
@@ -179,7 +180,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan', [KasirController::class, 'laporan'])->name('laporan');
     });
 
-    // Admin Routes
     Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
