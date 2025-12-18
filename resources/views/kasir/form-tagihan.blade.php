@@ -22,7 +22,7 @@
         <div class="lg:col-span-1 space-y-6">
             <!-- Data Pasien -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden sticky top-6">
-                <div class="px-6 py-4 border-b border-gray-100 bg-pink-50">
+                <div class="px-6 py-4 border-b border-gray-200">
                     <h3 class="text-lg font-bold text-gray-800">Informasi Pasien</h3>
                 </div>
                 <div class="p-6 space-y-4">
@@ -51,13 +51,13 @@
         </div>
 
         <!-- Form Tagihan -->
-        <div class="lg:col-span-2 space-y-6">
-            <form method="POST" action="{{ route('kasir.store-tagihan', $pemeriksaan->pemeriksaan_id) }}" id="formTagihan">
+        <div class="lg:col-span-2">
+            <form method="POST" action="{{ route('kasir.store-tagihan', $pemeriksaan->pemeriksaan_id) }}" id="formTagihan" class="space-y-8">
                 @csrf
 
                 <!-- Pilih Layanan -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100">
+                    <div class="px-6 py-4 border-b border-gray-200">
                         <h3 class="text-lg font-bold text-gray-800">Pilih Layanan</h3>
                         <p class="text-sm text-gray-600 mt-1">Centang layanan yang diberikan kepada pasien</p>
                     </div>
@@ -89,35 +89,35 @@
                 <!-- Item Otomatis (Obat & Lab) -->
                 @if(count($itemObat) > 0 || count($itemLab) > 0)
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-blue-50">
+                    <div class="px-6 py-4 border-b border-gray-200">
                         <h3 class="text-lg font-bold text-gray-800">Item Otomatis Termasuk</h3>
                         <p class="text-sm text-gray-600 mt-1">Item berikut otomatis ditambahkan ke tagihan</p>
                     </div>
                     <div class="p-6 space-y-3">
                         <!-- Obat dari Resep -->
                         @foreach($itemObat as $obat)
-                        <div class="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-center justify-between p-4 bg-pink-50 border border-pink-200 rounded-lg">
                             <div class="flex items-center space-x-3">
-                                <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">Obat</span>
+                                <span class="px-3 py-1 bg-pink-100 text-pink-700 text-xs rounded-full font-semibold">Obat</span>
                                 <div>
                                     <p class="font-semibold text-gray-800">{{ $obat['nama'] }}</p>
                                     <p class="text-sm text-gray-600">{{ $obat['jumlah'] }} x Rp {{ number_format($obat['harga_satuan'], 0, ',', '.') }}</p>
                                 </div>
                             </div>
-                            <p class="font-bold text-gray-800">Rp {{ number_format($obat['subtotal'], 0, ',', '.') }}</p>
+                            <p class="font-bold text-pink-600">Rp {{ number_format($obat['subtotal'], 0, ',', '.') }}</p>
                         </div>
                         @endforeach
 
                         <!-- Lab -->
                         @foreach($itemLab as $lab)
-                        <div class="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div class="flex items-center justify-between p-4 bg-pink-50 border border-pink-200 rounded-lg">
                             <div class="flex items-center space-x-3">
-                                <span class="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full font-semibold">Lab</span>
+                                <span class="px-3 py-1 bg-pink-100 text-pink-700 text-xs rounded-full font-semibold">Lab</span>
                                 <div>
                                     <p class="font-semibold text-gray-800">{{ $lab['nama'] }}</p>
                                 </div>
                             </div>
-                            <p class="font-bold text-gray-800">Rp {{ number_format($lab['harga'], 0, ',', '.') }}</p>
+                            <p class="font-bold text-pink-600">Rp {{ number_format($lab['harga'], 0, ',', '.') }}</p>
                         </div>
                         @endforeach
                     </div>
@@ -127,17 +127,17 @@
                 <!-- Total Tagihan -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-gray-200">
-                            <span class="text-lg font-semibold text-gray-700">Total Layanan:</span>
-                            <span class="text-xl font-bold text-gray-800" id="totalLayanan">Rp 0</span>
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
+                            <span class="text-base font-semibold text-gray-700">Total Layanan:</span>
+                            <span class="text-lg font-bold text-pink-600" id="totalLayanan">Rp 0</span>
                         </div>
-                        <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-gray-200">
-                            <span class="text-lg font-semibold text-gray-700">Total Obat & Lab:</span>
-                            <span class="text-xl font-bold text-gray-800">Rp {{ number_format($totalObatLab, 0, ',', '.') }}</span>
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
+                            <span class="text-base font-semibold text-gray-700">Total Obat & Lab:</span>
+                            <span class="text-lg font-bold text-pink-600">Rp {{ number_format($totalObatLab, 0, ',', '.') }}</span>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-bold text-gray-900">TOTAL TAGIHAN:</span>
-                            <span class="text-3xl font-bold text-pink-600" id="grandTotal">Rp {{ number_format($totalObatLab, 0, ',', '.') }}</span>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xl font-bold text-gray-900">TOTAL TAGIHAN:</span>
+                            <span class="text-2xl font-bold text-pink-600" id="grandTotal">Rp {{ number_format($totalObatLab, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>

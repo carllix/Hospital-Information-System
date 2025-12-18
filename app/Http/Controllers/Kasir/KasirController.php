@@ -33,7 +33,7 @@ class KasirController extends Controller
             ->where('status', 'selesai')
             ->whereDoesntHave('tagihan')
             ->orderBy('tanggal_pemeriksaan', 'asc')
-            ->get();
+            ->paginate(5, ['*'], 'pasien_page');
 
         // Tagihan yang sudah dibuat tapi BELUM LUNAS
         $tagihanPending = Tagihan::with([
@@ -43,14 +43,14 @@ class KasirController extends Controller
             ])
             ->whereIn('status', ['belum_bayar', 'sebagian'])
             ->orderBy('created_at', 'asc')
-            ->paginate(10);
+            ->paginate(5, ['*'], 'tagihan_page');
 
         // Statistik hari ini
         $todayStats = [
             'total_pendapatan' => Pembayaran::whereDate('tanggal_bayar', today())->sum('jumlah_bayar'),
             'jumlah_transaksi' => Pembayaran::whereDate('tanggal_bayar', today())->count(),
             'tagihan_pending' => Tagihan::whereIn('status', ['belum_bayar', 'sebagian'])->count(),
-            'pasien_siap_tagihan' => $pemeriksaanSiapTagihan->count(),
+            'pasien_siap_tagihan' => Pemeriksaan::where('status', 'selesai')->whereDoesntHave('tagihan')->count(),
         ];
 
         // Transaksi terakhir
