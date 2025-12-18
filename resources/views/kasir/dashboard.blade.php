@@ -5,7 +5,7 @@
 @section('content')
 <div class="space-y-6">
     <!-- Header -->
-    <div class="bg-white rounded-xl shadow-sm p-6">
+    <div class="bg-white rounded-lg shadow-md p-6">
         <h1 class="text-2xl font-bold text-gray-800">
             Selamat Datang, <span class="text-pink-600">{{ $kasir->nama_lengkap }}</span>
         </h1>
@@ -14,7 +14,7 @@
 
     <!-- Statistik Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Pendapatan Hari Ini</p>
@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Transaksi Hari Ini</p>
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Tagihan Pending</p>
@@ -56,7 +56,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Siap Dibuatkan Tagihan</p>
@@ -73,10 +73,10 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Pasien Siap Dibuatkan Tagihan -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-purple-50">
-                <h3 class="text-lg font-bold text-purple-800">Pasien Siap Dibuatkan Tagihan</h3>
-                <p class="text-sm text-purple-600 mt-1">Pemeriksaan selesai yang belum ada tagihan</p>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-bold text-gray-800">Pasien Siap Dibuatkan Tagihan</h3>
+                <p class="text-sm text-gray-600 mt-1">Pemeriksaan selesai yang belum ada tagihan</p>
             </div>
 
             @if($pemeriksaanSiapTagihan->count() > 0)
@@ -124,10 +124,10 @@
         </div>
 
         <!-- Tagihan Pending (Belum Bayar) -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-amber-50">
-                <h3 class="text-lg font-bold text-amber-800">Tagihan Menunggu Pembayaran</h3>
-                <p class="text-sm text-amber-600 mt-1">Tagihan yang sudah dibuat tapi belum lunas</p>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-bold text-gray-800">Tagihan Menunggu Pembayaran</h3>
+                <p class="text-sm text-gray-600 mt-1">Tagihan yang sudah dibuat tapi belum lunas</p>
             </div>
 
             @if($tagihanPending->count() > 0)
@@ -169,8 +169,8 @@
     </div>
 
     <!-- Transaksi Terakhir -->
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <div>
                 <h3 class="text-lg font-bold text-gray-800">Transaksi Terakhir</h3>
                 <p class="text-sm text-gray-500">5 transaksi terakhir yang sudah selesai</p>

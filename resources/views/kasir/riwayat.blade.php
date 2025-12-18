@@ -13,7 +13,7 @@
     </div>
 
     <!-- Filter -->
-    <div class="bg-white rounded-xl shadow-sm p-6">
+    <div class="bg-white rounded-lg shadow-md p-6">
         <form method="GET" action="{{ route('kasir.riwayat') }}" class="flex flex-wrap items-end gap-4">
             <div class="flex-1 min-w-[200px]">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Cari</label>
@@ -39,7 +39,7 @@
 
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Total Pendapatan</p>
@@ -53,7 +53,7 @@
             </div>
             <p class="text-xs text-gray-500 mt-2">Periode: {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}</p>
         </div>
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Jumlah Transaksi</p>
@@ -69,7 +69,7 @@
     </div>
 
     <!-- Transactions Table -->
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
         @if($riwayat->count() > 0)
             <div class="overflow-x-auto">
                 <table class="w-full">

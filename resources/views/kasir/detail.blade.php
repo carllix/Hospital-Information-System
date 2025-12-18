@@ -21,7 +21,7 @@
         <!-- Informasi Tagihan -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Info Pasien -->
-            <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Informasi Pasien</h3>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -44,7 +44,7 @@
             </div>
 
             <!-- Detail Tagihan -->
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
                     <h3 class="text-lg font-bold text-gray-800">Rincian Tagihan</h3>
                 </div>
@@ -92,7 +92,7 @@
 
             <!-- Riwayat Pembayaran -->
             @if($tagihan->pembayaran->count() > 0)
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100">
                         <h3 class="text-lg font-bold text-gray-800">Riwayat Pembayaran</h3>
                     </div>
@@ -114,7 +114,7 @@
         <!-- Form Pembayaran / Status -->
         <div class="space-y-6">
             <!-- Status Badge -->
-            <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Status Tagihan</h3>
                 @if($tagihan->status === 'lunas')
                     <div class="p-4 bg-green-100 rounded-lg text-center">
@@ -138,7 +138,7 @@
 
             <!-- Form Pembayaran -->
             @if($tagihan->status !== 'lunas')
-                <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4">Proses Pembayaran</h3>
 
                     <form action="{{ route('kasir.proses-pembayaran', $tagihan->tagihan_id) }}" method="POST">
