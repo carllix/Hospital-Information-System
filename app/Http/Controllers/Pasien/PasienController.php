@@ -213,6 +213,7 @@ class PasienController extends Controller
                         'jenis_pemeriksaan' => str_replace('_', ' ', ucwords($lab->jenis_pemeriksaan, '_')),
                         'tanggal_permintaan' => $lab->tanggal_permintaan->translatedFormat('j F Y'),
                         'status' => $lab->status,
+                        'file_hasil_url' => $lab->hasilLab->first()->file_hasil_url ?? null,
                         'hasil' => $lab->hasilLab->map(function ($hasil) {
                             return [
                                 'jenis_test' => $hasil->jenis_test,

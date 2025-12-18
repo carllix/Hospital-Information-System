@@ -160,15 +160,27 @@
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-6">
             <h3 class="text-sm font-bold text-gray-900 mb-4">Lampiran Dokumen (Opsional)</h3>
             <div class="flex items-center justify-center w-full">
-                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 hover:border-pink-400 transition-all">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <label for="dropzone-file" id="upload-label" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 hover:border-pink-400 transition-all">
+                    <div id="upload-placeholder" class="flex flex-col items-center justify-center pt-5 pb-6">
                         <svg class="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                         <p class="text-sm text-gray-500"><span class="font-semibold text-pink-600">Klik untuk upload</span> atau drag and drop</p>
                         <p class="text-xs text-gray-500 mt-1">PDF, PNG, JPG (Maks. 2MB)</p>
                     </div>
-                    <input id="dropzone-file" type="file" name="file_hasil" accept=".pdf,.jpg,.jpeg,.png" class="hidden" />
+                    <div id="file-preview" class="hidden w-full h-full">
+                        <!-- Preview akan muncul di sini -->
+                    </div>
+                    <input id="dropzone-file" type="file" name="file_hasil" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="previewFile(event)" />
                 </label>
-            </div> 
+            </div>
+            <div id="file-info" class="hidden mt-3 flex items-center justify-between p-3 bg-pink-50 rounded-lg border border-pink-100">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span id="file-name" class="text-sm font-medium text-pink-800"></span>
+                </div>
+                <button type="button" onclick="clearFile()" class="text-pink-600 hover:text-pink-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
         </div>
 
         {{-- Footer Actions --}}
@@ -226,6 +238,66 @@ function addHasil() {
 
 function removeHasil(button) {
     button.closest('.hasil-item').remove();
+}
+
+function previewFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const placeholder = document.getElementById('upload-placeholder');
+    const preview = document.getElementById('file-preview');
+    const fileInfo = document.getElementById('file-info');
+    const fileName = document.getElementById('file-name');
+    const uploadLabel = document.getElementById('upload-label');
+
+    // Tampilkan nama file
+    fileName.textContent = file.name;
+    fileInfo.classList.remove('hidden');
+
+    // Cek apakah file adalah gambar
+    if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `
+                <img src="${e.target.result}"
+                     alt="Preview"
+                     class="w-full h-full object-contain rounded-lg p-2">
+            `;
+            placeholder.classList.add('hidden');
+            preview.classList.remove('hidden');
+            uploadLabel.classList.remove('h-32');
+            uploadLabel.classList.add('h-64');
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // Untuk PDF, tampilkan icon
+        preview.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full p-4">
+                <svg class="w-16 h-16 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                <p class="text-sm font-medium text-gray-700">${file.name}</p>
+                <p class="text-xs text-gray-500">File PDF siap diupload</p>
+            </div>
+        `;
+        placeholder.classList.add('hidden');
+        preview.classList.remove('hidden');
+    }
+}
+
+function clearFile() {
+    const fileInput = document.getElementById('dropzone-file');
+    const placeholder = document.getElementById('upload-placeholder');
+    const preview = document.getElementById('file-preview');
+    const fileInfo = document.getElementById('file-info');
+    const uploadLabel = document.getElementById('upload-label');
+
+    fileInput.value = '';
+    placeholder.classList.remove('hidden');
+    preview.classList.add('hidden');
+    fileInfo.classList.add('hidden');
+    uploadLabel.classList.remove('h-64');
+    uploadLabel.classList.add('h-32');
 }
 </script>
 @endsection
