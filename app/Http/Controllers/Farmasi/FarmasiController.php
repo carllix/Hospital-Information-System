@@ -68,22 +68,44 @@ class FarmasiController extends Controller
     public function daftarResep(Request $request): View
     {
         $status = $request->get('status', 'semua');
-        
+        $search = $request->get('search');
+        $tanggal = $request->get('tanggal');
+
         // PERBAIKAN: Menggunakan relasi panjang
         $query = Resep::with([
-                'pemeriksaan.pendaftaran.pasien', 
-                'pemeriksaan.pendaftaran.jadwalDokter.dokter', 
-                'apoteker', 
+                'pemeriksaan.pendaftaran.pasien',
+                'pemeriksaan.pendaftaran.jadwalDokter.dokter',
+                'apoteker',
                 'detailResep.obat'
             ])
             ->orderBy('tanggal_resep', 'desc');
-        
+
+        // Filter by status
         if ($status !== 'semua') {
             $query->where('status', $status);
         }
-        
-        $resepList = $query->paginate(15);
-        
+
+        // Filter by search (nama pasien, no rekam medis, nama dokter)
+        if ($search) {
+            $searchLower = strtolower($search);
+            $query->where(function($q) use ($searchLower) {
+                $q->whereHas('pemeriksaan.pendaftaran.pasien', function($subQ) use ($searchLower) {
+                    $subQ->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$searchLower}%"])
+                         ->orWhereRaw('LOWER(no_rekam_medis) LIKE ?', ["%{$searchLower}%"]);
+                })
+                ->orWhereHas('pemeriksaan.pendaftaran.jadwalDokter.dokter', function($subQ) use ($searchLower) {
+                    $subQ->whereRaw('LOWER(nama_lengkap) LIKE ?', ["%{$searchLower}%"]);
+                });
+            });
+        }
+
+        // Filter by tanggal
+        if ($tanggal) {
+            $query->whereDate('tanggal_resep', $tanggal);
+        }
+
+        $resepList = $query->paginate(10);
+
         return view('farmasi.daftar-resep', compact('resepList', 'status'));
     }
 
@@ -211,7 +233,7 @@ class FarmasiController extends Controller
             $query->where('kategori', $kategori);
         }
         
-        $obatList = $query->orderBy('nama_obat')->paginate(20);
+        $obatList = $query->orderBy('nama_obat')->paginate(10);
         
         return view('farmasi.stok-obat', compact('obatList', 'search', 'kategori'));
     }

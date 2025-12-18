@@ -15,9 +15,9 @@ $stafMenus = [
 ],
 'farmasi' => [
 ['name' => 'Dashboard', 'route' => '/farmasi/dashboard', 'icon' => 'dashboard'],
-['name' => 'Daftar Resep', 'route' => '/farmasi/resep', 'icon' => 'medical'],
-['name' => 'Stok Obat', 'route' => '/farmasi/stok-obat', 'icon' => 'health'],
-['name' => 'Laporan', 'route' => '/farmasi/laporan', 'icon' => 'payment'],
+['name' => 'Daftar Resep', 'route' => '/farmasi/resep', 'icon' => 'document'],
+['name' => 'Stok Obat', 'route' => '/farmasi/stok-obat', 'icon' => 'box'],
+['name' => 'Laporan', 'route' => '/farmasi/laporan', 'icon' => 'chart'],
 ],
 'laboratorium' => [
 ['name' => 'Dashboard', 'route' => '/lab/dashboard', 'icon' => 'dashboard'],

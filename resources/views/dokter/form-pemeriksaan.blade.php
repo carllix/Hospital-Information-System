@@ -422,11 +422,7 @@
 
 <script>
     // Initialize obatIndex based on existing items
-    @if(old('obat'))
-    let obatIndex = {{ count(old('obat')) }};
-    @else
-    let obatIndex = 1;
-    @endif
+    let obatIndex = window.oldObatCount || 1;
 
     // Toggle form berdasarkan tindak lanjut yang dipilih
     document.querySelectorAll('input[name="tindak_lanjut"]').forEach(radio => {
@@ -642,4 +638,10 @@
 @if($errors->any())
 <x-toast type="error" message="Terdapat kesalahan pada form. Silakan periksa kembali." />
 @endif
+
+@push('scripts')
+<script>
+    window.oldObatCount = {{ old('obat') ? count(old('obat')) : 1 }};
+</script>
+@endpush
 @endsection
