@@ -17,7 +17,6 @@ $stafMenus = [
 ['name' => 'Dashboard', 'route' => '/farmasi/dashboard', 'icon' => 'dashboard'],
 ['name' => 'Daftar Resep', 'route' => '/farmasi/resep', 'icon' => 'document'],
 ['name' => 'Stok Obat', 'route' => '/farmasi/stok-obat', 'icon' => 'box'],
-['name' => 'Laporan', 'route' => '/farmasi/laporan', 'icon' => 'chart'],
 ],
 'laboratorium' => [
 ['name' => 'Dashboard', 'route' => '/lab/dashboard', 'icon' => 'dashboard'],
@@ -81,6 +80,14 @@ $currentRoute = request()->path();
         @foreach($menus as $menu)
         @php
         $isActive = '/' . $currentRoute === $menu['route'] || str_starts_with('/' . $currentRoute, $menu['route'] . '/');
+
+        // Special handling for Stok Obat menu - also activate for tambah and edit routes
+        if ($menu['route'] === '/farmasi/stok-obat' && (
+        str_contains($currentRoute, 'farmasi/obat/') ||
+        str_contains($currentRoute, 'farmasi/obat/tambah')
+        )) {
+        $isActive = true;
+        }
         @endphp
         <a href="{{ $menu['route'] }}"
             class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-white hover:bg-[#d4537b] {{ $isActive ? 'bg-[#d4537b] shadow-lg font-semibold' : '' }}">

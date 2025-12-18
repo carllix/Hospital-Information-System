@@ -167,19 +167,6 @@
                             <p class="text-sm text-gray-600">Kelola inventori obat</p>
                         </div>
                     </a>
-
-                    <!-- Laporan -->
-                    <a href="{{ route('farmasi.laporan-resep') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[#f56e9d] hover:bg-[#f56e9d]/5 transition-all group">
-                        <div class="p-3 bg-[#f56e9d] rounded-lg">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-800">Laporan Farmasi</p>
-                            <p class="text-sm text-gray-600">Lihat laporan & analisis</p>
-                        </div>
-                    </a>
                 </div>
             </div>
         </div>

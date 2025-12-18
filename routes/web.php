@@ -140,9 +140,6 @@ Route::middleware('auth')->group(function () {
         Route::put('/obat/{id}', [FarmasiController::class, 'updateObat'])->name('update-obat');
         Route::patch('/obat/{id}/stok', [FarmasiController::class, 'updateStok'])->name('update-stok');
         Route::delete('/obat/{id}', [FarmasiController::class, 'deleteObat'])->name('delete-obat');
-
-        // Laporan
-        Route::get('/laporan', [FarmasiController::class, 'laporanResep'])->name('laporan-resep');
     });
 
     // Lab Routes
