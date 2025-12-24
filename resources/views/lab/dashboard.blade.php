@@ -76,20 +76,7 @@
                 </div>
             </a>
 
-            <!-- Input Hasil -->
-            <a href="{{ route('lab.hasil-lab') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[#f56e9d] hover:bg-[#f56e9d]/5 transition-all group">
-                <div class="p-3 bg-[#f56e9d] rounded-lg">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7 12a5 5 0 1110 0 5 5 0 01-10 0z"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="font-semibold text-gray-800">Input Hasil</p>
-                    <p class="text-sm text-gray-600">Hasil pemeriksaan menunggu</p>
-                </div>
-            </a>
-
-            <!-- Riwayat Hasil -->
+            <!-- Riwayat Pemeriksaan -->
             <a href="{{ route('lab.riwayat') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[#f56e9d] hover:bg-[#f56e9d]/5 transition-all group">
                 <div class="p-3 bg-[#f56e9d] rounded-lg">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,8 +84,21 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="font-semibold text-gray-800">Riwayat Hasil</p>
+                    <p class="font-semibold text-gray-800">Riwayat Pemeriksaan</p>
                     <p class="text-sm text-gray-600">Lihat hasil pemeriksaan</p>
+                </div>
+            </a>
+
+            <!-- Laporan -->
+            <a href="{{ route('lab.laporan') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[#f56e9d] hover:bg-[#f56e9d]/5 transition-all group">
+                <div class="p-3 bg-[#f56e9d] rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="font-semibold text-gray-800">Laporan</p>
+                    <p class="text-sm text-gray-600">Lihat laporan laboratorium</p>
                 </div>
             </a>
         </div>
@@ -155,9 +155,13 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ \Carbon\Carbon::parse($permintaan->created_at)->format('d M Y H:i') }}
                             </td>
-                            
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    {{ ucfirst($permintaan->status ?? 'Menunggu') }}
+                                </span>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="#" class="text-[#f56e9d] hover:text-[#d14a7a]">Proses</a>
+                                <a href="{{ route('lab.form-hasil', $permintaan->permintaan_lab_id) }}" class="text-[#f56e9d] hover:text-[#d14a7a]">Proses</a>
                             </td>
                         </tr>
                         @endforeach

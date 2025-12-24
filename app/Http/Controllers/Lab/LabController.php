@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Lab;
 use App\Http\Controllers\Controller;
 use App\Models\HasilLab;
 use App\Models\PermintaanLab;
-use App\Models\Staf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,14 +14,9 @@ use Illuminate\View\View;
 
 class LabController extends Controller
 {
-    /**
-     * Dashboard Staf Lab
-     */
     public function dashboard(): View
     {
         $petugasLab = Auth::user()->staf;
-        
-        // Statistik
         $permintaanMenunggu = PermintaanLab::where('status', 'menunggu')->count();
         
         $permintaanDiproses = PermintaanLab::where('status', 'diproses')
@@ -38,8 +32,7 @@ class LabController extends Controller
             ->whereYear('tanggal_permintaan', now()->year)
             ->where('petugas_lab_id', $petugasLab->staf_id)
             ->count();
-        
-        // Daftar permintaan menunggu (terbaru)
+
         $permintaanMenungguList = PermintaanLab::with(['pasien', 'dokter', 'pemeriksaan'])
             ->where('status', 'menunggu')
             ->orderBy('tanggal_permintaan', 'asc')
@@ -56,9 +49,6 @@ class LabController extends Controller
         ));
     }
 
-    /**
-     * Daftar Permintaan Lab (Semua Status)
-     */
     public function daftarPermintaan(Request $request): View
     {
         $status = $request->get('status', 'semua');
@@ -89,9 +79,6 @@ class LabController extends Controller
         return view('lab.daftar-hasil', compact('hasilList'));
     }
 
-    /**
-     * Detail Permintaan Lab
-     */
     public function detailPermintaan($id): View
     {
         $permintaan = PermintaanLab::with([
@@ -105,9 +92,6 @@ class LabController extends Controller
         return view('lab.detail-permintaan', compact('permintaan'));
     }
 
-    /**
-     * Ambil Permintaan untuk Diproses
-     */
     public function ambilPermintaan($id): RedirectResponse
     {
         try {
@@ -138,9 +122,6 @@ class LabController extends Controller
         }
     }
 
-    /**
-     * Form Input Hasil Lab
-     */
     public function formHasil($id): View
     {
         $permintaan = PermintaanLab::with([
@@ -149,23 +130,17 @@ class LabController extends Controller
             'pemeriksaan',
             'hasilLab'
         ])->findOrFail($id);
-        
+
         $petugasLab = Auth::user()->staf;
-        
-        // Cek authorization - hanya petugas yang mengambil yang bisa input hasil
         if ($permintaan->petugas_lab_id !== $petugasLab->staf_id) {
             abort(403, 'Anda tidak memiliki akses untuk menginput hasil permintaan ini!');
         }
-        
-        // Template parameter berdasarkan jenis pemeriksaan
+
         $parameterTemplates = $this->getParameterTemplates($permintaan->jenis_pemeriksaan);
         
         return view('lab.form-hasil', compact('permintaan', 'parameterTemplates'));
     }
 
-    /**
-     * Simpan Hasil Lab
-     */
     public function storeHasil(Request $request): RedirectResponse
     {
         $request->validate([
@@ -232,25 +207,28 @@ class LabController extends Controller
         }
     }
 
-    /**
-     * Riwayat Pemeriksaan Lab
-     * Hanya tampilkan yang dikerjakan oleh petugas yang login
-     */
-    public function riwayat(): View
+    public function riwayat(Request $request): View
     {
         $petugasLab = Auth::user()->staf;
-        
-        $riwayatPermintaan = PermintaanLab::with(['pasien', 'dokter', 'pemeriksaan'])
-            ->where('petugas_lab_id', $petugasLab->staf_id)
-            ->orderBy('tanggal_permintaan', 'desc')
-            ->paginate(20);
-            
+
+        $query = PermintaanLab::with(['pasien', 'dokter', 'pemeriksaan'])
+            ->where('petugas_lab_id', $petugasLab->staf_id);
+
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->whereHas('pemeriksaan.pendaftaran.pasien', function($q) use ($search) {
+                $q->where('nama_lengkap', 'ilike', "%{$search}%")
+                  ->orWhere('no_rekam_medis', 'ilike', "%{$search}%");
+            });
+        }
+
+        $riwayatPermintaan = $query->orderBy('tanggal_permintaan', 'desc')
+            ->paginate(10)
+            ->appends(['search' => $request->search]);
+
         return view('lab.riwayat', compact('riwayatPermintaan'));
     }
 
-    /**
-     * Laporan Lab
-     */
     public function laporan(Request $request): View
     {
         $bulan = $request->get('bulan', now()->month);
@@ -268,8 +246,7 @@ class LabController extends Controller
             'diproses' => $permintaanList->where('status', 'diproses')->count(),
             'menunggu' => $permintaanList->where('status', 'menunggu')->count(),
         ];
-        
-        // Statistik per jenis pemeriksaan
+
         $perJenisPemeriksaan = $permintaanList->groupBy('jenis_pemeriksaan')->map(function($group) {
             return $group->count();
         });
@@ -277,27 +254,18 @@ class LabController extends Controller
         return view('lab.laporan', compact('permintaanList', 'statistik', 'bulan', 'tahun', 'perJenisPemeriksaan'));
     }
 
-    /**
-     * Profile Petugas Lab
-     */
     public function profile(): View
     {
         $petugasLab = Auth::user()->staf;
         return view('lab.profile', compact('petugasLab'));
     }
 
-    /**
-     * Form Edit Profile
-     */
     public function editProfile(): View
     {
         $petugasLab = Auth::user()->staf;
         return view('lab.edit-profile', compact('petugasLab'));
     }
 
-    /**
-     * Update Profile
-     */
     public function updateProfile(Request $request): RedirectResponse
     {
         $request->validate([
@@ -327,9 +295,6 @@ class LabController extends Controller
         }
     }
 
-    /**
-     * Helper: Get Parameter Templates
-     */
     private function getParameterTemplates($jenisPemeriksaan): array
     {
         $templates = [
