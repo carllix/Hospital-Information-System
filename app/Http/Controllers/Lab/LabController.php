@@ -65,20 +65,6 @@ class LabController extends Controller
         return view('lab.daftar-permintaan', compact('permintaanList', 'status'));
     }
 
-    public function daftarHasil(Request $request): View
-    {
-        $petugasLab = Auth::user()->staf;
-        
-        $query = PermintaanLab::with(['pasien', 'dokter', 'pemeriksaan'])
-            ->where('status', 'diproses')
-            ->where('petugas_lab_id', $petugasLab->staf_id)
-            ->orderBy('tanggal_permintaan', 'asc');
-        
-        $hasilList = $query->paginate(15);
-        
-        return view('lab.daftar-hasil', compact('hasilList'));
-    }
-
     public function detailPermintaan($id): View
     {
         $permintaan = PermintaanLab::with([
@@ -258,12 +244,6 @@ class LabController extends Controller
     {
         $petugasLab = Auth::user()->staf;
         return view('lab.profile', compact('petugasLab'));
-    }
-
-    public function editProfile(): View
-    {
-        $petugasLab = Auth::user()->staf;
-        return view('lab.edit-profile', compact('petugasLab'));
     }
 
     public function updateProfile(Request $request): RedirectResponse
