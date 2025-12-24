@@ -68,11 +68,16 @@
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
             <h3 class="font-bold text-gray-900">Daftar Riwayat</h3>
-            {{-- Search Bar Kecil (Opsional Visual) --}}
-            <div class="relative hidden sm:block">
-                <input type="text" disabled placeholder="Cari pasien..." class="pl-8 pr-3 py-1.5 text-xs border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
-                <svg class="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </div>
+            {{-- Search Bar --}}
+            <form method="GET" action="{{ route('lab.riwayat') }}" id="search-form" class="relative hidden sm:block">
+                <input type="text"
+                       name="search"
+                       id="search-input"
+                       value="{{ request('search') }}"
+                       placeholder="Cari pasien..."
+                       class="pl-8 pr-3 py-1.5 text-xs border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all">
+                <svg class="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </form>
         </div>
 
         @if($riwayatPermintaan->count() > 0)
@@ -209,4 +214,29 @@
         </div>
     </div>
 </div>
+
+<script>
+// Debounce function for search
+let searchTimeout;
+const searchInput = document.getElementById('search-input');
+const searchForm = document.getElementById('search-form');
+
+if (searchInput) {
+    // Auto-focus search input if search parameter exists in URL (even if empty)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('search')) {
+        searchInput.focus();
+        // Set cursor to end of text
+        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+    }
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(() => {
+            searchForm.submit();
+        }, 500); // 500ms delay
+    });
+}
+</script>
 @endsection

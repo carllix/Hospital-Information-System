@@ -26,6 +26,7 @@ class HasilLab extends Model
 
     protected $casts = [
         'tanggal_hasil' => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     public function permintaanLab(): BelongsTo

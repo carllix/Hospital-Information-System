@@ -133,18 +133,18 @@
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Aksi</h3>
 
                 @if($resep->status == 'menunggu')
-                <form method="POST" action="{{ route('farmasi.proses-resep', $resep->resep_id) }}" onsubmit="return confirm('Yakin ingin memproses resep ini?')">
+                <form id="prosesResepForm" method="POST" action="{{ route('farmasi.proses-resep', $resep->resep_id) }}">
                     @csrf
                     @method('PATCH')
-                    <button type="submit" class="w-full px-4 py-3 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition font-medium">
+                    <button type="button" onclick="openProsesModal()" class="w-full px-4 py-3 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition font-medium">
                         Proses Resep
                     </button>
                 </form>
                 @elseif($resep->status == 'diproses' && $resep->apoteker_id == Auth::user()->staf->staf_id)
-                <form method="POST" action="{{ route('farmasi.selesaikan-resep', $resep->resep_id) }}" onsubmit="return confirm('Yakin ingin menyelesaikan resep ini? Stok obat akan dikurangi.')">
+                <form id="selesaikanResepForm" method="POST" action="{{ route('farmasi.selesaikan-resep', $resep->resep_id) }}">
                     @csrf
                     @method('PATCH')
-                    <button type="submit" class="w-full px-4 py-3 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition font-medium">
+                    <button type="button" onclick="openSelesaikanModal()" class="w-full px-4 py-3 bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition font-medium">
                         Selesaikan Resep
                     </button>
                 </form>
@@ -173,4 +173,138 @@
 @if(session('error'))
 <x-toast type="error" message="{{ session('error') }}" />
 @endif
+
+<!-- Modal Konfirmasi Proses Resep -->
+<div id="prosesModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="prosesModalBackdrop" class="fixed inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="closeProsesModal()"></div>
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="prosesModalContent">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex items-start gap-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Proses Resep</h3>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Yakin ingin memproses resep ini? Status resep akan berubah menjadi "<strong>Diproses</strong>" dan akan ditugaskan kepada Anda.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 flex gap-3 justify-end">
+            <button
+                type="button"
+                onclick="closeProsesModal()"
+                class="px-4 py-2 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                Batal
+            </button>
+            <button
+                type="button"
+                onclick="confirmProsesResep()"
+                class="px-4 py-2 text-sm bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium shadow-sm">
+                Ya, Proses
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Selesaikan Resep -->
+<div id="selesaikanModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="selesaikanModalBackdrop" class="fixed inset-0 bg-black opacity-0 transition-opacity duration-200" onclick="closeSelesaikanModal()"></div>
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-95 opacity-0 relative z-10" id="selesaikanModalContent">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex items-start gap-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Selesaikan Resep</h3>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Yakin ingin menyelesaikan resep ini? <strong>Stok obat akan dikurangi</strong> dan status resep akan berubah menjadi "<strong>Selesai</strong>".
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 flex gap-3 justify-end">
+            <button
+                type="button"
+                onclick="closeSelesaikanModal()"
+                class="px-4 py-2 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                Batal
+            </button>
+            <button
+                type="button"
+                onclick="confirmSelesaikanResep()"
+                class="px-4 py-2 text-sm bg-[#f56e9d] text-white rounded-lg hover:bg-[#d14a7a] transition-colors font-medium shadow-sm">
+                Ya, Selesaikan
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Modal Proses Resep
+    function openProsesModal() {
+        const modal = document.getElementById('prosesModal');
+        const modalContent = document.getElementById('prosesModalContent');
+        const modalBackdrop = document.getElementById('prosesModalBackdrop');
+
+        modal.classList.remove('hidden');
+
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-20');
+        }, 10);
+    }
+
+    function closeProsesModal() {
+        const modal = document.getElementById('prosesModal');
+        const modalContent = document.getElementById('prosesModalContent');
+        const modalBackdrop = document.getElementById('prosesModalBackdrop');
+
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        modalBackdrop.classList.remove('opacity-20');
+        modalBackdrop.classList.add('opacity-0');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+    }
+
+    function confirmProsesResep() {
+        document.getElementById('prosesResepForm').submit();
+    }
+
+    // Modal Selesaikan Resep
+    function openSelesaikanModal() {
+        const modal = document.getElementById('selesaikanModal');
+        const modalContent = document.getElementById('selesaikanModalContent');
+        const modalBackdrop = document.getElementById('selesaikanModalBackdrop');
+
+        modal.classList.remove('hidden');
+
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-20');
+        }, 10);
+    }
+
+    function closeSelesaikanModal() {
+        const modal = document.getElementById('selesaikanModal');
+        const modalContent = document.getElementById('selesaikanModalContent');
+        const modalBackdrop = document.getElementById('selesaikanModalBackdrop');
+
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        modalBackdrop.classList.remove('opacity-20');
+        modalBackdrop.classList.add('opacity-0');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+    }
+
+    function confirmSelesaikanResep() {
+        document.getElementById('selesaikanResepForm').submit();
+    }
+</script>
 @endsection

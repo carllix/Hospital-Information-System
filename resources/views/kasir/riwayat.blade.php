@@ -114,11 +114,11 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full uppercase">
-                                        {{ $tagihan->pembayaran->first()->metode_pembayaran ?? '-' }}
+                                        {{ $tagihan->pembayaran->metode_pembayaran ?? '-' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500">
-                                    {{ $tagihan->pembayaran->first()->tanggal_bayar->format('d/m/Y H:i') ?? '-' }}
+                                    {{ $tagihan->pembayaran->tanggal_bayar->format('d/m/Y H:i') ?? '-' }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <a href="{{ route('kasir.invoice', $tagihan->tagihan_id) }}" class="text-pink-600 hover:text-pink-700 text-sm font-medium">

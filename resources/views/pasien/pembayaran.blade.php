@@ -30,7 +30,6 @@
                     >
                         <option value="">Semua Status</option>
                         <option value="belum_bayar" {{ request('status') === 'belum_bayar' ? 'selected' : '' }}>Belum Bayar</option>
-                        <option value="sebagian" {{ request('status') === 'sebagian' ? 'selected' : '' }}>Sebagian</option>
                         <option value="lunas" {{ request('status') === 'lunas' ? 'selected' : '' }}>Lunas</option>
                     </select>
                 </div>
@@ -90,10 +89,6 @@
                                 @if($tagihan->status === 'lunas')
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-green-100 text-green-800">
                                     Lunas
-                                </span>
-                                @elseif($tagihan->status === 'sebagian')
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-yellow-100 text-yellow-800">
-                                    Sebagian
                                 </span>
                                 @else
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-red-100 text-red-800">
@@ -242,8 +237,6 @@ function renderDetailTagihan(data) {
     let statusBadge;
     if (data.status === 'lunas') {
         statusBadge = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Lunas</span>';
-    } else if (data.status === 'sebagian') {
-        statusBadge = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Sebagian</span>';
     } else {
         statusBadge = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Belum Bayar</span>';
     }

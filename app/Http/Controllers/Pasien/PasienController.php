@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class PasienController extends Controller
@@ -39,7 +40,7 @@ class PasienController extends Controller
         $totalBelumBayar = Tagihan::whereHas('pemeriksaan.pendaftaran', function ($q) use ($pasien) {
             $q->where('pasien_id', $pasien->pasien_id);
         })
-            ->whereIn('status', ['belum_bayar', 'sebagian'])
+            ->where('status', 'belum_bayar')
             ->sum('total_tagihan');
 
         return view('pasien.dashboard', compact(
@@ -213,6 +214,7 @@ class PasienController extends Controller
                         'jenis_pemeriksaan' => str_replace('_', ' ', ucwords($lab->jenis_pemeriksaan, '_')),
                         'tanggal_permintaan' => $lab->tanggal_permintaan->translatedFormat('j F Y'),
                         'status' => $lab->status,
+                        'file_hasil_url' => $lab->hasilLab->first()->file_hasil_url ?? null,
                         'hasil' => $lab->hasilLab->map(function ($hasil) {
                             return [
                                 'jenis_test' => $hasil->jenis_test,
@@ -221,6 +223,7 @@ class PasienController extends Controller
                                 'satuan' => $hasil->satuan ?? '',
                                 'nilai_normal' => $hasil->nilai_normal ?? '-',
                                 'tanggal_hasil' => $hasil->tanggal_hasil->translatedFormat('j F Y'),
+                                'file_hasil_url' => $hasil->file_hasil_url,
                             ];
                         })
                     ];
@@ -574,8 +577,8 @@ class PasienController extends Controller
         
         try {
             file_put_contents($statusFile, json_encode($status, JSON_PRETTY_PRINT));
-            
-            \Log::info('Real-time monitoring started', [
+
+            Log::info('Real-time monitoring started', [
                 'pasien_id' => $pasien->pasien_id,
                 'file_path' => $statusFile,
                 'status' => $status
@@ -589,9 +592,9 @@ class PasienController extends Controller
                 'duration' => 10,
                 'file_created' => file_exists($statusFile) ? 'YES' : 'NO'
             ]);
-            
+
         } catch (\Exception $e) {
-            \Log::error('Failed to start monitoring', ['error' => $e->getMessage()]);
+            Log::error('Failed to start monitoring', ['error' => $e->getMessage()]);
             
             return response()->json([
                 'success' => false,
@@ -617,9 +620,9 @@ class PasienController extends Controller
                 try {
                     unlink($statusFile);
                     $filesDeleted[] = $statusFile;
-                    \Log::info('Monitoring file deleted', ['file' => $statusFile]);
+                    Log::info('Monitoring file deleted', ['file' => $statusFile]);
                 } catch (\Exception $e) {
-                    \Log::error('Failed to delete monitoring file', ['file' => $statusFile, 'error' => $e->getMessage()]);
+                    Log::error('Failed to delete monitoring file', ['file' => $statusFile, 'error' => $e->getMessage()]);
                 }
             }
         }
@@ -636,7 +639,7 @@ class PasienController extends Controller
      */
     public function storeRealtimeData(Request $request)
     {
-        \Log::info('Received real-time data', $request->all());
+        Log::info('Received real-time data', $request->all());
         
         $request->validate([
             'heart_rate' => 'required|integer|min:30|max:250',
@@ -654,7 +657,7 @@ class PasienController extends Controller
                 'oxygen_saturation' => $request->oxygen_saturation,
             ]);
 
-            \Log::info('Real-time data stored successfully', [
+            Log::info('Real-time data stored successfully', [
                 'data_id' => $data->id,
                 'pasien_id' => $request->pasien_id,
                 'heart_rate' => $request->heart_rate,
@@ -672,7 +675,7 @@ class PasienController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
-            \Log::error('Failed to store real-time data', [
+            Log::error('Failed to store real-time data', [
                 'error' => $e->getMessage(),
                 'request' => $request->all()
             ]);
@@ -723,7 +726,7 @@ class PasienController extends Controller
                         ]);
                     }
                 } catch (\Exception $e) {
-                    \Log::error('Error reading monitoring status', ['file' => $statusFile, 'error' => $e->getMessage()]);
+                    Log::error('Error reading monitoring status', ['file' => $statusFile, 'error' => $e->getMessage()]);
                 }
             }
         }
@@ -799,7 +802,7 @@ class PasienController extends Controller
      */
     public function storeSessionResults(Request $request)
     {
-        \Log::info('Received session results', $request->all());
+        Log::info('Received session results', $request->all());
         
         $request->validate([
             'heart_rate' => 'required|integer|min:30|max:250',
@@ -852,7 +855,7 @@ class PasienController extends Controller
 
             DB::commit();
 
-            \Log::info('Session results stored successfully', [
+            Log::info('Session results stored successfully', [
                 'data_id' => $data->id,
                 'pasien_id' => $request->pasien_id,
                 'duration' => $request->session_info['duration_seconds'],
@@ -876,7 +879,7 @@ class PasienController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Failed to store session results', [
+            Log::error('Failed to store session results', [
                 'error' => $e->getMessage(),
                 'request' => $request->all()
             ]);
@@ -920,8 +923,8 @@ class PasienController extends Controller
                         ]);
                     }
                 } catch (\Exception $e) {
-                    \Log::error('Error reading session progress', [
-                        'file' => $statusFile, 
+                    Log::error('Error reading session progress', [
+                        'file' => $statusFile,
                         'error' => $e->getMessage()
                     ]);
                 }

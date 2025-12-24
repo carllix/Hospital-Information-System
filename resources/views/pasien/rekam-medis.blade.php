@@ -425,6 +425,45 @@
                     html += '<p class="text-sm text-gray-500">Belum ada hasil</p>';
                 }
 
+                // Tampilkan lampiran file hasil lab jika ada
+                if (lab.file_hasil_url) {
+                    const fileExtension = lab.file_hasil_url.split('.').pop().toLowerCase();
+                    const isImage = ['jpg', 'jpeg', 'png'].includes(fileExtension);
+
+                    html += `
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <p class="text-xs font-semibold text-gray-600 mb-2">Lampiran Hasil Lab:</p>
+                    `;
+
+                    if (isImage) {
+                        html += `
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <img src="${lab.file_hasil_url}"
+                                     alt="Hasil Lab"
+                                     class="w-full cursor-pointer hover:opacity-90 transition-opacity"
+                                     onclick="window.open('${lab.file_hasil_url}', '_blank')">
+                                <p class="text-xs text-gray-500 p-2 bg-gray-50 text-center">Klik gambar untuk melihat ukuran penuh</p>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <a href="${lab.file_hasil_url}"
+                               target="_blank"
+                               class="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-lg hover:bg-red-100 transition-colors">
+                                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-semibold text-red-700">Lihat Dokumen PDF</p>
+                                    <p class="text-xs text-red-600">Klik untuk membuka</p>
+                                </div>
+                            </a>
+                        `;
+                    }
+
+                    html += `</div>`;
+                }
+
                 html += '</div>';
             });
 

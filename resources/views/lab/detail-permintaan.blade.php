@@ -140,8 +140,8 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
                     <h3 class="font-bold text-gray-900">Hasil Analisa</h3>
-                    @if($permintaan->hasilLab->isNotEmpty())
-                        <span class="text-xs text-gray-500">Terakhir update: {{ $permintaan->hasilLab->first()->created_at->format('d/m/Y') }}</span>
+                    @if($permintaan->hasilLab->isNotEmpty() && $permintaan->hasilLab->first()->created_at)
+                        <span class="text-xs text-gray-500">Terakhir update: {{ \Carbon\Carbon::parse($permintaan->hasilLab->first()->created_at)->format('d/m/Y') }}</span>
                     @endif
                 </div>
 
@@ -185,15 +185,39 @@
                             </div>
 
                             @if($hasilPertama->file_hasil_url)
-                                <a href="{{ asset($hasilPertama->file_hasil_url) }}" target="_blank" class="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl hover:border-pink-300 hover:shadow-sm transition-all group">
-                                    <div class="bg-red-50 p-2 rounded-lg text-red-500 group-hover:bg-red-100 transition-colors">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                    </div>
-                                    <div class="text-left">
-                                        <p class="text-sm font-semibold text-gray-700 group-hover:text-pink-600 transition-colors">Lampiran Hasil Lab</p>
-                                        <p class="text-xs text-gray-400">Klik untuk melihat file asli</p>
-                                    </div>
-                                </a>
+                                <div class="w-full">
+                                    @php
+                                        $fileExtension = pathinfo($hasilPertama->file_hasil_url, PATHINFO_EXTENSION);
+                                        $isImage = in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png']);
+                                    @endphp
+
+                                    @if($isImage)
+                                        {{-- Preview Gambar --}}
+                                        <div class="border border-gray-200 rounded-xl overflow-hidden">
+                                            <div class="bg-gray-50 px-4 py-2 border-b border-gray-200">
+                                                <p class="text-sm font-semibold text-gray-700">Lampiran Hasil Lab (Gambar)</p>
+                                            </div>
+                                            <div class="p-4">
+                                                <img src="{{ asset($hasilPertama->file_hasil_url) }}"
+                                                     alt="Hasil Lab"
+                                                     class="w-full rounded-lg border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                                                     onclick="window.open('{{ asset($hasilPertama->file_hasil_url) }}', '_blank')">
+                                                <p class="text-xs text-gray-500 mt-2 text-center">Klik gambar untuk melihat ukuran penuh</p>
+                                            </div>
+                                        </div>
+                                    @else
+                                        {{-- Link Download untuk PDF --}}
+                                        <a href="{{ asset($hasilPertama->file_hasil_url) }}" target="_blank" class="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl hover:border-pink-300 hover:shadow-sm transition-all group">
+                                            <div class="bg-red-50 p-2 rounded-lg text-red-500 group-hover:bg-red-100 transition-colors">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                            </div>
+                                            <div class="text-left">
+                                                <p class="text-sm font-semibold text-gray-700 group-hover:text-pink-600 transition-colors">Lampiran Hasil Lab (PDF)</p>
+                                                <p class="text-xs text-gray-400">Klik untuk melihat file asli</p>
+                                            </div>
+                                        </a>
+                                    @endif
+                                </div>
                             @endif
                         </div>
                     </div>

@@ -41,7 +41,7 @@ class KasirController extends Controller
                 'pemeriksaan.pendaftaran.jadwalDokter.dokter',
                 'detailTagihan'
             ])
-            ->whereIn('status', ['belum_bayar', 'sebagian'])
+            ->where('status', 'belum_bayar')
             ->orderBy('created_at', 'asc')
             ->paginate(5, ['*'], 'tagihan_page');
 
@@ -49,7 +49,7 @@ class KasirController extends Controller
         $todayStats = [
             'total_pendapatan' => Pembayaran::whereDate('tanggal_bayar', today())->sum('jumlah_bayar'),
             'jumlah_transaksi' => Pembayaran::whereDate('tanggal_bayar', today())->count(),
-            'tagihan_pending' => Tagihan::whereIn('status', ['belum_bayar', 'sebagian'])->count(),
+            'tagihan_pending' => Tagihan::where('status', 'belum_bayar')->count(),
             'pasien_siap_tagihan' => Pemeriksaan::where('status', 'selesai')->whereDoesntHave('tagihan')->count(),
         ];
 
@@ -282,15 +282,16 @@ class KasirController extends Controller
             return back()->with('error', 'Tagihan sudah lunas!');
         }
 
+        // Cek apakah sudah ada pembayaran
+        if ($tagihan->pembayaran) {
+            return back()->with('error', 'Tagihan ini sudah memiliki pembayaran!');
+        }
+
         $jumlahBayar = $request->jumlah_bayar;
         $totalTagihan = $tagihan->total_tagihan;
 
-        // Hitung total yang sudah dibayar sebelumnya
-        $sudahDibayar = $tagihan->pembayaran()->sum('jumlah_bayar');
-        $sisaTagihan = $totalTagihan - $sudahDibayar;
-
-        if ($jumlahBayar < $sisaTagihan) {
-            return back()->with('error', "Pembayaran harus minimal Rp " . number_format($sisaTagihan, 0, ',', '.') . " untuk melunasi tagihan.");
+        if ($jumlahBayar < $totalTagihan) {
+            return back()->with('error', "Pembayaran harus minimal Rp " . number_format($totalTagihan, 0, ',', '.') . " untuk melunasi tagihan.");
         }
 
         try {
@@ -303,7 +304,7 @@ class KasirController extends Controller
                 'tagihan_id' => $tagihan->tagihan_id,
                 'tanggal_bayar' => now(),
                 'metode_pembayaran' => $request->metode_pembayaran,
-                'jumlah_bayar' => $sisaTagihan, // Simpan yang dibutuhkan saja
+                'jumlah_bayar' => $totalTagihan,
                 'kasir_id' => $kasir->staf_id,
                 'no_kwitansi' => $noKwitansi,
                 'catatan' => $request->catatan,
@@ -313,7 +314,7 @@ class KasirController extends Controller
 
             DB::commit();
 
-            $kembalian = max(0, $jumlahBayar - $sisaTagihan);
+            $kembalian = max(0, $jumlahBayar - $totalTagihan);
 
             return redirect()->route('kasir.invoice', $tagihan->tagihan_id)
                 ->with('success', 'Pembayaran berhasil!')
@@ -337,7 +338,7 @@ class KasirController extends Controller
             'pembayaran.kasir'
         ])->findOrFail($tagihanId);
 
-        $pembayaranTerakhir = $tagihan->pembayaran()->latest('tanggal_bayar')->first();
+        $pembayaranTerakhir = $tagihan->pembayaran;
         $kembalian = session('kembalian', 0);
 
         return view('kasir.invoice', compact('tagihan', 'pembayaranTerakhir', 'kembalian'));

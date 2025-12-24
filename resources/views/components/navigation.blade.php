@@ -20,9 +20,9 @@ $stafMenus = [
 ],
 'laboratorium' => [
 ['name' => 'Dashboard', 'route' => '/lab/dashboard', 'icon' => 'dashboard'],
-['name' => 'Daftar Permintaan', 'route' => '/lab/permintaan', 'icon' => 'medical'],
-['name' => 'Riwayat Pemeriksaan', 'route' => '/lab/riwayat', 'icon' => 'health'],
-['name' => 'Laporan', 'route' => '/lab/laporan', 'icon' => 'payment'],
+['name' => 'Daftar Permintaan', 'route' => '/lab/permintaan', 'icon' => 'clipboard-check'],
+['name' => 'Riwayat Pemeriksaan', 'route' => '/lab/riwayat', 'icon' => 'clock'],
+['name' => 'Laporan', 'route' => '/lab/laporan', 'icon' => 'chart'],
 ],
 'kasir' => [
 ['name' => 'Dashboard', 'route' => '/kasir/dashboard', 'icon' => 'dashboard'],
@@ -81,7 +81,6 @@ $currentRoute = request()->path();
         @php
         $isActive = '/' . $currentRoute === $menu['route'] || str_starts_with('/' . $currentRoute, $menu['route'] . '/');
 
-        // Special handling for Stok Obat menu - also activate for tambah and edit routes
         if ($menu['route'] === '/farmasi/stok-obat' && (
         str_contains($currentRoute, 'farmasi/obat/') ||
         str_contains($currentRoute, 'farmasi/obat/tambah')
@@ -97,6 +96,13 @@ $currentRoute = request()->path();
         }
 
         if ($menu['route'] === '/kasir/riwayat' && str_contains($currentRoute, 'kasir/invoice')) {
+        $isActive = true;
+        }
+
+        if ($menu['route'] === '/lab/riwayat' && (
+        str_contains($currentRoute, 'lab/form-hasil') ||
+        str_contains($currentRoute, 'lab/hasil')
+        )) {
         $isActive = true;
         }
         @endphp

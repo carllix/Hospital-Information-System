@@ -10,66 +10,97 @@
         <x-toast :type="session('success') ? 'success' : 'error'" :message="session('success') ?? session('error')" />
     @endif
 
+    <!-- Welcome Card -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">Selamat Datang, {{ auth()->user()->staf->nama_lengkap }}!</h2>
+                <p class="mt-2 text-gray-600">Kelola dan proses permintaan pemeriksaan laboratorium</p>
+            </div>
+        </div>
+    </div>
+
     {{-- Statistik Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {{-- Permintaan Menunggu --}}
-        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600 font-medium">Permintaan Menunggu</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $permintaanMenunggu }}</p>
-                </div>
-                <div class="bg-yellow-100 p-3 rounded-full">
-                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Permintaan Menunggu</p>
+                <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $permintaanMenunggu }}</p>
+                <p class="text-xs text-gray-500 mt-1">Menunggu diproses</p>
             </div>
         </div>
 
         {{-- Sedang Diproses --}}
-        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600 font-medium">Sedang Diproses</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $permintaanDiproses }}</p>
-                </div>
-                <div class="bg-blue-100 p-3 rounded-full">
-                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Sedang Diproses</p>
+                <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $permintaanDiproses }}</p>
+                <p class="text-xs text-gray-500 mt-1">Dalam pemeriksaan</p>
             </div>
         </div>
 
         {{-- Selesai Hari Ini --}}
-        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600 font-medium">Selesai Hari Ini</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $permintaanSelesaiHariIni }}</p>
-                </div>
-                <div class="bg-green-100 p-3 rounded-full">
-                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Selesai Hari Ini</p>
+                <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $permintaanSelesaiHariIni }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ now()->translatedFormat('d F Y') }}</p>
             </div>
         </div>
 
         {{-- Total Bulan Ini --}}
-        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600 font-medium">Total Bulan Ini</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">{{ $totalPermintaanBulanIni }}</p>
-                </div>
-                <div class="bg-purple-100 p-3 rounded-full">
-                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div>
+                <p class="text-sm font-medium text-gray-600">Total Bulan Ini</p>
+                <p class="text-3xl font-bold text-[#f56e9d] mt-2">{{ $totalPermintaanBulanIni }}</p>
+                <p class="text-xs text-gray-500 mt-1">Bulan ini</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Menu Utama</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Daftar Permintaan -->
+            <a href="{{ route('lab.daftar-permintaan') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[#f56e9d] hover:bg-[#f56e9d]/5 transition-all group">
+                <div class="p-3 bg-[#f56e9d] rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                     </svg>
                 </div>
-            </div>
+                <div class="ml-4">
+                    <p class="font-semibold text-gray-800">Daftar Permintaan</p>
+                    <p class="text-sm text-gray-600">Lihat semua permintaan lab</p>
+                </div>
+            </a>
+
+            <!-- Riwayat Pemeriksaan -->
+            <a href="{{ route('lab.riwayat') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[#f56e9d] hover:bg-[#f56e9d]/5 transition-all group">
+                <div class="p-3 bg-[#f56e9d] rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="font-semibold text-gray-800">Riwayat Pemeriksaan</p>
+                    <p class="text-sm text-gray-600">Lihat hasil pemeriksaan</p>
+                </div>
+            </a>
+
+            <!-- Laporan -->
+            <a href="{{ route('lab.laporan') }}" class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[#f56e9d] hover:bg-[#f56e9d]/5 transition-all group">
+                <div class="p-3 bg-[#f56e9d] rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="font-semibold text-gray-800">Laporan</p>
+                    <p class="text-sm text-gray-600">Lihat laporan laboratorium</p>
+                </div>
+            </a>
         </div>
     </div>
 
@@ -77,8 +108,8 @@
     <div class="bg-white rounded-lg shadow-md">
         <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex justify-between items-center">
-                <h3 class="text-lg font-semibold text-gray-800">Permintaan Lab Menunggu</h3>
-                <a href="{{ route('lab.daftar-permintaan') }}" class="text-sm text-pink-600 hover:text-pink-700 font-medium">
+                <h3 class="text-lg font-bold text-gray-800">Permintaan Lab Menunggu</h3>
+                <a href="{{ route('lab.daftar-permintaan') }}" class="text-sm text-[#f56e9d] hover:text-[#d14a7a] font-medium">
                     Lihat Semua →
                 </a>
             </div>
@@ -117,16 +148,20 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#f56e9d]/10 text-[#f56e9d]">
                                     {{ ucwords(str_replace('_', ' ', $permintaan->jenis_pemeriksaan)) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ \Carbon\Carbon::parse($permintaan->created_at)->format('d M Y H:i') }}
                             </td>
-                            
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    {{ ucfirst($permintaan->status ?? 'Menunggu') }}
+                                </span>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Proses</a>
+                                <a href="{{ route('lab.form-hasil', $permintaan->permintaan_lab_id) }}" class="text-[#f56e9d] hover:text-[#d14a7a]">Proses</a>
                             </td>
                         </tr>
                         @endforeach
