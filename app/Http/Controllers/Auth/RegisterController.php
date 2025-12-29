@@ -59,7 +59,7 @@ class RegisterController extends Controller
                     ->numbers()
                     ->symbols(),
             ],
-            'g-recaptcha-response' => ['required', 'captcha'],
+            // 'g-recaptcha-response' => ['required', 'captcha'],
             'nama_lengkap' => ['required', 'string', 'max:100'],
             'nik' => ['required', 'string', 'size:16', 'unique:pasien,nik'],
             'tempat_lahir' => ['required', 'string', 'max:100'],
