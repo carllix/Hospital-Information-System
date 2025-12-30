@@ -41,6 +41,9 @@ The system is designed to support 7 user roles with different functions:
 6. **Laboratory Staff** - Process examination requests and record results
 7. **Cashier Staff** - Manage payment processes and issue payment receipts
 
+> **For more detailed information**, please refer to the complete documentation: 
+[Laporan Tugas Besar Sistem Informasi Kesehatan.pdf](doc/Laporan%20Tugas%20Besar%20Sistem%20Informasi%20Kesehatan.pdf)
+
 ## Screenshots
 
 ### 1. Administrator
